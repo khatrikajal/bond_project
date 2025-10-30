@@ -1,0 +1,170 @@
+[
+  {
+    "model": "bonds.isinbasicinfo",
+    "pk": "INE020B08AF7",
+    "fields": {
+      "security_type": "Non-Convertible Debenture",
+      "isin_description": "Reliance Industries Limited NCD Series VIII",
+      "issue_description": "7.50% Reliance Industries Limited NCD due 2029",
+      "coupon_rate_percent": "7.500",
+      "maturity_date": "2029-04-20",
+      "ytm_percent": "7.600",
+      "face_value_rs": "1000.00",
+      "isin_active": true,
+      "issue_size_lakhs": "400000.00",
+      "issue_date": "2024-04-20",
+      "issuer_name": "Reliance Industries Limited",
+      "issuer_type": "CORPORATE",
+      "series": "VIII",
+      "listed_unlisted": "Listed",
+      "trading_status": "ACTIVE",
+      "tax_category": "TAXABLE",
+      "secured": false,
+      "transferable": true,
+      "primary_exchange": "NSE",
+      "minimum_investment_rs": "1000.00",
+      "interest_payment_frequency": "Semi-Annual",
+      "tax_free": false,
+      "option_type": "NONE",
+      "data_hash": "hash001",
+      "record_created_date": "2024-04-01T10:00:00Z",
+      "last_updated": "2024-04-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isinbasicinfo",
+    "pk": "INE020B08AG7",
+    "fields": {
+      "security_type": "Non-Convertible Debenture",
+      "isin_description": "Reliance Industries Limited NCD Series IX",
+      "issue_description": "7.75% Reliance Industries Limited NCD due 2030",
+      "coupon_rate_percent": "7.750",
+      "maturity_date": "2030-03-15",
+      "ytm_percent": "7.800",
+      "face_value_rs": "1000.00",
+      "isin_active": true,
+      "issue_size_lakhs": "300000.00",
+      "issue_date": "2025-03-15",
+      "issuer_name": "Reliance Industries Limited",
+      "issuer_type": "CORPORATE",
+      "series": "IX",
+      "listed_unlisted": "Listed",
+      "trading_status": "ACTIVE",
+      "tax_category": "TAXABLE",
+      "secured": false,
+      "transferable": true,
+      "primary_exchange": "NSE",
+      "minimum_investment_rs": "1000.00",
+      "interest_payment_frequency": "Semi-Annual",
+      "tax_free": false,
+      "option_type": "NONE",
+      "data_hash": "hash002",
+      "record_created_date": "2025-03-01T10:00:00Z",
+      "last_updated": "2025-03-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isinbasicinfo",
+    "pk": "INE002A08218",
+    "fields": {
+      "security_type": "Non-Convertible Debenture",
+      "isin_description": "Tata Steel Limited NCD Series V",
+      "issue_description": "8.55% Tata Steel Limited NCD due 2030",
+      "coupon_rate_percent": "8.550",
+      "maturity_date": "2030-06-30",
+      "ytm_percent": "8.700",
+      "face_value_rs": "1000.00",
+      "isin_active": true,
+      "issue_size_lakhs": "200000.00",
+      "issue_date": "2025-06-30",
+      "issuer_name": "Tata Steel Limited",
+      "issuer_type": "CORPORATE",
+      "series": "V",
+      "listed_unlisted": "Listed",
+      "trading_status": "ACTIVE",
+      "tax_category": "TAXABLE",
+      "secured": false,
+      "transferable": true,
+      "primary_exchange": "NSE",
+      "minimum_investment_rs": "10000.00",
+      "interest_payment_frequency": "Annual",
+      "tax_free": false,
+      "option_type": "CALL",
+      "data_hash": "hash003",
+      "record_created_date": "2025-06-01T10:00:00Z",
+      "last_updated": "2025-06-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isinbasicinfo",
+    "pk": "INE002A08219",
+    "fields": {
+      "security_type": "Non-Convertible Debenture",
+      "isin_description": "Tata Steel Limited NCD Series VI",
+      "issue_description": "8.60% Tata Steel Limited NCD due 2031",
+      "coupon_rate_percent": "8.600",
+      "maturity_date": "2031-07-30",
+      "ytm_percent": "8.750",
+      "face_value_rs": "1000.00",
+      "isin_active": true,
+      "issue_size_lakhs": "250000.00",
+      "issue_date": "2026-07-30",
+      "issuer_name": "Tata Steel Limited",
+      "issuer_type": "CORPORATE",
+      "series": "VI",
+      "listed_unlisted": "Listed",
+      "trading_status": "ACTIVE",
+      "tax_category": "TAXABLE",
+      "secured": false,
+      "transferable": true,
+      "primary_exchange": "NSE",
+      "minimum_investment_rs": "10000.00",
+      "interest_payment_frequency": "Annual",
+      "tax_free": false,
+      "option_type": "CALL",
+      "data_hash": "hash004",
+      "record_created_date": "2026-06-01T10:00:00Z",
+      "last_updated": "2026-06-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 11,
+    "fields": {
+      "isin": "INE020B08AF7",
+      "rating_agency": "CRISIL",
+      "credit_rating": "AA_PLUS",
+      "rating_date": "2024-03-01"
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 12,
+    "fields": {
+      "isin": "INE020B08AG7",
+      "rating_agency": "CRISIL",
+      "credit_rating": "AA_PLUS",
+      "rating_date": "2025-03-01"
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 13,
+    "fields": {
+      "isin": "INE002A08218",
+      "rating_agency": "ICRA",
+      "credit_rating": "A_PLUS",
+      "rating_date": "2025-06-01"
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 14,
+    "fields": {
+      "isin": "INE002A08219",
+      "rating_agency": "ICRA",
+      "credit_rating": "A_PLUS",
+      "rating_date": "2026-06-01"
+    }
+  }
+]

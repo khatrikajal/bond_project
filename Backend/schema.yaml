@@ -1,0 +1,496 @@
+openapi: 3.0.3
+info:
+  title: Bond Platform API
+  version: 1.0.0
+  description: Bond Platform API Documentation (secured with JWT)
+paths:
+  /api/auth/otp/resend/:
+    post:
+      operationId: api_auth_otp_resend_create
+      description: Resend OTP (public endpoint)
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/otp/send/:
+    post:
+      operationId: api_auth_otp_send_create
+      description: Send OTP to a phone number (public endpoint)
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/otp/status/:
+    get:
+      operationId: api_auth_otp_status_retrieve
+      description: OTP status / statistics (optional public endpoint)
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/otp/verify/:
+    post:
+      operationId: api_auth_otp_verify_create
+      description: Verify OTP (public endpoint)
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/bond/:
+    get:
+      operationId: api_bonds_bond_retrieve
+      description: Retrieve detailed information about a specific bond by ISIN code.
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/bond/research-data/:
+    get:
+      operationId: api_bonds_bond_research_data_retrieve
+      description: Retrieve research data (financial metrics, ratio analysis, key
+        factors) for the company associated with a given bond ISIN.
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/bond/snapshot/:
+    get:
+      operationId: api_bonds_bond_snapshot_retrieve
+      description: |-
+        Returns a UI-ready Key Financial & Rating Snapshot for a given bond ISIN.
+        Only includes financial metrics and credit ratings.
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/bonds/:
+    get:
+      operationId: api_bonds_bonds_list
+      description: |-
+        API endpoint that returns a list of bonds.
+        Annotates each bond with the number of days remaining until maturity.
+      parameters:
+      - in: query
+        name: balance_tenure_max
+        schema:
+          type: number
+        description: Maximum Tenure (Years)
+      - in: query
+        name: balance_tenure_min
+        schema:
+          type: number
+        description: Minimum Tenure (Years)
+      - in: query
+        name: coupon_rate_max
+        schema:
+          type: number
+        description: Maximum Coupon Rate (%)
+      - in: query
+        name: coupon_rate_min
+        schema:
+          type: number
+        description: Minimum Coupon Rate (%)
+      - in: query
+        name: credit_rating
+        schema:
+          type: string
+        description: Credit Rating
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - in: query
+        name: face_value_max
+        schema:
+          type: number
+        description: Maximum Face Value (Rs)
+      - in: query
+        name: face_value_min
+        schema:
+          type: number
+        description: Minimum Face Value (Rs)
+      - in: query
+        name: interest_payment_frequency
+        schema:
+          type: string
+        description: Interest Payment Frequency
+      - in: query
+        name: issuer_type
+        schema:
+          type: string
+        description: Issuer Type
+      - in: query
+        name: option_type
+        schema:
+          type: string
+        description: Option Type (Call/Put)
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: secured
+        schema:
+          type: boolean
+        description: Secured Bonds Only
+      - in: query
+        name: tax_category
+        schema:
+          type: string
+        description: Tax Category
+      - in: query
+        name: ytm_percent_max
+        schema:
+          type: number
+        description: Maximum YTM (%)
+      - in: query
+        name: ytm_percent_min
+        schema:
+          type: number
+        description: Minimum YTM (%)
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedISINBasicInfoList'
+          description: ''
+  /api/bonds/bonds/featured/:
+    get:
+      operationId: api_bonds_bonds_featured_retrieve
+      description: |-
+        Returns a list of featured bonds for the homepage.
+        Bonds are sorted by issue_date descending.
+        Supports a 'limit' query param to specify number of bonds (default 5, max 100).
+        Caches results for 5 minutes.
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/bonds/search/:
+    get:
+      operationId: api_bonds_bonds_search_list
+      description: Search bonds by ISIN or issuer name using pure ORM.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedISINBasicInfoList'
+          description: ''
+  /api/bonds/contact/:
+    post:
+      operationId: api_bonds_contact_create
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/similar-bonds/:
+    get:
+      operationId: api_bonds_similar_bonds_retrieve
+      description: |-
+        Returns bonds similar to a given ISIN based on:
+        - Latest credit rating
+        - YTM (±0.5% tolerance by default)
+        Supports optional 'limit' query parameter.
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/bonds/stats/:
+    get:
+      operationId: api_bonds_stats_retrieve
+      tags:
+      - api
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    ISINBasicInfo:
+      type: object
+      properties:
+        isin_code:
+          type: string
+          maxLength: 12
+        tenure:
+          type: string
+          readOnly: true
+        ratings:
+          type: string
+          readOnly: true
+        security_type:
+          type: string
+          nullable: true
+          maxLength: 100
+        isin_description:
+          type: string
+          nullable: true
+        issue_description:
+          type: string
+          nullable: true
+        coupon_rate_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        maturity_date:
+          type: string
+          format: date
+          nullable: true
+        ytm_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,3})?$
+          nullable: true
+        face_value_rs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          nullable: true
+        issuer_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        issuer_type:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/IssuerTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        issue_size_lakhs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          nullable: true
+        issue_date:
+          type: string
+          format: date
+          nullable: true
+        isin_active:
+          type: boolean
+          title: ISIN Active?
+          description: Check if the ISIN is active
+        listed_unlisted:
+          type: string
+          nullable: true
+          description: Listed or Unlisted status
+          maxLength: 50
+        trading_status:
+          nullable: true
+          description: |-
+            Active/Suspended/Delisted status
+
+            * `ACTIVE` - Active
+            * `SUSPENDED` - Suspended
+            * `DELISTED` - Delisted
+            * `MATURED` - Matured
+          oneOf:
+          - $ref: '#/components/schemas/TradingStatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        tax_category:
+          nullable: true
+          description: |-
+            Tax treatment category
+
+            * `TAX_FREE` - Tax Free
+            * `TAXABLE` - Taxable
+            * `PARTIALLY_TAX_FREE` - Partially Tax Free
+          oneOf:
+          - $ref: '#/components/schemas/TaxCategoryEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        secured:
+          type: boolean
+          description: Whether the bond is secured or unsecured
+        transferable:
+          type: boolean
+          description: Whether the bond is transferable
+        primary_exchange:
+          type: string
+          nullable: true
+          description: Primary exchange for trading
+          maxLength: 50
+        minimum_investment_rs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          nullable: true
+        interest_payment_frequency:
+          type: string
+          nullable: true
+          maxLength: 20
+        series:
+          type: string
+          nullable: true
+          description: Bond series identifier - stays in basic for identification
+          maxLength: 100
+        tax_free:
+          type: boolean
+          description: True if bond is tax-free, False if taxable
+        option_type:
+          nullable: true
+          oneOf:
+          - $ref: '#/components/schemas/OptionTypeEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        seniority:
+          type: string
+          nullable: true
+          maxLength: 255
+      required:
+      - isin_code
+      - ratings
+      - tenure
+    IssuerTypeEnum:
+      enum:
+      - CENTRAL_GOV
+      - STATE_GOV
+      - PSU
+      - SLU
+      - CORPORATE
+      - BANK
+      - MUNICIPAL
+      type: string
+      description: |-
+        * `CENTRAL_GOV` - Central Government
+        * `STATE_GOV` - State Government
+        * `PSU` - Public Sector Undertaking
+        * `SLU` - State Level Undertaking
+        * `CORPORATE` - Corporate / Non-PSU
+        * `BANK` - Bank / NBFC
+        * `MUNICIPAL` - Municipal Bonds
+    NullEnum:
+      enum:
+      - null
+    OptionTypeEnum:
+      enum:
+      - CALL
+      - PUT
+      - NONE
+      type: string
+      description: |-
+        * `CALL` - Callable
+        * `PUT` - Puttable
+        * `NONE` - None
+    PaginatedISINBasicInfoList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ISINBasicInfo'
+    TaxCategoryEnum:
+      enum:
+      - TAX_FREE
+      - TAXABLE
+      - PARTIALLY_TAX_FREE
+      type: string
+      description: |-
+        * `TAX_FREE` - Tax Free
+        * `TAXABLE` - Taxable
+        * `PARTIALLY_TAX_FREE` - Partially Tax Free
+    TradingStatusEnum:
+      enum:
+      - ACTIVE
+      - SUSPENDED
+      - DELISTED
+      - MATURED
+      type: string
+      description: |-
+        * `ACTIVE` - Active
+        * `SUSPENDED` - Suspended
+        * `DELISTED` - Delisted
+        * `MATURED` - Matured

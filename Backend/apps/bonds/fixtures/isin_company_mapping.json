@@ -1,0 +1,72 @@
+[
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 1,
+    "fields": {
+      "isin": "INE020B08AE7",
+      "company": 1,
+      "primary_company": true,
+      "mapped_on": "2023-03-01T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 2,
+    "fields": {
+      "isin": "INE002A08217",
+      "company": 2,
+      "primary_company": true,
+      "mapped_on": "2024-06-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 3,
+    "fields": {
+      "isin": "INE134E08KR4",
+      "company": 3,
+      "primary_company": true,
+      "mapped_on": "2022-03-30T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 4,
+    "fields": {
+      "isin": "INE238A08032",
+      "company": 4,
+      "primary_company": true,
+      "mapped_on": "2021-11-20T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 5,
+    "fields": {
+      "isin": "INE129A08039",
+      "company": 5,
+      "primary_company": true,
+      "mapped_on": "2024-09-05T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 6,
+    "fields": {
+      "isin": "INE040A08046",
+      "company": 6,
+      "primary_company": true,
+      "mapped_on": "2025-01-05T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isincompanymap",
+    "pk": 7,
+    "fields": {
+      "isin": "INE021A08063",
+      "company": 7,
+      "primary_company": true,
+      "mapped_on": "2023-06-30T10:00:00Z"
+    }
+  }
+]

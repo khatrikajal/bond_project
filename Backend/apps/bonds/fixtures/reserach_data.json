@@ -1,0 +1,1949 @@
+[
+  {
+    "model": "bonds.companyinfo",
+    "pk": 1,
+    "fields": {
+      "issuer_name": "Reliance Industries Limited",
+      "issuer_address": "Maker Chambers IV, Nariman Point, Mumbai, Maharashtra",
+      "issuer_type": "CORPORATE",
+      "issuer_state": "Maharashtra",
+      "issuer_website": "https://www.ril.com",
+      "contact_person": "Investor Relations Team",
+      "phone_number": "+91-22-35555000",
+      "fax_number": null,
+      "email_id": "investor.relations@ril.com",
+      "guaranteed_by": null,
+      "registrar": "KFin Technologies",
+      "industry_group": "Conglomerate",
+      "macro_sector": "Diversified",
+      "micro_industry": "Oil and Gas, Petrochemicals",
+      "product_service_activity": "Oil refining, petrochemicals, telecom, retail",
+      "sector": "Energy",
+      "security_code": "RIL001",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "abc123xyz789",
+      "record_created_date": "2023-03-01T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 2,
+    "fields": {
+      "issuer_name": "Tata Steel Limited",
+      "issuer_address": "Bombay House, Fort, Mumbai, Maharashtra",
+      "issuer_type": "CORPORATE",
+      "issuer_state": "Maharashtra",
+      "issuer_website": "https://www.tatasteel.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-22-66658282",
+      "fax_number": null,
+      "email_id": "ir@tatasteel.com",
+      "guaranteed_by": null,
+      "registrar": "TSR Darashaw",
+      "industry_group": "Metals",
+      "macro_sector": "Industrial",
+      "micro_industry": "Steel Manufacturing",
+      "product_service_activity": "Steel production, processing",
+      "sector": "Steel",
+      "security_code": "TATA002",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "def456abc123",
+      "record_created_date": "2024-06-15T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 3,
+    "fields": {
+      "issuer_name": "ICICI Bank Limited",
+      "issuer_address": "ICICI Bank Towers, Bandra-Kurla Complex, Mumbai",
+      "issuer_type": "BANK",
+      "issuer_state": "Maharashtra",
+      "issuer_website": "https://www.icicibank.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-22-26531414",
+      "fax_number": null,
+      "email_id": "ir@icicibank.com",
+      "guaranteed_by": null,
+      "registrar": "3i Infotech",
+      "industry_group": "Banking",
+      "macro_sector": "Financial Services",
+      "micro_industry": "Commercial Banking",
+      "product_service_activity": "Banking, loans, deposits",
+      "sector": "Banking",
+      "security_code": "ICICI003",
+      "financial_last_updated_at": "2025-09-23",
+
+      "data_hash": "ghi789def456",
+      "record_created_date": "2022-03-30T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 4,
+    "fields": {
+      "issuer_name": "Axis Bank Limited",
+      "issuer_address": "Axis House, Wadia International Centre, Mumbai",
+      "issuer_type": "BANK",
+      "issuer_state": "Maharashtra",
+      "issuer_website": "https://www.axisbank.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-22-24252525",
+      "fax_number": null,
+      "email_id": "investor@axisbank.com",
+      "guaranteed_by": null,
+      "registrar": "Link Intime",
+      "industry_group": "Banking",
+      "macro_sector": "Financial Services",
+      "micro_industry": "Commercial Banking",
+      "product_service_activity": "Banking, loans, deposits",
+      "sector": "Banking",
+      "security_code": "AXIS004",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "jkl012ghi789",
+      "record_created_date": "2021-11-20T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 5,
+    "fields": {
+      "issuer_name": "GAIL India Limited",
+      "issuer_address": "GAIL Bhawan, New Delhi",
+      "issuer_type": "PSU",
+      "issuer_state": "Delhi",
+      "issuer_website": "https://www.gailonline.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-11-26172580",
+      "fax_number": null,
+      "email_id": "investor@gail.co.in",
+      "guaranteed_by": null,
+      "registrar": "MCS Share Transfer",
+      "industry_group": "Energy",
+      "macro_sector": "Utilities",
+      "micro_industry": "Gas Distribution",
+      "product_service_activity": "Natural gas transmission, distribution",
+      "sector": "Energy",
+      "security_code": "GAIL005",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "mno345jkl012",
+      "record_created_date": "2024-09-05T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 6,
+    "fields": {
+      "issuer_name": "ITC Limited",
+      "issuer_address": "Virginia House, Kolkata, West Bengal",
+      "issuer_type": "CORPORATE",
+      "issuer_state": "West Bengal",
+      "issuer_website": "https://www.itcportal.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-33-22889371",
+      "fax_number": null,
+      "email_id": "investor@itc.in",
+      "guaranteed_by": null,
+      "registrar": "CDSL Ventures",
+      "industry_group": "Consumer Goods",
+      "macro_sector": "FMCG",
+      "micro_industry": "Diversified FMCG",
+      "product_service_activity": "Cigarettes, FMCG, hotels",
+      "sector": "FMCG",
+      "security_code": "ITC006",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "pqr678mno345",
+      "record_created_date": "2025-01-05T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.companyinfo",
+    "pk": 7,
+    "fields": {
+      "issuer_name": "Hindalco Industries Limited",
+      "issuer_address": "Aditya Birla Centre, Mumbai, Maharashtra",
+      "issuer_type": "CORPORATE",
+      "issuer_state": "Maharashtra",
+      "issuer_website": "https://www.hindalco.com",
+      "contact_person": "Investor Relations",
+      "phone_number": "+91-22-66525000",
+      "fax_number": null,
+      "email_id": "investor@hindalco.com",
+      "guaranteed_by": null,
+      "registrar": "KFin Technologies",
+      "industry_group": "Metals",
+      "macro_sector": "Industrial",
+      "micro_industry": "Aluminium and Copper",
+      "product_service_activity": "Aluminium, copper manufacturing",
+      "sector": "Metals",
+      "security_code": "HIND007",
+      "financial_last_updated_at": "2025-09-23",
+      "data_hash": "stu901pqr678",
+      "record_created_date": "2023-06-30T10:00:00Z",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 1,
+    "fields": {
+      "isin": "INE020B08AE7",
+      "rating_agency": "CRISIL",
+      "credit_rating": "AA_PLUS",
+      "rating_date": "2023-02-15"
+    
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 2,
+    "fields": {
+      "isin": "INE002A08217",
+      "rating_agency": "ICRA",
+      "credit_rating": "A_PLUS",
+      "rating_date": "2024-05-20"
+    
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 4,
+    "fields": {
+      "isin": "INE134E08KR4",
+      "rating_agency": "CARE",
+      "credit_rating": "AA",
+      "rating_date": "2022-03-15"
+     
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 6,
+    "fields": {
+      "isin": "INE238A08032",
+      "rating_agency": "BWR",
+      "credit_rating": "AA_MINUS",
+      "rating_date": "2021-11-10"
+     
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 7,
+    "fields": {
+      "isin": "INE129A08039",
+      "rating_agency": "ACUITE",
+      "credit_rating": "AA",
+      "rating_date": "2024-08-25"
+    
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 8,
+    "fields": {
+      "isin": "INE040A08046",
+      "rating_agency": "CRISIL",
+      "credit_rating": "AA_PLUS",
+      "rating_date": "2024-12-10"
+    
+    }
+  },
+  {
+    "model": "bonds.isinrating",
+    "pk": 10,
+    "fields": {
+      "isin": "INE021A08063",
+      "rating_agency": "ICRA",
+      "credit_rating": "A_MINUS",
+      "rating_date": "2023-06-20"
+   
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 1,
+    "fields": {
+      "company": 1,
+      "name": "Revenue",
+      "data_hash": "rev123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 2,
+    "fields": {
+      "company": 1,
+      "name": "PAT",
+      "data_hash": "pat123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 3,
+    "fields": {
+      "company": 1,
+      "name": "Debt",
+      "data_hash": "debt123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 4,
+    "fields": {
+      "company": 1,
+      "name": "Net Worth",
+      "data_hash": "nw123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 5,
+    "fields": {
+      "company": 2,
+      "name": "Revenue",
+      "data_hash": "rev456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 6,
+    "fields": {
+      "company": 2,
+      "name": "PAT",
+      "data_hash": "pat456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 7,
+    "fields": {
+      "company": 2,
+      "name": "Debt",
+      "data_hash": "debt456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 8,
+    "fields": {
+      "company": 2,
+      "name": "Net Worth",
+      "data_hash": "nw456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 9,
+    "fields": {
+      "company": 3,
+      "name": "Revenue",
+      "data_hash": "rev789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 10,
+    "fields": {
+      "company": 3,
+      "name": "PAT",
+      "data_hash": "pat789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 11,
+    "fields": {
+      "company": 3,
+      "name": "Debt",
+      "data_hash": "debt789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 12,
+    "fields": {
+      "company": 3,
+      "name": "Net Worth",
+      "data_hash": "nw789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 13,
+    "fields": {
+      "company": 4,
+      "name": "Revenue",
+      "data_hash": "rev012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 14,
+    "fields": {
+      "company": 4,
+      "name": "PAT",
+      "data_hash": "pat012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 15,
+    "fields": {
+      "company": 4,
+      "name": "Debt",
+      "data_hash": "debt012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 16,
+    "fields": {
+      "company": 4,
+      "name": "Net Worth",
+      "data_hash": "nw012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 17,
+    "fields": {
+      "company": 5,
+      "name": "Revenue",
+      "data_hash": "rev345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 18,
+    "fields": {
+      "company": 5,
+      "name": "PAT",
+      "data_hash": "pat345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 19,
+    "fields": {
+      "company": 5,
+      "name": "Debt",
+      "data_hash": "debt345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 20,
+    "fields": {
+      "company": 5,
+      "name": "Net Worth",
+      "data_hash": "nw345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 21,
+    "fields": {
+      "company": 6,
+      "name": "Revenue",
+      "data_hash": "rev678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 22,
+    "fields": {
+      "company": 6,
+      "name": "PAT",
+      "data_hash": "pat678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 23,
+    "fields": {
+      "company": 6,
+      "name": "Debt",
+      "data_hash": "debt678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 24,
+    "fields": {
+      "company": 6,
+      "name": "Net Worth",
+      "data_hash": "nw678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 25,
+    "fields": {
+      "company": 7,
+      "name": "Revenue",
+      "data_hash": "rev901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 26,
+    "fields": {
+      "company": 7,
+      "name": "PAT",
+      "data_hash": "pat901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 27,
+    "fields": {
+      "company": 7,
+      "name": "Debt",
+      "data_hash": "debt901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetric",
+    "pk": 28,
+    "fields": {
+      "company": 7,
+      "name": "Net Worth",
+      "data_hash": "nw901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 1,
+    "fields": {
+      "metric": 1,
+      "year": 2022,
+      "value": 944300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 2,
+    "fields": {
+      "metric": 1,
+      "year": 2023,
+      "value": 1012300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 3,
+    "fields": {
+      "metric": 1,
+      "year": 2024,
+      "value": 1104500000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 4,
+    "fields": {
+      "metric": 2,
+      "year": 2022,
+      "value": 83360000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 5,
+    "fields": {
+      "metric": 2,
+      "year": 2023,
+      "value": 92140000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 6,
+    "fields": {
+      "metric": 2,
+      "year": 2024,
+      "value": 105320000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 7,
+    "fields": {
+      "metric": 3,
+      "year": 2022,
+      "value": 243500000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 8,
+    "fields": {
+      "metric": 3,
+      "year": 2023,
+      "value": 287600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 9,
+    "fields": {
+      "metric": 3,
+      "year": 2024,
+      "value": 310400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 10,
+    "fields": {
+      "metric": 4,
+      "year": 2022,
+      "value": 623400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 11,
+    "fields": {
+      "metric": 4,
+      "year": 2023,
+      "value": 715800000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 12,
+    "fields": {
+      "metric": 4,
+      "year": 2024,
+      "value": 821200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 13,
+    "fields": {
+      "metric": 5,
+      "year": 2022,
+      "value": 243200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 14,
+    "fields": {
+      "metric": 5,
+      "year": 2023,
+      "value": 227100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 15,
+    "fields": {
+      "metric": 5,
+      "year": 2024,
+      "value": 213500000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 16,
+    "fields": {
+      "metric": 6,
+      "year": 2022,
+      "value": 6300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 17,
+    "fields": {
+      "metric": 6,
+      "year": 2023,
+      "value": 2500000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 18,
+    "fields": {
+      "metric": 6,
+      "year": 2024,
+      "value": 4300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 19,
+    "fields": {
+      "metric": 7,
+      "year": 2022,
+      "value": 148300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 20,
+    "fields": {
+      "metric": 7,
+      "year": 2023,
+      "value": 156700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 21,
+    "fields": {
+      "metric": 7,
+      "year": 2024,
+      "value": 162400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 22,
+    "fields": {
+      "metric": 8,
+      "year": 2022,
+      "value": 69700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 23,
+    "fields": {
+      "metric": 8,
+      "year": 2023,
+      "value": 72100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 24,
+    "fields": {
+      "metric": 8,
+      "year": 2024,
+      "value": 76400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 25,
+    "fields": {
+      "metric": 9,
+      "year": 2022,
+      "value": 135200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 26,
+    "fields": {
+      "metric": 9,
+      "year": 2023,
+      "value": 152700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 27,
+    "fields": {
+      "metric": 9,
+      "year": 2024,
+      "value": 171300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 28,
+    "fields": {
+      "metric": 10,
+      "year": 2022,
+      "value": 49300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 29,
+    "fields": {
+      "metric": 10,
+      "year": 2023,
+      "value": 56100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 30,
+    "fields": {
+      "metric": 10,
+      "year": 2024,
+      "value": 63200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 31,
+    "fields": {
+      "metric": 11,
+      "year": 2022,
+      "value": 110300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 32,
+    "fields": {
+      "metric": 11,
+      "year": 2023,
+      "value": 124500000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 33,
+    "fields": {
+      "metric": 11,
+      "year": 2024,
+      "value": 138700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 34,
+    "fields": {
+      "metric": 12,
+      "year": 2022,
+      "value": 98700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 35,
+    "fields": {
+      "metric": 12,
+      "year": 2023,
+      "value": 104200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 36,
+    "fields": {
+      "metric": 12,
+      "year": 2024,
+      "value": 112600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 37,
+    "fields": {
+      "metric": 13,
+      "year": 2022,
+      "value": 103400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 38,
+    "fields": {
+      "metric": 13,
+      "year": 2023,
+      "value": 116200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 39,
+    "fields": {
+      "metric": 13,
+      "year": 2024,
+      "value": 129800000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 40,
+    "fields": {
+      "metric": 14,
+      "year": 2022,
+      "value": 42100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 41,
+    "fields": {
+      "metric": 14,
+      "year": 2023,
+      "value": 48200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 42,
+    "fields": {
+      "metric": 14,
+      "year": 2024,
+      "value": 55300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 43,
+    "fields": {
+      "metric": 15,
+      "year": 2022,
+      "value": 89200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 44,
+    "fields": {
+      "metric": 15,
+      "year": 2023,
+      "value": 97600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 45,
+    "fields": {
+      "metric": 15,
+      "year": 2024,
+      "value": 105300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 46,
+    "fields": {
+      "metric": 16,
+      "year": 2022,
+      "value": 82100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 47,
+    "fields": {
+      "metric": 16,
+      "year": 2023,
+      "value": 89700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 48,
+    "fields": {
+      "metric": 16,
+      "year": 2024,
+      "value": 96200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 49,
+    "fields": {
+      "metric": 17,
+      "year": 2022,
+      "value": 132600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 50,
+    "fields": {
+      "metric": 17,
+      "year": 2023,
+      "value": 141300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 51,
+    "fields": {
+      "metric": 17,
+      "year": 2024,
+      "value": 150200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 52,
+    "fields": {
+      "metric": 18,
+      "year": 2022,
+      "value": 24300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 53,
+    "fields": {
+      "metric": 18,
+      "year": 2023,
+      "value": 27600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 54,
+    "fields": {
+      "metric": 18,
+      "year": 2024,
+      "value": 31200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 55,
+    "fields": {
+      "metric": 19,
+      "year": 2022,
+      "value": 43200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 56,
+    "fields": {
+      "metric": 19,
+      "year": 2023,
+      "value": 45600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 57,
+    "fields": {
+      "metric": 19,
+      "year": 2024,
+      "value": 48700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 58,
+    "fields": {
+      "metric": 20,
+      "year": 2022,
+      "value": 91300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 59,
+    "fields": {
+      "metric": 20,
+      "year": 2023,
+      "value": 98700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 60,
+    "fields": {
+      "metric": 20,
+      "year": 2024,
+      "value": 105600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 61,
+    "fields": {
+      "metric": 21,
+      "year": 2022,
+      "value": 69200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 62,
+    "fields": {
+      "metric": 21,
+      "year": 2023,
+      "value": 75300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 63,
+    "fields": {
+      "metric": 21,
+      "year": 2024,
+      "value": 82100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 64,
+    "fields": {
+      "metric": 22,
+      "year": 2022,
+      "value": 20300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 65,
+    "fields": {
+      "metric": 22,
+      "year": 2023,
+      "value": 23100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 66,
+    "fields": {
+      "metric": 22,
+      "year": 2024,
+      "value": 26700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 67,
+    "fields": {
+      "metric": 23,
+      "year": 2022,
+      "value": 32100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 68,
+    "fields": {
+      "metric": 23,
+      "year": 2023,
+      "value": 35600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 69,
+    "fields": {
+      "metric": 23,
+      "year": 2024,
+      "value": 38700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 70,
+    "fields": {
+      "metric": 24,
+      "year": 2022,
+      "value": 54300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 71,
+    "fields": {
+      "metric": 24,
+      "year": 2023,
+      "value": 61200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 72,
+    "fields": {
+      "metric": 24,
+      "year": 2024,
+      "value": 69300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 73,
+    "fields": {
+      "metric": 25,
+      "year": 2022,
+      "value": 207600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 74,
+    "fields": {
+      "metric": 25,
+      "year": 2023,
+      "value": 194300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 75,
+    "fields": {
+      "metric": 25,
+      "year": 2024,
+      "value": 182700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 76,
+    "fields": {
+      "metric": 26,
+      "year": 2022,
+      "value": 7200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 77,
+    "fields": {
+      "metric": 26,
+      "year": 2023,
+      "value": 3400000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 78,
+    "fields": {
+      "metric": 26,
+      "year": 2024,
+      "value": 5100000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 79,
+    "fields": {
+      "metric": 27,
+      "year": 2022,
+      "value": 132600000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 80,
+    "fields": {
+      "metric": 27,
+      "year": 2023,
+      "value": 141300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 81,
+    "fields": {
+      "metric": 27,
+      "year": 2024,
+      "value": 149200000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 82,
+    "fields": {
+      "metric": 28,
+      "year": 2022,
+      "value": 62300000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 83,
+    "fields": {
+      "metric": 28,
+      "year": 2023,
+      "value": 65700000000
+    }
+  },
+  {
+    "model": "bonds.financialmetricvalue",
+    "pk": 84,
+    "fields": {
+      "metric": 28,
+      "year": 2024,
+      "value": 70200000000
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 1,
+    "fields": {
+      "company": 1,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Good",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 2,
+    "fields": {
+      "company": 1,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Good",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 3,
+    "fields": {
+      "company": 2,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Risky",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 4,
+    "fields": {
+      "company": 2,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Risky",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 5,
+    "fields": {
+      "company": 3,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Good",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 6,
+    "fields": {
+      "company": 3,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Good",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 7,
+    "fields": {
+      "company": 4,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Good",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 8,
+    "fields": {
+      "company": 4,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Good",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 9,
+    "fields": {
+      "company": 5,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Good",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 10,
+    "fields": {
+      "company": 5,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Good",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 11,
+    "fields": {
+      "company": 6,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Good",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 12,
+    "fields": {
+      "company": 6,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Good",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 13,
+    "fields": {
+      "company": 7,
+      "title": "Capital Adequacy Ratio",
+      "benchmark": "Minimum 15%",
+      "assessment": "Risky",
+      "description": "Measures capital strength as a percentage of risk-weighted assets. Higher CAR indicates better loss absorption capacity.",
+      "data_hash": "car901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratioanalysis",
+    "pk": 14,
+    "fields": {
+      "company": 7,
+      "title": "Interest Coverage Ratio",
+      "benchmark": "Minimum 2",
+      "assessment": "Risky",
+      "description": "Measures how many times a company can pay its interest using operating profit. Above 2 indicates comfortable interest coverage.",
+      "data_hash": "icr901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 1,
+    "fields": {
+      "ratio": 1,
+      "year": 2022,
+      "value": 20.50
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 2,
+    "fields": {
+      "ratio": 1,
+      "year": 2023,
+      "value": 21.75
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 3,
+    "fields": {
+      "ratio": 1,
+      "year": 2024,
+      "value": 22.90
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 4,
+    "fields": {
+      "ratio": 2,
+      "year": 2022,
+      "value": 3.10
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 5,
+    "fields": {
+      "ratio": 2,
+      "year": 2023,
+      "value": 3.25
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 6,
+    "fields": {
+      "ratio": 2,
+      "year": 2024,
+      "value": 3.40
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 7,
+    "fields": {
+      "ratio": 3,
+      "year": 2022,
+      "value": 12.80
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 8,
+    "fields": {
+      "ratio": 3,
+      "year": 2023,
+      "value": 11.50
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 9,
+    "fields": {
+      "ratio": 3,
+      "year": 2024,
+      "value": 10.20
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 10,
+    "fields": {
+      "ratio": 4,
+      "year": 2022,
+      "value": 1.60
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 11,
+    "fields": {
+      "ratio": 4,
+      "year": 2023,
+      "value": 1.45
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 12,
+    "fields": {
+      "ratio": 4,
+      "year": 2024,
+      "value": 1.30
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 13,
+    "fields": {
+      "ratio": 5,
+      "year": 2022,
+      "value": 18.90
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 14,
+    "fields": {
+      "ratio": 5,
+      "year": 2023,
+      "value": 19.60
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 15,
+    "fields": {
+      "ratio": 5,
+      "year": 2024,
+      "value": 20.30
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 16,
+    "fields": {
+      "ratio": 6,
+      "year": 2022,
+      "value": 2.80
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 17,
+    "fields": {
+      "ratio": 6,
+      "year": 2023,
+      "value": 2.95
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 18,
+    "fields": {
+      "ratio": 6,
+      "year": 2024,
+      "value": 3.10
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 19,
+    "fields": {
+      "ratio": 7,
+      "year": 2022,
+      "value": 17.50
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 20,
+    "fields": {
+      "ratio": 7,
+      "year": 2023,
+      "value": 18.20
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 21,
+    "fields": {
+      "ratio": 7,
+      "year": 2024,
+      "value": 19.10
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 22,
+    "fields": {
+      "ratio": 8,
+      "year": 2022,
+      "value": 2.70
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 23,
+    "fields": {
+      "ratio": 8,
+      "year": 2023,
+      "value": 2.85
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 24,
+    "fields": {
+      "ratio": 8,
+      "year": 2024,
+      "value": 3.00
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 25,
+    "fields": {
+      "ratio": 9,
+      "year": 2022,
+      "value": 16.80
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 26,
+    "fields": {
+      "ratio": 9,
+      "year": 2023,
+      "value": 17.40
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 27,
+    "fields": {
+      "ratio": 9,
+      "year": 2024,
+      "value": 18.20
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 28,
+    "fields": {
+      "ratio": 10,
+      "year": 2022,
+      "value": 2.60
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 29,
+    "fields": {
+      "ratio": 10,
+      "year": 2023,
+      "value": 2.75
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 30,
+    "fields": {
+      "ratio": 10,
+      "year": 2024,
+      "value": 2.90
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 31,
+    "fields": {
+      "ratio": 11,
+      "year": 2022,
+      "value": 19.20
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 32,
+    "fields": {
+      "ratio": 11,
+      "year": 2023,
+      "value": 20.10
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 33,
+    "fields": {
+      "ratio": 11,
+      "year": 2024,
+      "value": 21.30
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 34,
+    "fields": {
+      "ratio": 12,
+      "year": 2022,
+      "value": 3.00
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 35,
+    "fields": {
+      "ratio": 12,
+      "year": 2023,
+      "value": 3.15
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 36,
+    "fields": {
+      "ratio": 12,
+      "year": 2024,
+      "value": 3.30
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 37,
+    "fields": {
+      "ratio": 13,
+      "year": 2022,
+      "value": 11.90
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 38,
+    "fields": {
+      "ratio": 13,
+      "year": 2023,
+      "value": 10.60
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 39,
+    "fields": {
+      "ratio": 13,
+      "year": 2024,
+      "value": 9.80
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 40,
+    "fields": {
+      "ratio": 14,
+      "year": 2022,
+      "value": 1.50
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 41,
+    "fields": {
+      "ratio": 14,
+      "year": 2023,
+      "value": 1.35
+    }
+  },
+  {
+    "model": "bonds.ratiovalue",
+    "pk": 42,
+    "fields": {
+      "ratio": 14,
+      "year": 2024,
+      "value": 1.20
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 1,
+    "fields": {
+      "company": 1,
+      "key_factors": ["Revenue growth from ₹9443 Cr (2022) to ₹11045 Cr (2024)", "Diversified operations across energy, telecom, retail"],
+      "strengths": ["Strong market presence in multiple sectors", "High credit rating (AA+/Stable)", "Robust cash flows"],
+      "weaknesses": ["High debt levels due to expansion", "Exposure to volatile oil prices"],
+      "data_hash": "kf123xyz789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 2,
+    "fields": {
+      "company": 2,
+      "key_factors": ["Revenue decline from ₹2432 Cr (2022) to ₹2135 Cr (2024)", "Focus on cost optimization"],
+      "strengths": ["Established brand under Tata Group", "Global steel market presence"],
+      "weaknesses": ["Low CAR below regulatory norms", "Cyclical steel industry risks"],
+      "data_hash": "kf456abc123",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 3,
+    "fields": {
+      "company": 3,
+      "key_factors": ["Revenue growth from ₹1352 Cr (2022) to ₹1713 Cr (2024)", "Strong retail banking growth"],
+      "strengths": ["High CAR at 20.3% (2024)", "Robust digital banking platform"],
+      "weaknesses": ["Rising NPAs in retail loans", "Regulatory compliance costs"],
+      "data_hash": "kf789def456",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 4,
+    "fields": {
+      "company": 4,
+      "key_factors": ["Revenue growth from ₹1034 Cr (2022) to ₹1298 Cr (2024)", "Expansion in SME lending"],
+      "strengths": ["Strong CAR at 19.1% (2024)", "Growing branch network"],
+      "weaknesses": ["Competition from larger banks", "Exposure to SME credit risks"],
+      "data_hash": "kf012ghi789",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 5,
+    "fields": {
+      "company": 5,
+      "key_factors": ["Revenue growth from ₹1326 Cr (2022) to ₹1502 Cr (2024)", "Stable gas distribution business"],
+      "strengths": ["Government-backed PSU", "Strong CAR at 18.2% (2024)"],
+      "weaknesses": ["Dependence on government policies", "Limited geographic diversification"],
+      "data_hash": "kf345jkl012",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 6,
+    "fields": {
+      "company": 6,
+      "key_factors": ["Revenue growth from ₹692 Cr (2022) to ₹821 Cr (2024)", "Strong FMCG portfolio"],
+      "strengths": ["Diversified FMCG and hospitality", "High CAR at 21.3% (2024)"],
+      "weaknesses": ["Regulatory risks in tobacco segment", "High marketing costs"],
+      "data_hash": "kf678mno345",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  },
+  {
+    "model": "bonds.keyfactor",
+    "pk": 7,
+    "fields": {
+      "company": 7,
+      "key_factors": ["Revenue decline from ₹2076 Cr (2022) to ₹1827 Cr (2024)", "Focus on aluminium market"],
+      "strengths": ["Part of Aditya Birla Group", "Global aluminium market presence"],
+      "weaknesses": ["Low CAR below norms", "Exposure to commodity price volatility"],
+      "data_hash": "kf901pqr678",
+      "last_updated": "2025-09-23T10:00:00Z"
+    }
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 1,
+    "fields": {
+      "metric_name": "credit_rating",
+      "display_name": "Credit Rating / Outlook",
+      "order": 1,
+      "metric_type": "rating",
+      "description": "Combined rating from agencies, including outlook."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 2,
+    "fields": {
+      "metric_name": "AUM",
+      "display_name": "AUM (Assets Under Management)",
+      "order": 2,
+      "metric_type": "financial",
+      "description": "Total Assets Under Management."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 3,
+    "fields": {
+      "metric_name": "Disbursements",
+      "display_name": "Disbursements",
+      "order": 3,
+      "metric_type": "financial",
+      "description": "Total disbursed amount for the period."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 4,
+    "fields": {
+      "metric_name": "PAT",
+      "display_name": "Profit After Tax (PAT)",
+      "order": 4,
+      "metric_type": "financial",
+      "description": "Net profit after tax for the period."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 5,
+    "fields": {
+      "metric_name": "RoMA",
+      "display_name": "Return on Managed Assets (RoMA)",
+      "order": 5,
+      "metric_type": "financial",
+      "description": "Return on Managed Assets."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 6,
+    "fields": {
+      "metric_name": "Gearing",
+      "display_name": "Gearing / Leverage",
+      "order": 6,
+      "metric_type": "financial",
+      "description": "Managed gearing ratio."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 7,
+    "fields": {
+      "metric_name": "Net Worth",
+      "display_name": "Net Worth / Capitalization",
+      "order": 7,
+      "metric_type": "financial",
+      "description": "Net worth of the company."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 8,
+    "fields": {
+      "metric_name": "Revenue",
+      "display_name": "Growth / Trends",
+      "order": 8,
+      "metric_type": "financial",
+      "description": "Revenue or Total Income growth trends."
+    }
+  },
+  {
+    "model": "bonds.snapshotdefinition",
+    "pk": 9,
+    "fields": {
+      "metric_name": "key_factors",
+      "display_name": "Portfolio Quality / Risk Factors",
+      "order": 9,
+      "metric_type": "keyfactor",
+      "description": "Portfolio quality, collection efficiency, delinquencies, strengths/weaknesses."
+    }
+  }
+]
