@@ -125,6 +125,7 @@ from .base import BASE_DIR
 
 local_env_file = path.join(BASE_DIR.parent, "envs", ".env.local")
 
+
 if path.isfile(local_env_file):
     load_dotenv(local_env_file)
 
@@ -163,6 +164,21 @@ DOMAIN = getenv("DOMAIN", "localhost:8000")
 
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024  # 1MB
 
+JWT_SECRET_KEY = env('JWT_SECRET_KEY')
+# JWT Settings - CRITICAL: Set the signing key
+SIMPLE_JWT.update({
+    "SIGNING_KEY": JWT_SECRET_KEY,  # Use the SECRET_KEY from environment SECRET_KEY,
+    "AUTH_COOKIE_SECURE": True,  # Allow non-HTTPS in development
+    "AUTH_COOKIE_DOMAIN": None,   # No domain restriction in development
+    "AUTH_COOKIE_SAMESITE": "Strict",
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),  # 1 hour for development
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 1 day for development
+    "USER_ID_FIELD": "user_id",        # <-- important
+    "USER_ID_CLAIM": "user_id",  
+})
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 # ==========================================
 # CRITICAL: CORS Configuration for Server
 # ==========================================
@@ -230,12 +246,14 @@ CSRF_COOKIE_SAMESITE = "Lax"
 # Celery Configuration
 CELERY_BROKER_URL = getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-
-# Development-specific settings
-REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
-    "rest_framework.renderers.JSONRenderer",
-    "rest_framework.renderers.BrowsableAPIRenderer",
-]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny', 
+    )
+}
 
 CACHES = {
     "default": {
@@ -247,4 +265,20 @@ CACHES = {
         "LOCATION": "otp-snowflake",
     },
 }
+# Development-specific settings
+# REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+#     "rest_framework.renderers.JSONRenderer",
+#     "rest_framework.renderers.BrowsableAPIRenderer",
+# ]
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+#         "LOCATION": "unique-snowflake",
+#     },
+#     "otp": {
+#         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+#         "LOCATION": "otp-snowflake",
+#     },
+# }
 
