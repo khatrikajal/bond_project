@@ -130,41 +130,41 @@ class Otp(models.Model):
 
 
 # logsss table
-class IssureAuthActivityLog(models.Model):
-    db_table = 'issuer_auth_activity_logs'
-    verbose_name = 'Issuer Auth Activity Log'
-    verbose_name_plural= 'Issuer Auth Activity Logs'
+# class IssureAuthActivityLog(models.Model):
+#     db_table = 'issuer_auth_activity_logs'
+#     verbose_name = 'Issuer Auth Activity Log'
+#     verbose_name_plural= 'Issuer Auth Activity Logs'
 
 
-    #   db_table = 'users'
-    #     verbose_name = 'User'
-    #     verbose_name_plural = 'Users'
+#     #   db_table = 'users'
+#     #     verbose_name = 'User'
+#     #     verbose_name_plural = 'Users'
     
-    SEVERITY_CHOICES = [
-        ("INFO", "Info"),
-        ("WARNING", "Warning"),
-        ("ERROR", "Error"),
-        ("HIGH", "High Risk"),
-    ]
+#     SEVERITY_CHOICES = [
+#         ("INFO", "Info"),
+#         ("WARNING", "Warning"),
+#         ("ERROR", "Error"),
+#         ("HIGH", "High Risk"),
+#     ]
 
-    log_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    activity_type = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
-    device_fingerprint = models.CharField(max_length=100, null=True, blank=True)
-    user_agent = models.TextField(null=True, blank=True)
-    session_id = models.CharField(max_length=100, null=True, blank=True)
-    severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default="INFO")
-    metadata = models.JSONField(null=True, blank=True)
-    related_table = models.CharField(max_length=50, null=True, blank=True)
-    related_record_id = models.BigIntegerField(null=True, blank=True)
-    is_del = models.SmallIntegerField(default=0)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-    user_id_updated_by = models.ForeignKey(
-        User, related_name="updated_logs", on_delete=models.SET_NULL, null=True, blank=True
-    )
+#     log_id = models.BigAutoField(primary_key=True)
+#     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+#     activity_type = models.CharField(max_length=100)
+#     description = models.TextField(null=True, blank=True)
+#     ip_address = models.GenericIPAddressField(null=True, blank=True)
+#     device_fingerprint = models.CharField(max_length=100, null=True, blank=True)
+#     user_agent = models.TextField(null=True, blank=True)
+#     session_id = models.CharField(max_length=100, null=True, blank=True)
+#     severity = models.CharField(max_length=20, choices=SEVERITY_CHOICES, default="INFO")
+#     metadata = models.JSONField(null=True, blank=True)
+#     related_table = models.CharField(max_length=50, null=True, blank=True)
+#     related_record_id = models.BigIntegerField(null=True, blank=True)
+#     is_del = models.SmallIntegerField(default=0)
+#     created_at = models.DateTimeField(default=timezone.now)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     user_id_updated_by = models.ForeignKey(
+#         User, related_name="updated_logs", on_delete=models.SET_NULL, null=True, blank=True
+#     )
 
-    def __str__(self):
-        return f"{self.activity_type} - {self.user_id or 'System'}"
+#     def __str__(self):
+#         return f"{self.activity_type} - {self.user_id or 'System'}"

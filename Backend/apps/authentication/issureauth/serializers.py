@@ -5,7 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 from .model import User,Otp
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from .utils import log_activity,raise_validation_error
+# from .utils import log_activity,raise_validation_error
 from rest_framework.permissions import IsAuthenticated
 # from ..models import Otp  
 
@@ -61,16 +61,16 @@ class MobileOtpRequestSerializer(serializers.Serializer):
             expiry_time=timezone.now() + timedelta(minutes=5)
         )
 
-        log_activity(
-    user=user,
-    activity_type="MOBILE_OTP_SENT",
-    description=f"OTP sent to mobile {user.mobile_number}",
-    severity="INFO",
-    related_table="otp",
-    related_record_id=otp_obj.otp_id,
-    metadata={"otp_type": "SMS"},
-    request=self.context.get("request") 
-)
+#         log_activity(
+#     user=user,
+#     activity_type="MOBILE_OTP_SENT",
+#     description=f"OTP sent to mobile {user.mobile_number}",
+#     severity="INFO",
+#     related_table="otp",
+#     related_record_id=otp_obj.otp_id,
+#     metadata={"otp_type": "SMS"},
+#     request=self.context.get("request") 
+# )
 
 
         
@@ -141,15 +141,15 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
         user.mobile_verified = True
         user.save(update_fields=["mobile_verified"])
 
-        log_activity(
-        user=user,
-        activity_type="MOBILE_OTP_VERIFIED",
-        description="Mobile number successfully verified.",
-        severity="INFO",
-        related_table="otp",
-        related_record_id=otp_obj.otp_id,
-        metadata={"otp_type": "SMS"}
-    )
+    #     log_activity(
+    #     user=user,
+    #     activity_type="MOBILE_OTP_VERIFIED",
+    #     description="Mobile number successfully verified.",
+    #     severity="INFO",
+    #     related_table="otp",
+    #     related_record_id=otp_obj.otp_id,
+    #     metadata={"otp_type": "SMS"}
+    # )
 
         return {
             "user_id": user.user_id,
@@ -203,15 +203,15 @@ class EmailOtpRequestSerializer(serializers.Serializer):
             expiry_time=timezone.now() + timedelta(minutes=5)
         )
 
-        log_activity(
-        user=user,
-        activity_type="EMAIL_OTP_SENT",
-        description=f"OTP sent to email {user.email}",
-        severity="INFO",
-        related_table="otp",
-        related_record_id=otp_obj.otp_id,
-        metadata={"otp_type": "EMAIL"}
-    )
+    #     log_activity(
+    #     user=user,
+    #     activity_type="EMAIL_OTP_SENT",
+    #     description=f"OTP sent to email {user.email}",
+    #     severity="INFO",
+    #     related_table="otp",
+    #     related_record_id=otp_obj.otp_id,
+    #     metadata={"otp_type": "EMAIL"}
+    # )
 
         return {
             "user_id": user.user_id,   # actual integer value
@@ -269,15 +269,15 @@ class VerifyEmailOtpSerializer(serializers.Serializer):
         refresh = RefreshToken.for_user(user)
         access_token= str(refresh.access_token)
 
-        log_activity(
-        user=user,
-        activity_type="EMAIL_OTP_VERIFIED",
-        description="Email verified successfully.",
-        severity="INFO",
-        related_table="otp",
-        related_record_id=otp_obj.otp_id,
-        metadata={"otp_type": "EMAIL"}
-    )
+    #     log_activity(
+    #     user=user,
+    #     activity_type="EMAIL_OTP_VERIFIED",
+    #     description="Email verified successfully.",
+    #     severity="INFO",
+    #     related_table="otp",
+    #     related_record_id=otp_obj.otp_id,
+    #     metadata={"otp_type": "EMAIL"}
+    # )
 
 
         return {
@@ -337,15 +337,15 @@ class LoginRequestSerializer(serializers.Serializer):
             expiry_time=timezone.now() + timedelta(minutes=5)
         )
             
-            log_activity(
-        user=user,
-        activity_type="LOGIN_OTP_SENT",
-        description=f"Login OTP sent via {otp_type}",
-        severity="INFO",
-        related_table="otp",
-        related_record_id=otp_obj.otp_id,
-        metadata={"otp_type": otp_type}
-    )
+    #         log_activity(
+    #     user=user,
+    #     activity_type="LOGIN_OTP_SENT",
+    #     description=f"Login OTP sent via {otp_type}",
+    #     severity="INFO",
+    #     related_table="otp",
+    #     related_record_id=otp_obj.otp_id,
+    #     metadata={"otp_type": otp_type}
+    # )
             return {
             "user_id": user.user_id,
             "email": user.email,
@@ -408,15 +408,15 @@ class VerifyLoginOtpSerializer(serializers.Serializer):
         refresh = RefreshToken.for_user(user)
         access_token= str(refresh.access_token)
 
-        log_activity(
-        user=user,
-        activity_type="LOGIN_SUCCESS",
-        description=f"User logged in using {otp_obj.otp_type} OTP.",
-        severity="INFO",
-        related_table="otp",
-        related_record_id=otp_obj.otp_id,
-        metadata={"otp_type": otp_obj.otp_type}
-    )
+    #     log_activity(
+    #     user=user,
+    #     activity_type="LOGIN_SUCCESS",
+    #     description=f"User logged in using {otp_obj.otp_type} OTP.",
+    #     severity="INFO",
+    #     related_table="otp",
+    #     related_record_id=otp_obj.otp_id,
+    #     metadata={"otp_type": otp_obj.otp_type}
+    # )
         # refresh = RefreshToken.for_user(user)
         # access_token = str(refresh.access_token)
 

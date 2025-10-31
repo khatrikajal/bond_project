@@ -604,9 +604,10 @@ DATABASES = {
 #         "CONN_MAX_AGE": 60,  # Connection pooling
 #     }
 # }
+DATABASE_ROUTERS = ['config.routers.database_router.HybridDatabaseRouter']
 
 DATABASES = {
-    "default": {
+    "transformation": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "bond_platform"),
         "USER": os.getenv("POSTGRES_USER", "bond_user"), 
@@ -617,6 +618,15 @@ DATABASES = {
         #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         # },
         "CONN_MAX_AGE": 60,  # Connection pooling
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB_Main'),
+        'USER': os.getenv('POSTGRES_USER_Main'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD_Main'),
+        'HOST': os.getenv('POSTGRES_HOST_Main'),
+        'PORT': os.getenv('POSTGRES_PORT_Main', '5432'),
+        'CONN_MAX_AGE': 60,
     }
 }
 
