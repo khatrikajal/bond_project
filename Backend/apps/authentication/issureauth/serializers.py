@@ -103,13 +103,14 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
         try:
             user = User.objects.get(mobile_number=mobile_number)
         except User.DoesNotExist:
-            raise_validation_error(
-                "Invalid user_id. User not found.",
-                activity_type="LOGIN_FAILED",
-                severity="ERROR",
-                request=request,
-                metadata={"user_id": user_id, "otp_type": otp_type}
-            )
+            raise serializers.ValidationError("User does not exist")
+            # raise_validation_error(
+            #     "Invalid user_id. User not found.",
+            #     activity_type="LOGIN_FAILED",
+            #     severity="ERROR",
+            #     request=request,
+            #     metadata={"user_id": user_id, "otp_type": otp_type}
+            # )
         
         # otp check
         try:

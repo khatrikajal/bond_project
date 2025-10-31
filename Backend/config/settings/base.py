@@ -582,11 +582,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database Configuration with PostgreSQL
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.getenv("POSTGRES_DB", "bond_platform"),
+#         "USER": os.getenv("POSTGRES_USER", "bond_user"), 
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "bond_password"),
+#         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+#         "PORT": os.getenv("POSTGRES_PORT", "5432"),
+#         "CONN_MAX_AGE": 60,  # Connection pooling
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -595,6 +613,9 @@ DATABASES = {
         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "bond_password"),
         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
+        # "OPTIONS": {
+        #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        # },
         "CONN_MAX_AGE": 60,  # Connection pooling
     }
 }
