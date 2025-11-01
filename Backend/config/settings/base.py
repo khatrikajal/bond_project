@@ -542,6 +542,7 @@ LOCAL_APPS = [
     "apps.risk_management",
     "apps.settlement",
     "apps.trading",
+    "apps.issuer_kyc"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
