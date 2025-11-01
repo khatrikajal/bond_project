@@ -39,10 +39,6 @@ urlpatterns += [
     ),
     # Placeholder for your app URLs (create apps/urls.py later)
     path("api/", include("apps.urls")),
-
-    # ---- Issuer KYC URLs ----
-    path("api/issuer-kyc/", include("apps.issuer_kyc.urls")),
-
 ]
 
 # Debug error pages in development
