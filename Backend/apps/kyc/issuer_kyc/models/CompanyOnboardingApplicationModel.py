@@ -46,7 +46,7 @@ class CompanyOnboardingApplication(BaseModel):
         help_text="Tracks completion status of each onboarding step."
     )
 
-    # Link to step 1 (optional)
+
     company_information = models.OneToOneField(
         "CompanyInformation",
         on_delete=models.SET_NULL,

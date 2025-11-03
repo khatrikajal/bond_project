@@ -20,13 +20,13 @@ class CompanyInformation(BaseModel):
 
     company_id = models.BigAutoField(primary_key=True)
 
-    application = models.OneToOneField(
-        CompanyOnboardingApplication,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="company_info"
-    )
+    # application = models.OneToOneField(
+    #     CompanyOnboardingApplication,
+    #     on_delete=models.CASCADE,
+    #     null=True,
+    #     blank=True,
+    #     related_name="company_info"
+    # )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
