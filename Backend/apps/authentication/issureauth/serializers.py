@@ -25,16 +25,16 @@ class MobileOtpRequestSerializer(serializers.Serializer):
 
         # Validate: must be 10 digits and start with 6–9
         if not (value.isdigit() and len(value) == 10 and value[0] in "6789"):
-            raise_validation_error(
-                "Enter a valid 10-digit Indian mobile number.",
-                activity_type="MOBILE_OTP_REQUEST_FAILED",
-                severity="ERROR",
-                request=self.context.get("request"),
-                metadata={"otp_type": "SMS"},
-                related_table="otp",
+            # raise_validation_error(
+            #     "Enter a valid 10-digit Indian mobile number.",
+            #     activity_type="MOBILE_OTP_REQUEST_FAILED",
+            #     severity="ERROR",
+            #     request=self.context.get("request"),
+            #     metadata={"otp_type": "SMS"},
+            #     related_table="otp",
                
                 
-            )
+            # )
             
             
             
