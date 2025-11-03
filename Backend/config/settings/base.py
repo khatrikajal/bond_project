@@ -501,6 +501,8 @@ local_env_file = os.path.join(BASE_DIR, "envs", ".env.local")
 if os.path.isfile(local_env_file):
     load_dotenv(local_env_file)
 
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(exist_ok=True)
 
 # Application definition
 
@@ -542,7 +544,7 @@ LOCAL_APPS = [
     "apps.risk_management",
     "apps.settlement",
     "apps.trading",
-    "apps.kyc"
+    "apps.kyc.issuer_kyc.apps.IssuerKycConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -726,23 +728,105 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # LOGGING
 # ------------------------------------------------------------------------------
+APP_NAMES = [
+    d.name for d in APPS_DIR.iterdir()
+    if d.is_dir() and not d.name.startswith("__")
+]
+# ------------------------
+# Base formatters
+# ------------------------
+formatters = {
+    "verbose": {
+        "format": "[{asctime}] {levelname} {name}:{lineno} - {message}",
+        "style": "{",
+    },
+    "simple": {
+        "format": "{levelname} {message}",
+        "style": "{",
+    },
+}
+# ------------------------
+# Base handlers (shared)
+# ------------------------
+handlers = {
+    "console": {
+        "class": "logging.StreamHandler",
+        "formatter": "verbose",
+    },
+    "debug_file": {
+        "class": "logging.FileHandler",
+        "filename": BASE_DIR / "debug.log",
+        "formatter": "verbose",
+        "level": "DEBUG",
+    },
+    "django_errors_file": {
+        "class": "logging.FileHandler",
+        "filename": LOG_DIR / "django_errors.log",
+        "formatter": "verbose",
+        "level": "ERROR",
+    },
+    "default_file": {
+        "class": "logging.FileHandler",
+        "filename": LOG_DIR / "common.log",
+        "formatter": "verbose",
+        "level": "INFO",
+    },
+}
+# ------------------------
+# Add per-app log handlers dynamically
+# ------------------------
+for app in APP_NAMES:
+    handlers[f"{app}_file"] = {
+        "class": "logging.FileHandler",
+        "filename": LOG_DIR / f"{app}.log",
+        "formatter": "verbose",
+        "level": "DEBUG",
+    }
+# ------------------------
+# Define loggers
+# ------------------------
+loggers = {
+    "django": {
+        "handlers": ["console", "debug_file"],
+        "level": "INFO",
+        "propagate": False,
+    },
+    "django.request": {
+        "handlers": ["console", "django_errors_file"],
+        "level": "ERROR",
+        "propagate": False,
+    },
+}
+# Add one logger for each app dynamically
+for app in APP_NAMES:
+    loggers[f"apps.{app}"] = {
+        "handlers": [f"{app}_file", "console"],
+        "level": "DEBUG",
+        "propagate": False,
+    }
+# Fallback for any other unknown module
+loggers["apps"] = {
+    "handlers": ["default_file", "console"],
+    "level": "INFO",
+    "propagate": True,
+}
+# ------------------------
+# Combine everything
+# ------------------------
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s",
-        },
+    "formatters": formatters,
+    "handlers": handlers,
+    "root": {
+        "level": "INFO",
+        "handlers": ["console", "debug_file"],
     },
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
-        },
-    },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "loggers": loggers,
 }
+DEBUG = True
+
 
 # Celery
 # ------------------------------------------------------------------------------

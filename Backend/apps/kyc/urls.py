@@ -1,10 +1,9 @@
-
 from django.urls import path,include
 
-app_name = 'kyc'
+app_name = 'authentication'
 
 urlpatterns = [
-
-    path('v1/',include('apps.kyc.issuer_kyc.urls',namespace='issuer_kyc')),
+  
+    path("issuer_kyc/", include("apps.kyc.issuer_kyc.urls")),
    
-]  
+]
