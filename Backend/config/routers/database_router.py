@@ -126,6 +126,3 @@ class HybridDatabaseRouter:
         return None
 
 
-# ============================================
-# EXAMPLE USAGE IN SETTINGS.PY
-# ============================================

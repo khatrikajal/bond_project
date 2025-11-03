@@ -1,0 +1,1 @@
+DEAFULT_APP_CONFIG = "apps.kyc.issuer_kyc.IssuerKycConfig"

@@ -40,7 +40,7 @@ urlpatterns += [
     # Placeholder for your app URLs (create apps/urls.py later)
     path("api/", include("apps.urls")),
 
-    path("api/issuer_kyc/", include("apps.kyc.issuer_kyc.urls")),
+    
 ]
 
 # Debug error pages in development
