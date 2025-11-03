@@ -1,7 +1,8 @@
 from .BaseModel import BaseModel
 from django.db import models
 from django.utils import timezone
-from apps.authentication.issureauth.model import User
+from apps.authentication.issureauth.models import User
+
 import uuid
 
 class CompanyOnboardingApplication(BaseModel):

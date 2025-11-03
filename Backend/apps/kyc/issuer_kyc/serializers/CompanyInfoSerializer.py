@@ -4,7 +4,9 @@ from io import BytesIO
 from PIL import Image
 import re
 import pytesseract
-from ..models.CompanyInformationModel import CompanyInformation
+from ..models.CompanyInformationModel import CompanyInformation,CompanyOnboardingApplication
+from django.core.files.base import ContentFile
+import uuid
 
 
 
@@ -37,8 +39,8 @@ class CompanyInfoSerializer(serializers.Serializer):
     def extract_pan_details(self, file_bytes):
         """Extract PAN details using OCR."""
         try:
-            image = image.open(BytesIO(file_bytes))
-            text = pytesseract.image_to_string(image).upper()
+            img = Image.open(BytesIO(file_bytes))
+            text = pytesseract.image_to_string(img).upper()
 
             pan_match = re.search(r"[A-Z]{5}[0-9]{4}[A-Z]{1}", text) 
             dob_match = re.search(r"\d{2}/\d{2}/\d{4}", text)
@@ -66,20 +68,50 @@ class CompanyInfoSerializer(serializers.Serializer):
         user = self.context['request'].user
         file = validated_data.pop("company_or_individual_pan_card_file", None)
 
+        
+
+
         if not file:
             raise serializers.ValidationError({"company_or_individual_pan_card_file": "PAN card upload is required."})
         
+        
         file_bytes = file.read()
         extracted = self.extract_pan_details(file_bytes)
+        if not extracted["pan_number"]:
+           
+
+           raise serializers.ValidationError({
+            "company_or_individual_pan_card_file": "PAN number could not be extracted. Please upload a clearer image."
+        })
+
+        if CompanyInformation.objects.filter(company_pan_number=extracted["pan_number"]).exists():
+            raise serializers.ValidationError({
+                "company_or_individual_pan_card_file": "This PAN number is already registered with another company."
+            })
+        filename = f"pan_{uuid.uuid4().hex}.pdf" 
+        file_obj = ContentFile(file_bytes, name=filename)
 
         company_info = CompanyInformation.objects.create(
             user=user,
-            company_or_individual_pan_card_file=file_bytes,
+            company_or_individual_pan_card_file=file_obj,
             company_pan_number=extracted["pan_number"],
             pan_holder_name=extracted["pan_holder_name"],
             date_of_birth=extracted["dob"],
             **validated_data
         )
+
+        onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
+            user=user,
+            defaults={
+                "status": "IN_PROGRESS",
+                "current_step": 1,
+                "company_information": company_info,
+                "step_completion": {},
+            }
+        )
+        onboarding_app.mark_step_complete(step=1, record_id=str(company_info.company_id))
+        onboarding_app.company_information = company_info
+        onboarding_app.save()
         return { 
             "company_id": company_info.company_id,
               "company_name": company_info.company_name,
