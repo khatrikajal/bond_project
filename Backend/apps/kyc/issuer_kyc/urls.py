@@ -9,3 +9,12 @@
 #     path('login-request/',LoginRequestView.as_view(),name='login-request'),
 #     path("verify-login-otp/", VerifyLoginOtpView.as_view(), name="verify-login-otp"),
 # ]
+
+from django.urls import path
+from .views.CompanyInformationCreateView import CompanyInformationCreateView
+
+app_name = 'kyc.issuer_kyc'
+
+urlpatterns = [
+    path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
+]
