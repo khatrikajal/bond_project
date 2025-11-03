@@ -20,7 +20,7 @@ class CompanyInformation(BaseModel):
 
     company_id = models.BigAutoField(primary_key=True)
 
-    application = models.ForeignKey(
+    application = models.OneToOneField(
         CompanyOnboardingApplication,
         on_delete=models.CASCADE,
         null=True,
@@ -40,7 +40,11 @@ class CompanyInformation(BaseModel):
     entity_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES)
 
     # Sensitive fields
-    company_or_individual_pan_card_file = models.BinaryField()
+    company_or_individual_pan_card_file = models.FileField(
+        upload_to='company_documents/pan_cards/',
+        null=True,
+        blank=True
+    )
     company_pan_number = models.CharField(max_length=10, unique=True)
     pan_holder_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
