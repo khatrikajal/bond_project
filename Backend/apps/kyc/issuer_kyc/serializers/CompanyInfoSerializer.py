@@ -28,7 +28,8 @@ class CompanyInfoSerializer(serializers.Serializer):
     pan_holder_name = serializers.CharField(max_length=255, read_only=True) 
     date_of_birth = serializers.DateField(read_only=True)
 
-    def validate_company_or_individual_pan_card_file(seld,value):
+    def validate_company_or_individual_pan_card_file(self, value):
+
         """Ensure uploaded file is a valid image or PDF.""" 
         if not value.name.lower().endswith(('.jpg', '.jpeg', '.png', '.pdf')):
              raise serializers.ValidationError("Only image or PDF files are allowed for PAN upload.")

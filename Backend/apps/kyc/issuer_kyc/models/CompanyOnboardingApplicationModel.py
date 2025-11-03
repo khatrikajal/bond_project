@@ -47,13 +47,13 @@ class CompanyOnboardingApplication(BaseModel):
     )
 
 
-    company_information = models.OneToOneField(
-        "CompanyInformation",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="application"
-    )
+    # company_information = models.OneToOneField(
+    #     "CompanyInformation",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name="application"
+    # )
 
     submitted_at = models.DateTimeField(null=True, blank=True)
 

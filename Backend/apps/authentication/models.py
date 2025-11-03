@@ -130,4 +130,6 @@
     
 #     def __str__(self):
 #         return f"Attempt for {self.otp_request.phone_number} - {'Success' if self.is_successful else 'Failed'}"
+from .issureauth.model import User
+
 

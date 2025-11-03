@@ -931,6 +931,7 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_HTTP_ONLY": True,
     "AUTH_COOKIE_PATH": "/",
     "AUTH_COOKIE_SAMESITE": "Lax",
+    "USER_ID_FIELD": "user_id",
 }
 
 # -------------------------
@@ -969,3 +970,4 @@ SPECTACULAR_SETTINGS = {
         }
     },
 }
+

@@ -174,8 +174,8 @@ SIMPLE_JWT.update({
     "AUTH_COOKIE_SAMESITE": "Strict",
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),  # 1 hour for development
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 1 day for development
-    "USER_ID_FIELD": "user_id",        # <-- important
-    "USER_ID_CLAIM": "user_id",  
+     "USER_ID_FIELD": "user_id",
+    "USER_ID_CLAIM": "user_id", 
 })
 
 SESSION_COOKIE_SECURE = True
@@ -225,18 +225,18 @@ CORS_ALLOW_METHODS = [
 # ==========================================
 # JWT Settings for Cookie-Based Auth
 # ==========================================
-SIMPLE_JWT.update({
-    "SIGNING_KEY": SECRET_KEY,
-    # CRITICAL: Must be False for HTTP connections
-    "AUTH_COOKIE_SECURE": False,  # Set to True only when using HTTPS
-    "AUTH_COOKIE_DOMAIN": None,   # No domain restriction
-    # CRITICAL: Must be "Lax" or "None" for cross-origin requests
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Changed from "Strict"
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_COOKIE_HTTP_ONLY": True,
-    "AUTH_COOKIE_PATH": "/",
-})
+# SIMPLE_JWT.update({
+#     "SIGNING_KEY": SECRET_KEY,
+#     # CRITICAL: Must be False for HTTP connections
+#     "AUTH_COOKIE_SECURE": False,  # Set to True only when using HTTPS
+#     "AUTH_COOKIE_DOMAIN": None,   # No domain restriction
+#     # CRITICAL: Must be "Lax" or "None" for cross-origin requests
+#     "AUTH_COOKIE_SAMESITE": "Lax",  # Changed from "Strict"
+#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+#     "AUTH_COOKIE_HTTP_ONLY": True,
+#     "AUTH_COOKIE_PATH": "/",
+# })
 
 # Session and CSRF cookies - Must match JWT cookie settings
 SESSION_COOKIE_SECURE = False  # False for HTTP
@@ -252,9 +252,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny', 
-    )
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
+
 
 CACHES = {
     "default": {
@@ -282,4 +283,5 @@ CACHES = {
 #         "LOCATION": "otp-snowflake",
 #     },
 # }
+
 
