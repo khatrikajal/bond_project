@@ -20,14 +20,6 @@ class CompanyInformation(BaseModel):
 
     company_id = models.BigAutoField(primary_key=True)
 
-    # application = models.OneToOneField(
-    #     CompanyOnboardingApplication,
-    #     on_delete=models.CASCADE,
-    #     null=True,
-    #     blank=True,
-    #     related_name="company_info"
-    # )
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # ENCRYPT WHEN READY
@@ -60,4 +52,4 @@ class CompanyInformation(BaseModel):
         ]
 
     def __str__(self):
-        return f"{self.company_name} (CIN: {self.corporate_identification_number})"
+         return f"{self.company_name} (CIN: {self.corporate_identification_number})"

@@ -66,7 +66,7 @@ class CompanyOnboardingApplication(BaseModel):
         ]
 
     def __str__(self):
-        return f"Application #{self.application_id} - {self.user.username}"
+        return f"Application #{self.application_id} - {self.user.user_id}"
 
     # ---------------------------------------------------
     # ✅ Resume Logic Helper Methods
@@ -108,4 +108,80 @@ class CompanyOnboardingApplication(BaseModel):
         total_steps = 5
         completed = sum(1 for s in self.step_completion.values() if s.get("completed"))
         return int((completed / total_steps) * 100)
+    
+    def update_state(self, step_number: int, completed=True, record_ids=None):
+        """
+        Updates onboarding state for a step with automatic merging, dedupe,
+        cleanup of deleted records, and required behaviors for resume logic.
+
+        Args:
+            step_number (int): Step number (1 to N).
+            completed (bool): Whether the step is completed.
+            record_ids (int | list[int] | None): IDs of records for this step.
+
+        Behavior:
+            ✅ Merges record_ids with existing ones
+            ✅ Removes deleted/missing records automatically
+            ✅ Rejects duplicates
+            ✅ Automatically adds timestamps
+            ✅ Moves current_step forward
+            ✅ Does not overwrite previous steps
+            ✅ Perfect for multi-record steps (address, directors, documents)
+        """
+        from apps.kyc.issuer_kyc.services.onboarding_service import get_model_for_step
+        step_key = str(step_number)
+
+        # Existing state
+        state = self.step_completion or {}
+        step_state = state.get(step_key, {})
+
+        # Normalize record_id input
+        if record_ids is not None:
+            if not isinstance(record_ids, list):
+                record_ids = [record_ids]
+
+            # Merge with existing IDs
+            existing = step_state.get("record_id", [])
+            merged_ids = list(set(existing + record_ids))   # dedupe
+
+            # ✅ Auto-remove deleted records from DB
+            model = get_model_for_step(step_number)
+            #valid_ids = list(model.objects.filter(id__in=merged_ids).values_list("id", flat=True))
+            pk_name = model._meta.pk.name  
+            valid_ids = list(model.objects.filter(**{f"{pk_name}__in": merged_ids}).values_list(pk_name, flat=True))
+
+            step_state["record_id"] = valid_ids
+
+        # Set completion
+        step_state["completed"] = completed
+
+        if completed:
+            step_state["completed_at"] = timezone.now().isoformat()
+
+        # Update JSON
+        state[step_key] = step_state
+        self.step_completion = state
+
+        # Move next step only if current matches
+        if self.current_step == step_number:
+            self.current_step = min(step_number + 1, 5)
+
+        # Mark progress
+        if self.status == "INITIATED":
+            self.status = "IN_PROGRESS"
+
+        self.save(update_fields=["step_completion", "current_step", "status"])
+
+    def remove_record_id(self, step_number, record_id):
+        state = self.step_completion or {}
+        step_key = str(step_number)
+
+        if step_key in state:
+            ids = state[step_key].get("record_id", [])
+            ids = [i for i in ids if i != record_id]
+            state[step_key]["record_id"] = ids
+
+            self.step_completion = state
+            self.save(update_fields=["step_completion"])
+
 

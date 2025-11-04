@@ -5,9 +5,6 @@ from .CompanyInformationModel import CompanyInformation
 
 
 class CompanyAddress(BaseModel):
-    """
-    Stores registered + correspondence addresses.
-    """
 
     ADDRESS_TYPE_CHOICES = [
         (0, "REGISTERED"),
@@ -17,13 +14,13 @@ class CompanyAddress(BaseModel):
 
     address_id = models.BigAutoField(primary_key=True)
 
-    application = models.ForeignKey(
-        CompanyOnboardingApplication,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="addresses"
-    )
+    # application = models.ForeignKey(
+    #     CompanyOnboardingApplication,
+    #     on_delete=models.CASCADE,
+    #     null=True,
+    #     blank=True,
+    #     related_name="addresses"
+    # )
 
     company = models.ForeignKey(
         CompanyInformation,

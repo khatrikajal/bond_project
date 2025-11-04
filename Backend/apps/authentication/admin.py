@@ -1,4 +1,4 @@
-# # Backend/apps/authentication/admin.py
+#  Backend/apps/authentication/admin.py
 # from django.contrib import admin
 # from django.utils.html import format_html
 # from django.urls import reverse
@@ -218,3 +218,5 @@
 #         extra_context['analytics'] = analytics
         
 #         return super().changelist_view(request, extra_context=extra_context)
+
+
