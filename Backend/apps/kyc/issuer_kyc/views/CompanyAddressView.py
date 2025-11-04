@@ -119,7 +119,7 @@ from django.utils import timezone
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.serializers.CompanyAddressSerializer import CompanyAddressSerializer
-from apps.kyc.issuer_kyc.models.helpers import update_step_state
+
 
 
 class ComapnyAdressAPIView(APIView):
@@ -248,7 +248,7 @@ class ComapnyAdressAPIView(APIView):
                 serializer.save(company=company)
                 created_records.append(serializer.data)
             else:
-                update_step_state(company.company_id, 2)
+                # update_step_state(company.company_id, 2)
                 return Response(
                     {"success": False, "errors": serializer.errors},
                     status=status.HTTP_400_BAD_REQUEST
