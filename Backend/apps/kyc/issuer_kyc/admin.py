@@ -1,6 +1,8 @@
 from django.contrib import admin
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+from apps.kyc.issuer_kyc.models.CompanyOnboardingApplicationModel import CompanyOnboardingApplication
+
 
 @admin.register(CompanyAddress)
 class CompanyAddressAdmin(admin.ModelAdmin):
@@ -47,3 +49,6 @@ class CompanyInformationAdmin(admin.ModelAdmin):
     )
     list_filter = ("entity_type", "state_of_incorporation", "created_at")
     ordering = ("-created_at",)
+
+
+admin.site.register(CompanyOnboardingApplication)

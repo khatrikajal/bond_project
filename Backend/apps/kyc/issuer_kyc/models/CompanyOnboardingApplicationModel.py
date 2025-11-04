@@ -1,7 +1,11 @@
-from .BaseModel import BaseModel
+from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from django.db import models
 from django.utils import timezone
 from apps.authentication.issureauth.models import User
+import logging
+from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 import uuid
 
@@ -103,11 +107,83 @@ class CompanyOnboardingApplication(BaseModel):
 
         if self.status == "INITIATED":
             self.status = "IN_PROGRESS"
+            logger.debug("[update_state] Status moved from INITIATED → IN_PROGRESS")
 
-        self.save()
+        self.save(update_fields=["step_completion", "status", "updated_at"])
+        logger.debug("[update_state] State saved successfully to DB")
 
-    def get_completion_percentage(self):
+
+    def remove_record_id(self, step_number: int, record_id: int):
+        """
+        Remove a specific record ID from a step's state.
+        Useful when user deletes a document or address.
+        """
+        state = self.step_completion or {}
+        step_key = str(step_number)
+        
+        if step_key in state:
+            ids = state[step_key].get("record_id", [])
+            ids = [i for i in ids if i != record_id]
+            state[step_key]["record_id"] = ids
+            
+            # If no records left, mark incomplete
+            if not ids:
+                state[step_key]["completed"] = False
+            
+            self.step_completion = state
+            self.save(update_fields=["step_completion", "updated_at"])
+
+    def mark_step_incomplete(self, step_number: int, reason: str = None):
+        """
+        Mark step explicitly incomplete.
+        Useful when user deletes data or step becomes invalid externally.
+        """
+        step_key = str(step_number)
+        state = self.step_completion or {}
+
+        if step_key not in state:
+            state[step_key] = {}
+
+        state[step_key].update({
+            "completed": False,
+            "incomplete_reason": reason,
+            "updated_at": timezone.now().isoformat()
+        })
+
+        self.step_completion = state
+        self.save(update_fields=["step_completion", "updated_at"])
+
+
+    # ==========================================
+    # Helper Methods
+    # ==========================================
+
+    def _get_model_for_step(self, step_number: int):
+        """Get the model class for a given step"""
+        from apps.kyc.issuer_kyc.services.onboarding_service import get_model_for_step
+        return get_model_for_step(step_number)
+
+    def is_step_completed(self, step: int) -> bool:
+        """Check if a step is marked as completed"""
+        return self.step_completion.get(str(step), {}).get("completed", False)
+
+    def get_step_status(self, step: int) -> dict:
+        """Get detailed status for a step"""
+        step_data = self.step_completion.get(str(step), {})
+        
+        return {
+            "step": step,
+            "completed": step_data.get("completed", False),
+            "completed_at": step_data.get("completed_at"),
+            "is_valid": step_data.get("is_valid", False),
+            "validation_errors": step_data.get("validation_errors", []),
+            "record_id": step_data.get("record_id"),
+        }
+
+    def get_completion_percentage(self) -> int:
+        """Calculate overall completion percentage"""
         total_steps = 5
-        completed = sum(1 for s in self.step_completion.values() if s.get("completed"))
+        completed = sum(1 for s in range(1, 6) if self.is_step_completed(s))
         return int((completed / total_steps) * 100)
+
 
