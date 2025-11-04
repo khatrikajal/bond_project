@@ -102,8 +102,53 @@ class CompanyOnboardingApplication(BaseModel):
             "record_id": record_id,
         }
 
-        # if self.last_accessed_step == step:
-        #     self.last_accessed_step = min(step + 1, 5)
+        # Get existing state
+        state = self.step_completion or {}
+        logger.debug(f"[update_state] Current step_completion state: {state}")
+
+        step_state = state.get(step_key, {})
+        logger.debug(f"[update_state] Existing state for step {step_key}: {step_state}")
+
+        # Normalize record_ids
+        if record_ids is not None:
+            if not isinstance(record_ids, list):
+                record_ids = [record_ids]
+                logger.debug(f"[update_state] Normalized record_ids to list: {record_ids}")
+
+            existing = step_state.get("record_id", [])
+            logger.debug(f"[update_state] Existing record_ids for step {step_key}: {existing}")
+
+            merged_ids = list(set(existing + record_ids))
+            logger.debug(f"[update_state] Merged and deduped record_ids: {merged_ids}")
+
+            # Auto-remove deleted IDs using model lookup
+            model = self._get_model_for_step(step_number)
+            logger.debug(f"[update_state] Resolved model for step {step_key}: {model}")
+            #changed here
+            if model:
+                valid_ids = list(
+                    model.objects.filter(pk__in=merged_ids)
+                    .values_list("pk", flat=True)
+                )
+                step_state["record_id"] = valid_ids
+                logger.debug(f"[update_state] Valid record_ids after model lookup: {valid_ids}")
+            else:
+                step_state["record_id"] = merged_ids
+                logger.debug(f"[update_state] No model found — keeping merged record_ids: {merged_ids}")
+
+        # Set completion status
+        step_state["completed"] = completed
+        logger.debug(f"[update_state] Step {step_key} completion status set to: {completed}")
+
+        if completed:
+            completed_at = timezone.now().isoformat()
+            step_state["completed_at"] = completed_at
+            logger.debug(f"[update_state] Step {step_key} marked completed at {completed_at}")
+
+        # Update JSON state
+        state[step_key] = step_state
+        self.step_completion = state
+        logger.debug(f"[update_state] Updated step_completion JSON: {state}")
 
         if self.status == "INITIATED":
             self.status = "IN_PROGRESS"
@@ -111,6 +156,7 @@ class CompanyOnboardingApplication(BaseModel):
 
         self.save(update_fields=["step_completion", "status", "updated_at"])
         logger.debug("[update_state] State saved successfully to DB")
+
 
 
     def remove_record_id(self, step_number: int, record_id: int):
