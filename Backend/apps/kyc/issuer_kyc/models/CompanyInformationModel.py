@@ -1,7 +1,8 @@
 from .BaseModel import BaseModel
 from django.db import models
 from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
-from apps.authentication.issureauth.model import User
+from apps.authentication.issureauth.models import User
+
 
 class CompanyInformation(BaseModel):
     """
@@ -17,7 +18,6 @@ class CompanyInformation(BaseModel):
         ('OPC', 'OPC'),
         ('TRUST_NGO', 'Trust/Society/NGO'),
     ]
-
     company_id = models.BigAutoField(primary_key=True)
 
     # application = models.OneToOneField(

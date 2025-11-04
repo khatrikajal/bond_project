@@ -2,11 +2,16 @@ from rest_framework.views import APIView
 from ..serializers.CompanyInfoSerializer import CompanyInfoSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class CompanyInformationCreateView(APIView):
-
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     def post(self,request):
-        serializer = CompanyInfoSerializer(data=request.data,CONTEXT={'request': request})
+        serializer = CompanyInfoSerializer(data=request.data, context={'request': request})
+
 
         if serializer.is_valid():
             data = serializer.save()
