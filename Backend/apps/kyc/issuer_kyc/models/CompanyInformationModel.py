@@ -3,6 +3,8 @@ from django.db import models
 from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 from apps.authentication.issureauth.models import User
 
+import uuid
+
 
 class CompanyInformation(BaseModel):
     """
@@ -18,7 +20,13 @@ class CompanyInformation(BaseModel):
         ('OPC', 'OPC'),
         ('TRUST_NGO', 'Trust/Society/NGO'),
     ]
-    company_id = models.BigAutoField(primary_key=True)
+    company_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
+    )
+    # company_id = models.BigAutoField(primary_key=True)
 
     # application = models.OneToOneField(
     #     CompanyOnboardingApplication,
