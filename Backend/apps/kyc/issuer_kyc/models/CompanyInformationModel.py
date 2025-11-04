@@ -18,7 +18,6 @@ class CompanyInformation(BaseModel):
         ('OPC', 'OPC'),
         ('TRUST_NGO', 'Trust/Society/NGO'),
     ]
-
     company_id = models.BigAutoField(primary_key=True)
 
     # application = models.OneToOneField(
