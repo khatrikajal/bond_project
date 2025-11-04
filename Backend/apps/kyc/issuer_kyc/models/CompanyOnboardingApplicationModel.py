@@ -226,5 +226,3 @@ class CompanyOnboardingApplication(BaseModel):
         total_steps = 5
         completed = sum(1 for s in range(1, 6) if self.is_step_completed(s))
         return int((completed / total_steps) * 100)
-
-
