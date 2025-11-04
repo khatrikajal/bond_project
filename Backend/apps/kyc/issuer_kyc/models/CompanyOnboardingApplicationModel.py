@@ -38,8 +38,9 @@ class CompanyOnboardingApplication(BaseModel):
         default='INITIATED',
         db_index=True
     )
+    last_accessed_step = models.IntegerField(default=1)
 
-    current_step = models.IntegerField(default=1)
+    # current_step = models.IntegerField(default=1)
 
     step_completion = models.JSONField(
         default=dict,
@@ -63,7 +64,7 @@ class CompanyOnboardingApplication(BaseModel):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', 'status']),
-            models.Index(fields=['current_step']),
+            models.Index(fields=['last_accessed_step']),
         ]
 
     def __str__(self):
@@ -97,8 +98,8 @@ class CompanyOnboardingApplication(BaseModel):
             "record_id": record_id,
         }
 
-        if self.current_step == step:
-            self.current_step = min(step + 1, 5)
+        # if self.last_accessed_step == step:
+        #     self.last_accessed_step = min(step + 1, 5)
 
         if self.status == "INITIATED":
             self.status = "IN_PROGRESS"
