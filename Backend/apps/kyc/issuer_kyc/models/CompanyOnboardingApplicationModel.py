@@ -42,11 +42,9 @@ class CompanyOnboardingApplication(BaseModel):
         default='INITIATED',
         db_index=True
     )
+    last_accessed_step = models.IntegerField(default=1)
 
-    last_accessed_step = models.IntegerField(
-        default=1,
-        help_text="Last step user visited (analytics only)"
-    )
+    # current_step = models.IntegerField(default=1)
 
     step_completion = models.JSONField(
         default=dict,
@@ -70,81 +68,43 @@ class CompanyOnboardingApplication(BaseModel):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', 'status']),
-
+            models.Index(fields=['last_accessed_step']),
         ]
 
     def __str__(self):
-        return f"Application #{self.application_id} - {self.user.user_id}"
+        return f"Application #{self.application_id} - {self.user.username}"
 
-    # ==========================================
-    # Core State Management
-    # ==========================================
+    # ---------------------------------------------------
+    # ✅ Resume Logic Helper Methods
+    # ---------------------------------------------------
 
-    def update_state(self, step_number: int, completed=True, record_ids=None):
-        """
-        Lightweight state tracker for onboarding steps.
-        No validation logic here — validation is handled in serializers/views/models.
+    def is_step_completed(self, step):
+        return self.step_completion.get(str(step), {}).get("completed", False)
 
-        Behavior:
-            ✅ Merge and dedupe record_ids
-            ✅ Remove IDs of deleted DB records (auto-clean)
-            ✅ Track completed status
-            ✅ Save timestamps when completed
-            ✅ Mark application IN_PROGRESS automatically
-        """
+    def get_next_incomplete_step(self):
+        for step in range(1, 6):
+            if not self.is_step_completed(step):
+                return step
+        return 5
 
-        step_key = str(step_number)
-        logger.debug(f"[update_state] Called for step_number={step_key}, completed={completed}, record_ids={record_ids}")
+    def can_proceed_to_step(self, target_step):
+        if target_step == 1:
+            return True
+        for s in range(1, target_step):
+            if not self.is_step_completed(s):
+                return False
+        return True
 
-        # Get existing state
-        state = self.step_completion or {}
-        logger.debug(f"[update_state] Current step_completion state: {state}")
+    def mark_step_complete(self, step, record_id=None):
+        self.step_completion[str(step)] = {
+            "completed": True,
+            "completed_at": timezone.now().isoformat(),
+            "record_id": record_id,
+        }
 
-        step_state = state.get(step_key, {})
-        logger.debug(f"[update_state] Existing state for step {step_key}: {step_state}")
+        # if self.last_accessed_step == step:
+        #     self.last_accessed_step = min(step + 1, 5)
 
-        # Normalize record_ids
-        if record_ids is not None:
-            if not isinstance(record_ids, list):
-                record_ids = [record_ids]
-                logger.debug(f"[update_state] Normalized record_ids to list: {record_ids}")
-
-            existing = step_state.get("record_id", [])
-            logger.debug(f"[update_state] Existing record_ids for step {step_key}: {existing}")
-
-            merged_ids = list(set(existing + record_ids))
-            logger.debug(f"[update_state] Merged and deduped record_ids: {merged_ids}")
-
-            # Auto-remove deleted IDs using model lookup
-            model = self._get_model_for_step(step_number)
-            logger.debug(f"[update_state] Resolved model for step {step_key}: {model}")
-
-            if model:
-                valid_ids = list(
-                    model.objects.filter(pk__in=merged_ids)
-                    .values_list("pk", flat=True)
-                )
-                step_state["record_id"] = valid_ids
-                logger.debug(f"[update_state] Valid record_ids after model lookup: {valid_ids}")
-            else:
-                step_state["record_id"] = merged_ids
-                logger.debug(f"[update_state] No model found — keeping merged record_ids: {merged_ids}")
-
-        # Set completion status
-        step_state["completed"] = completed
-        logger.debug(f"[update_state] Step {step_key} completion status set to: {completed}")
-
-        if completed:
-            completed_at = timezone.now().isoformat()
-            step_state["completed_at"] = completed_at
-            logger.debug(f"[update_state] Step {step_key} marked completed at {completed_at}")
-
-        # Update JSON state
-        state[step_key] = step_state
-        self.step_completion = state
-        logger.debug(f"[update_state] Updated step_completion JSON: {state}")
-
-        # Move to IN_PROGRESS if starting journey
         if self.status == "INITIATED":
             self.status = "IN_PROGRESS"
             logger.debug("[update_state] Status moved from INITIATED → IN_PROGRESS")
