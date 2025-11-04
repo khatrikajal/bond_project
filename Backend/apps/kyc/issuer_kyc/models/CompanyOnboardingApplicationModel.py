@@ -118,7 +118,7 @@ class CompanyOnboardingApplication(BaseModel):
             # Auto-remove deleted IDs using model lookup
             model = self._get_model_for_step(step_number)
             logger.debug(f"[update_state] Resolved model for step {step_key}: {model}")
-
+            #changed here
             if model:
                 valid_ids = list(
                     model.objects.filter(pk__in=merged_ids)
@@ -151,6 +151,7 @@ class CompanyOnboardingApplication(BaseModel):
 
         self.save(update_fields=["step_completion", "status", "updated_at"])
         logger.debug("[update_state] State saved successfully to DB")
+
 
 
     def remove_record_id(self, step_number: int, record_id: int):
