@@ -1,24 +1,146 @@
+# from rest_framework import serializers
+# from django.db import transaction
+# from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
+# from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+# import re
+# import phonenumbers
+# class CompanyAddressSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CompanyAddress
+#         fields = [
+#             'address_id',
+#             'company',
+#             'registered_office_address',
+#             'city',
+#             'state_ut',
+#             'pin_code',
+#             'country',
+#             'company_contact_email',
+#             'company_contact_phone',
+#             'address_type',
+#             'created_at'
+#         ]
+#         read_only_fields = ['address_id', 'created_at']
+
+#     # -----------------------------
+#     # FIELD-LEVEL VALIDATIONS
+#     # -----------------------------
+#     def validate_pin_code(self, value):
+#         if not re.match(r'^\d{6}$', str(value)):
+#             raise serializers.ValidationError("PIN code must be exactly 6 digits.")
+#         return value
+
+#     def validate_company_contact_email(self, value):
+#         if value and not re.match(r'^[^@]+@[^@]+\.[^@]+$', value):
+#             raise serializers.ValidationError("Invalid company email address format.")
+#         return value
+
+#     def validate_company_contact_phone(self, value):
+#         try:
+#             phone = phonenumbers.parse(value, None)
+#             if not phonenumbers.is_valid_number(phone):
+#                 raise serializers.ValidationError("Invalid or non-existent phone number.")
+#         except phonenumbers.NumberParseException:
+#             raise serializers.ValidationError(
+#                 "Invalid phone number format. Use E.164 format like +14155552671."
+#             )
+#         return phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.E164)
+
+#     def validate_country(self, value):
+#         if not value.strip():
+#             raise serializers.ValidationError("Country cannot be blank.")
+#         return value
+
+#     # -----------------------------
+#     # OBJECT-LEVEL VALIDATION
+#     # -----------------------------
+#     def validate(self, attrs):
+#         company = attrs.get("company")
+#         address_type = attrs.get("address_type")
+
+#         if company and address_type is not None:
+#             existing_qs = CompanyAddress.objects.filter(
+#                 company=company,
+#                 del_flag=0  
+#             )
+#             if self.instance:
+#                 existing_qs = existing_qs.exclude(pk=self.instance.pk)
+
+#             if address_type == 0:  # Registered
+#                 if existing_qs.filter(address_type__in=[0, 2]).exists():
+#                     raise serializers.ValidationError(
+#                         "A registered address already exists for this company."
+#                     )
+#             elif address_type == 1:  # Correspondence
+#                 if existing_qs.filter(address_type__in=[1, 2]).exists():
+#                     raise serializers.ValidationError(
+#                         "A correspondence address already exists for this company."
+#                     )
+#             elif address_type == 2:  # Both
+#                 if existing_qs.filter(address_type__in=[0, 1, 2]).exists():
+#                     raise serializers.ValidationError(
+#                         "An address already exists for this company. Cannot add 'BOTH' type."
+#                     )
+
+#         city = attrs.get("city")
+#         state_ut = attrs.get("state_ut")
+#         if address_type == 2 and (not city or not state_ut):
+#             raise serializers.ValidationError("City and State/UT are required when address type is BOTH.")
+#         return attrs
+
+#     # -----------------------------
+#     # CREATE WITH TRANSACTION ATOMIC
+#     # -----------------------------
+#     def create(self, validated_data):
+#         company = validated_data.get("company")
+
+#         # ✅ Wrap both DB operations in a transaction
+#         with transaction.atomic():
+#             address = super().create(validated_data)
+
+#             try:
+#                 if hasattr(company, "application") and company.application:
+#                     application = company.application
+#                     if hasattr(application, "update_state"):
+#                         application.update_state(
+#                             step_number=2,
+#                             completed=True,
+#                             record_ids=[address.address_id]
+#                         )
+#             except Exception as e:
+#                 # ❌ If anything fails in update_state, rollback entire transaction
+#                 raise serializers.ValidationError(
+#                     f"Failed to update application state: {str(e)}"
+#                 )
+
+#         return address
+
+#     # -----------------------------
+#     # UPDATE (optional transaction)
+#     # -----------------------------
+#     def update(self, instance, validated_data):
+#         with transaction.atomic():
+#             updated_instance = super().update(instance, validated_data)
+#             # Optionally handle update_state here as well if needed
+#             return updated_instance
+
+
+
 from rest_framework import serializers
 from django.db import transaction
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.utils import timezone
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-import phonenumbers
-import re
 import os
 import uuid
+import re
+import phonenumbers
+from django.core.files.base import ContentFile
+from rest_framework import serializers
+from django.core.files.storage import default_storage
+
 
 
 class CompanyAddressSerializer(serializers.ModelSerializer):
-    # Add file field for uploads
-    address_proof_file = serializers.FileField(
-        required=False,
-        allow_null=True,
-        help_text="Upload address proof (PDF, JPG, JPEG, PNG, max 5MB)"
-    )
-
     class Meta:
         model = CompanyAddress
         fields = [
@@ -32,14 +154,13 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
             'company_contact_email',
             'company_contact_phone',
             'address_type',
-            'address_proof_file',
             'created_at',
             'user_id_updated_by_id'
         ]
         read_only_fields = ['address_id', 'created_at', 'user_id_updated_by_id']
 
     # -----------------------------
-    # FIELD-LEVEL VALIDATIONS
+    # FIELD VALIDATIONS
     # -----------------------------
     def validate_pin_code(self, value):
         if not re.match(r'^\d{6}$', str(value)):
@@ -68,25 +189,7 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
         return value
 
     # -----------------------------
-    # FILE VALIDATION
-    # -----------------------------
-    def validate_address_proof_file(self, file):
-        if not file:
-            return file
-
-        allowed_ext = ['.jpg', '.jpeg', '.png', '.pdf']
-        max_size_mb = 5
-        ext = os.path.splitext(file.name)[1].lower()
-
-        if ext not in allowed_ext:
-            raise serializers.ValidationError("Unsupported file type. Allowed: JPG, JPEG, PNG, PDF.")
-        if file.size > max_size_mb * 1024 * 1024:
-            raise serializers.ValidationError("File too large (max 5MB allowed).")
-
-        return file
-
-    # -----------------------------
-    # OBJECT-LEVEL VALIDATION
+    # OBJECT LEVEL VALIDATION
     # -----------------------------
     def validate(self, attrs):
         company = attrs.get("company") or getattr(self.instance, "company", None)
@@ -117,40 +220,63 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
         state_ut = attrs.get("state_ut")
         if address_type == 2 and (not city or not state_ut):
             raise serializers.ValidationError("City and State/UT are required when address type is BOTH.")
-
         return attrs
 
-    # -----------------------------
-    # FILE SAVE HELPER
-    # -----------------------------
-    def _save_file(self, file):
-        """Save uploaded file to /uploads/company_address/ and return stored path."""
-        folder = "uploads/company_address"
-        filename = f"{uuid.uuid4()}_{file.name}"
-        saved_path = default_storage.save(os.path.join(folder, filename), ContentFile(file.read()))
-        return saved_path
+    # # -----------------------------
+    # # CREATE WITH TRANSACTION
+    # # -----------------------------
+    # def create(self, validated_data):
+    #     company = validated_data.get("company")
+    #     with transaction.atomic():
+    #         address = super().create(validated_data)
+    #         try:
+    #             if hasattr(company, "application") and company.application:
+    #                 application = company.application
+    #                 if hasattr(application, "update_state"):
+    #                     application.update_state(
+    #                         step_number=2,
+    #                         completed=True,
+    #                         record_ids=[address.address_id]
+    #                     )
+    #         except Exception as e:
+    #             raise serializers.ValidationError(f"Failed to update application state: {str(e)}")
+    #     return address
+
+    # # -----------------------------
+    # # UPDATE WITH TRANSACTION
+    # # -----------------------------
+    # def update(self, instance, validated_data):
+    #     with transaction.atomic():
+    #         updated_instance = super().update(instance, validated_data)
+    #         company = updated_instance.company
+    #         try:
+    #             if hasattr(company, "application") and company.application:
+    #                 application = company.application
+    #                 if hasattr(application, "update_state"):
+    #                     application.update_state(
+    #                         step_number=2,
+    #                         completed=True,
+    #                         record_ids=[updated_instance.address_id]
+    #                     )
+    #         except Exception as e:
+    #             raise serializers.ValidationError(f"Failed to update application state: {str(e)}")
+    #         return updated_instance
 
     # -----------------------------
-    # CREATE WITH TRANSACTION + USER TRACKING + FILE HANDLING
+    # CREATE WITH TRANSACTION + USER TRACKING
     # -----------------------------
     def create(self, validated_data):
         request = self.context.get("request")
         user = getattr(request, "user", None)
-        file = validated_data.pop("address_proof_file", None)
 
         with transaction.atomic():
+            # Attach user to BaseModel tracking field
             if user and user.is_authenticated:
                 validated_data["user_id_updated_by"] = user
 
-            # Handle file saving
-            if file:
-                saved_path = self._save_file(file)
-                validated_data["address_proof_file"] = saved_path
-
             address = super().create(validated_data)
-            company = validated_data.get("company")
 
-            # Optional: update onboarding step
+            company = validated_data.get("company")
             try:
                 if hasattr(company, "application") and company.application:
                     application = company.application
@@ -165,30 +291,22 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
 
         return address
 
-    # -----------------------------
-    # UPDATE WITH TRANSACTION + USER TRACKING + FILE HANDLING
-    # -----------------------------
+
+        # -----------------------------
+        # UPDATE WITH TRANSACTION + USER TRACKING
+        # -----------------------------
     def update(self, instance, validated_data):
         request = self.context.get("request")
         user = getattr(request, "user", None)
-        file = validated_data.pop("address_proof_file", None)
 
         with transaction.atomic():
             if user and user.is_authenticated:
                 instance.user_id_updated_by = user
                 instance.save(update_fields=["user_id_updated_by"])
 
-            # Handle file replacement
-            if file:
-                if instance.address_proof_file and default_storage.exists(instance.address_proof_file.name):
-                    default_storage.delete(instance.address_proof_file.name)
-                saved_path = self._save_file(file)
-                validated_data["address_proof_file"] = saved_path
-
             updated_instance = super().update(instance, validated_data)
-            company = updated_instance.company
 
-            # Optional: update onboarding step
+            company = updated_instance.company
             try:
                 if hasattr(company, "application") and company.application:
                     application = company.application
@@ -305,28 +423,22 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
 
         return grouped_data
     
-        # -----------------------------
-    # FILE VALIDATION & SAVING HELPERS (for OCR upload API)
-    # -----------------------------
     def validate_file(self, file):
-        allowed_ext = ['.jpg', '.jpeg', '.png', '.pdf']
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
         max_size_mb = 5
+
         ext = os.path.splitext(file.name)[1].lower()
+        if ext not in allowed_extensions:
+            return False
 
-        if ext not in allowed_ext:
-            raise serializers.ValidationError("Unsupported file type. Allowed: JPG, PNG, PDF.")
         if file.size > max_size_mb * 1024 * 1024:
-            raise serializers.ValidationError("File too large (max 5MB allowed).")
+            return False
 
-        return file
+        return True
 
+    # ✅ 2. Save uploaded file manually and return paths
     def save_uploaded_file(self, file):
-        from django.core.files.storage import default_storage
-        from django.core.files.base import ContentFile
-        import uuid
-
-        folder = "company_docs"
-        file_name = f"{folder}/{uuid.uuid4()}_{file.name}"
+        file_name = f"company_docs/{uuid.uuid4()}_{file.name}"
         saved_path = default_storage.save(file_name, ContentFile(file.read()))
         file_url = default_storage.url(saved_path)
 
