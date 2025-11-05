@@ -123,10 +123,16 @@ from dotenv import load_dotenv
 from .base import * # noqa
 from .base import BASE_DIR
 import pytesseract
+import platform
 
 local_env_file = path.join(BASE_DIR.parent, "envs", ".env.local")
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# Detect OS and set Tesseract path
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 if path.isfile(local_env_file):
     load_dotenv(local_env_file)
 
