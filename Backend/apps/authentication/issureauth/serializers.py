@@ -3,7 +3,7 @@
 from rest_framework import serializers
 from django.utils import timezone
 from datetime import timedelta
-from .model import User,Otp
+from .models import User,Otp
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 # from .utils import log_activity,raise_validation_error
 from rest_framework.permissions import IsAuthenticated

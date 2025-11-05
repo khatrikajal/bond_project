@@ -1,5 +1,8 @@
 from django.db import models
-from apps.authentication.issureauth.model import User
+
+
+from apps.authentication.issureauth.models import User
+
 
 
 

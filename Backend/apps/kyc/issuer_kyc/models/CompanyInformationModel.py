@@ -1,7 +1,10 @@
 from .BaseModel import BaseModel
 from django.db import models
 from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
-from apps.authentication.issureauth.model import User
+from apps.authentication.issureauth.models import User
+
+import uuid
+
 
 class CompanyInformation(BaseModel):
     """
@@ -17,16 +20,13 @@ class CompanyInformation(BaseModel):
         ('OPC', 'OPC'),
         ('TRUST_NGO', 'Trust/Society/NGO'),
     ]
-
-    company_id = models.BigAutoField(primary_key=True)
-
-    application = models.OneToOneField(
-        CompanyOnboardingApplication,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="company_info"
+    company_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        unique=True,
     )
+    # company_id = models.BigAutoField(primary_key=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -60,4 +60,4 @@ class CompanyInformation(BaseModel):
         ]
 
     def __str__(self):
-        return f"{self.company_name} (CIN: {self.corporate_identification_number})"
+         return f"{self.company_name} (CIN: {self.corporate_identification_number})"
