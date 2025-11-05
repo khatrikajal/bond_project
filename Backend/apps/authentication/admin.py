@@ -218,5 +218,3 @@
 #         extra_context['analytics'] = analytics
         
 #         return super().changelist_view(request, extra_context=extra_context)
-
-
