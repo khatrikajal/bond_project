@@ -155,7 +155,8 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
             'company_contact_phone',
             'address_type',
             'created_at',
-            'user_id_updated_by_id'
+            'user_id_updated_by_id',
+            'address_proof_file',
         ]
         read_only_fields = ['address_id', 'created_at', 'user_id_updated_by_id']
 

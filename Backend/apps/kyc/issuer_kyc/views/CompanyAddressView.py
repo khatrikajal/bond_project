@@ -103,7 +103,7 @@ class ComapnyAdressAPIView(APIView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-    # ✅ POST method (already in your code)
+
     def post(self, request, company_id):
         try:
             company = CompanyInformation.objects.get(company_id=company_id)
@@ -113,12 +113,13 @@ class ComapnyAdressAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        data = request.data
+        data = request.data.copy()  # ✅ copy for mutability
+        files = request.FILES
+        address_file = files.get("address_proof_file", None)
         is_same_address = data.get("is_same_address", True)
         created_records = []
-
+        
         if is_same_address:
-            # Same for both REGISTERED + CORRESPONDENCE
             address_data = {
                 "company": company.company_id,
                 "registered_office_address": data.get("registered_office"),
@@ -128,20 +129,26 @@ class ComapnyAdressAPIView(APIView):
                 "country": data.get("country", "India"),
                 "company_contact_email": data.get("contact_email"),
                 "company_contact_phone": data.get("contact_phone"),
-                "address_type": 2  # BOTH
+                "address_type": 2
             }
+           
 
-            #serializer = CompanyAddressSerializer(data=address_data)
+            # ✅ Attach file if present
+            if address_file:
+                
+                address_data["address_proof_file"] = address_file
+
+            
+
             serializer = CompanyAddressSerializer(data=address_data, context={"request": request})
             if serializer.is_valid():
+                
                 serializer.save(company=company)
+               
                 created_records.append(serializer.data)
+                
             else:
-                # update_step_state(company.company_id, 2)
-                return Response(
-                    {"success": False, "errors": serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             # Registered Address
@@ -156,16 +163,15 @@ class ComapnyAdressAPIView(APIView):
                 "company_contact_phone": data.get("contact_phone"),
                 "address_type": 0
             }
+            if address_file:
+                reg_data["address_proof_file"] = address_file
 
-            reg_serializer = CompanyAddressSerializer(data=reg_data)
+            reg_serializer = CompanyAddressSerializer(data=reg_data, context={"request": request})
             if reg_serializer.is_valid():
                 reg_serializer.save(company=company)
                 created_records.append(reg_serializer.data)
             else:
-                return Response(
-                    {"success": False, "errors": reg_serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": reg_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
             # Correspondence Address
             corr_data = {
@@ -180,15 +186,17 @@ class ComapnyAdressAPIView(APIView):
                 "address_type": 1
             }
 
-            corr_serializer = CompanyAddressSerializer(data=corr_data)
+            # Optional: Different proof file for correspondence
+            corr_file = files.get("correspondence_address_proof_file", None)
+            if corr_file:
+                corr_data["address_proof_file"] = corr_file
+
+            corr_serializer = CompanyAddressSerializer(data=corr_data, context={"request": request})
             if corr_serializer.is_valid():
                 corr_serializer.save(company=company)
                 created_records.append(corr_serializer.data)
             else:
-                return Response(
-                    {"success": False, "errors": corr_serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": corr_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
             {
@@ -199,31 +207,23 @@ class ComapnyAdressAPIView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
-    
+
     def put(self, request, company_id):
         try:
             company = CompanyInformation.objects.get(company_id=company_id)
         except CompanyInformation.DoesNotExist:
-            return Response(
-                {"success": False, "error": "Company not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"success": False, "error": "Company not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        data = request.data
+        data = request.data.copy()
+        files = request.FILES
         is_same_address = data.get("is_same_address", True)
         updated_records = []
 
         if is_same_address:
-            # Update BOTH type (2)
             try:
-                address_instance = CompanyAddress.objects.get(
-                    company=company, address_type=2, del_flag=0
-                )
+                address_instance = CompanyAddress.objects.get(company=company, address_type=2, del_flag=0)
             except CompanyAddress.DoesNotExist:
-                return Response(
-                    {"success": False, "error": "No BOTH address found for this company."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"success": False, "error": "No BOTH address found"}, status=status.HTTP_404_NOT_FOUND)
 
             address_data = {
                 "registered_office_address": data.get("registered_office"),
@@ -235,28 +235,24 @@ class ComapnyAdressAPIView(APIView):
                 "company_contact_phone": data.get("contact_phone"),
             }
 
-            #serializer = CompanyAddressSerializer(address_instance, data=address_data, partial=True)
+            # ✅ Update file if provided
+            address_file = files.get("address_proof_file")
+            if address_file:
+                address_data["address_proof_file"] = address_file
+
             serializer = CompanyAddressSerializer(address_instance, data=address_data, partial=True, context={"request": request})
             if serializer.is_valid():
                 serializer.save()
                 updated_records.append(serializer.data)
             else:
-                return Response(
-                    {"success": False, "errors": serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            # Update REGISTERED (0)
+            # Update REGISTERED
             try:
-                reg_instance = CompanyAddress.objects.get(
-                    company=company, address_type=0, del_flag=0
-                )
+                reg_instance = CompanyAddress.objects.get(company=company, address_type=0, del_flag=0)
             except CompanyAddress.DoesNotExist:
-                return Response(
-                    {"success": False, "error": "No REGISTERED address found for this company."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"success": False, "error": "No REGISTERED address found"}, status=status.HTTP_404_NOT_FOUND)
 
             reg_data = {
                 "registered_office_address": data.get("registered_office"),
@@ -268,26 +264,22 @@ class ComapnyAdressAPIView(APIView):
                 "company_contact_phone": data.get("contact_phone"),
             }
 
-            reg_serializer = CompanyAddressSerializer(reg_instance, data=reg_data, partial=True)
+            reg_file = files.get("address_proof_file")
+            if reg_file:
+                reg_data["address_proof_file"] = reg_file
+
+            reg_serializer = CompanyAddressSerializer(reg_instance, data=reg_data, partial=True, context={"request": request})
             if reg_serializer.is_valid():
                 reg_serializer.save()
                 updated_records.append(reg_serializer.data)
             else:
-                return Response(
-                    {"success": False, "errors": reg_serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": reg_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Update CORRESPONDENCE (1)
+            # Update CORRESPONDENCE
             try:
-                corr_instance = CompanyAddress.objects.get(
-                    company=company, address_type=1, del_flag=0
-                )
+                corr_instance = CompanyAddress.objects.get(company=company, address_type=1, del_flag=0)
             except CompanyAddress.DoesNotExist:
-                return Response(
-                    {"success": False, "error": "No CORRESPONDENCE address found for this company."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                return Response({"success": False, "error": "No CORRESPONDENCE address found"}, status=status.HTTP_404_NOT_FOUND)
 
             corr_data = {
                 "registered_office_address": data.get("correspondence_address"),
@@ -299,15 +291,16 @@ class ComapnyAdressAPIView(APIView):
                 "company_contact_phone": data.get("correspondence_phone"),
             }
 
-            corr_serializer = CompanyAddressSerializer(corr_instance, data=corr_data, partial=True)
+            corr_file = files.get("correspondence_address_proof_file")
+            if corr_file:
+                corr_data["address_proof_file"] = corr_file
+
+            corr_serializer = CompanyAddressSerializer(corr_instance, data=corr_data, partial=True, context={"request": request})
             if corr_serializer.is_valid():
                 corr_serializer.save()
                 updated_records.append(corr_serializer.data)
             else:
-                return Response(
-                    {"success": False, "errors": corr_serializer.errors},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"success": False, "errors": corr_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(
             {
@@ -377,50 +370,6 @@ class ComapnyAdressAPIView(APIView):
                 {"success": False, "error": f"Failed to fetch active addresses: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-        
-    def post(self, request, *args, **kwargs):
-        """
-        Handles two types of POST requests:
-        1️⃣ If 'file' is present → upload and extract text.
-        2️⃣ Else → normal address creation logic (like before).
-        """
-        uploaded_file = request.FILES.get("file", None)
-
-        # ✅ CASE 1: File Upload + Extraction
-        if uploaded_file:
-            try:
-                serializer = CompanyAddressSerializer(data=request.data, context={"request": request})
-                if not serializer.validate_file(uploaded_file):
-                    return Response(
-                        {"success": False, "error": "Invalid file format or size"},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-
-                # Save uploaded file to storage (media/company_docs/)
-                file_instance = serializer.save_uploaded_file(uploaded_file)
-
-                # Extract text from saved file
-                extracted_text = extract_address_from_bill(file_instance["file_path"])
-
-                return Response(
-                    {
-                        "success": True,
-                        "message": "File uploaded and text extracted successfully",
-                        "file_url": file_instance["file_url"],
-                        "extracted_text": extracted_text,
-                        "uploaded_at": timezone.now(),
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-
-            except Exception as e:
-                return Response(
-                    {"success": False, "error": f"File upload failed: {str(e)}"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-
-        # ✅ CASE 2: Normal company address creation
-        return self._create_address(request)
 
     def _create_address(self, request):
         """
