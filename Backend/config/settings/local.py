@@ -128,6 +128,7 @@ import platform
 local_env_file = path.join(BASE_DIR.parent, "envs", ".env.local")
 
 
+# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 # Detect OS and set Tesseract path
 if platform.system() == "Windows":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
