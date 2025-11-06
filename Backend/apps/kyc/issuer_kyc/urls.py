@@ -3,6 +3,7 @@ from .views.CompanyAddressView import ComapnyAdressAPIView
 from .views.CompanyAllAddressView import ComapnyAllAdressAPIView
 from .views.CompanyInformationCreateView import CompanyInformationCreateView,PanExtractionView
 from .views.CompanyInformationCreateView import CompanyInformationCreateView,PanExtractionView,CompanyInfoGetView,CompanyInformationUpdateView,CompanyInfoDeleteView
+from .views import BankDetailsView
 from .views.CompanyDocumentView import (
     CompanyDocumentBulkUploadView,
     CompanyDocumentVerificationView,
@@ -26,6 +27,13 @@ urlpatterns = [
     path('company-info/<uuid:company_id>/', CompanyInfoGetView.as_view(), name='company-info-get'),
     path('company-info/<uuid:company_id>/update/', CompanyInformationUpdateView.as_view(), name='company-info-update'),
     path("company-info/<uuid:company_id>/delete/", CompanyInfoDeleteView.as_view(), name="company-info-delete"),
+
+    #--- Bank Details ----
+    path("bank-details/<uuid:company_id>/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
+    path("bank-details/<uuid:company_id>/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-get"),
+    path("bank-details/<uuid:company_id>/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
+    path("bank-details/<uuid:company_id>/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
+
    # Bulk upload all documents at once (main endpoint as per UI)
     path("company/<uuid:company_id>/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
     path('company/demat/<int:demat_account_id>/get', DematAccountGetView.as_view(), name='demat-account-get'),

@@ -4,6 +4,8 @@ from django.contrib import admin
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.models.CompanyOnboardingApplicationModel import CompanyOnboardingApplication
+from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
+
 from .models.CompanyDocumentModel import CompanyDocument
 from django import forms
 
@@ -57,6 +59,7 @@ class CompanyInformationAdmin(admin.ModelAdmin):
 admin.site.register(CompanyOnboardingApplication)
 
 
+admin.site.register(BankDetails)
 # Form class - NO DECORATOR HERE
 class CompanyDocumentAdminForm(forms.ModelForm):
     """Custom form for uploading documents in admin"""
