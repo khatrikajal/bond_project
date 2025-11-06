@@ -130,9 +130,14 @@ from rest_framework import serializers
 from django.db import transaction
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-
+import os
+import uuid
 import re
 import phonenumbers
+from django.core.files.base import ContentFile
+from rest_framework import serializers
+from django.core.files.storage import default_storage
+
 
 
 class CompanyAddressSerializer(serializers.ModelSerializer):
@@ -150,7 +155,8 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
             'company_contact_phone',
             'address_type',
             'created_at',
-            'user_id_updated_by_id'
+            'user_id_updated_by_id',
+            'address_proof_file',
         ]
         read_only_fields = ['address_id', 'created_at', 'user_id_updated_by_id']
 
@@ -417,3 +423,26 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
                 grouped_data.append(company_data)
 
         return grouped_data
+    
+    def validate_file(self, file):
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
+        max_size_mb = 5
+
+        ext = os.path.splitext(file.name)[1].lower()
+        if ext not in allowed_extensions:
+            return False
+
+        if file.size > max_size_mb * 1024 * 1024:
+            return False
+
+        return True
+
+    # ✅ 2. Save uploaded file manually and return paths
+    def save_uploaded_file(self, file):
+        file_name = f"company_docs/{uuid.uuid4()}_{file.name}"
+        saved_path = default_storage.save(file_name, ContentFile(file.read()))
+        file_url = default_storage.url(saved_path)
+
+        return {"file_path": default_storage.path(saved_path), "file_url": file_url}
+
+    

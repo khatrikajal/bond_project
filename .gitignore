@@ -187,3 +187,25 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+
+
+# PostgreSQL init scripts (if dynamic)
+postgres-init/*.sh
+postgres-init/*.sql
+postgres-init/*.pyc
+
+# Docker
+docker-data/
+docker-compose.override.yml
+**/postgres_data/
+**/redis_data/
+**/pgadmin_data/
+.docker/
+docker_logs/
+
+# Gunicorn
+gunicorn.pid
+gunicorn.sock
+gunicorn-error.log
+gunicorn-access.log

@@ -123,10 +123,17 @@ from dotenv import load_dotenv
 from .base import * # noqa
 from .base import BASE_DIR
 import pytesseract
+import platform
 
 local_env_file = path.join(BASE_DIR.parent, "envs", ".env.local")
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# Detect OS and set Tesseract path
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 if path.isfile(local_env_file):
     load_dotenv(local_env_file)
 
@@ -165,19 +172,37 @@ DOMAIN = getenv("DOMAIN", "localhost:8000")
 
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024  # 1MB
 
-JWT_SECRET_KEY = env('JWT_SECRET_KEY')
+JWT_SECRET_KEY = getenv("JWT_SECRET_KEY", SECRET_KEY)
 # JWT Settings - CRITICAL: Set the signing key
-SIMPLE_JWT.update({
-    "SIGNING_KEY": JWT_SECRET_KEY,  # Use the SECRET_KEY from environment SECRET_KEY,
-    "AUTH_COOKIE_SECURE": True,  # Allow non-HTTPS in development
-    "AUTH_COOKIE_DOMAIN": None,   # No domain restriction in development
-    "AUTH_COOKIE_SAMESITE": "Strict",
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),  # 1 hour for development
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 1 day for development
-    "USER_ID_FIELD": "user_id",        # <-- important
-    "USER_ID_CLAIM": "user_id",  
-})
-
+# SIMPLE_JWT.update({
+#     "SIGNING_KEY": JWT_SECRET_KEY,  # Use the SECRET_KEY from environment SECRET_KEY,
+#     "AUTH_COOKIE_SECURE": True,  # Allow non-HTTPS in development
+#     "AUTH_COOKIE_DOMAIN": None,   # No domain restriction in development
+#     "AUTH_COOKIE_SAMESITE": "Strict",
+#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),  # 1 hour for development
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # 1 day for development
+#     "USER_ID_FIELD": "user_id",        # <-- important
+#     "USER_ID_CLAIM": "user_id",  
+# })
+SIMPLE_JWT = {
+    "SIGNING_KEY": JWT_SECRET_KEY,
+    "ALGORITHM": "HS256",
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=6),  # ⏱ valid for 6 hours
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # ♻️ valid for 7 days
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "user_id",
+    "USER_ID_CLAIM": "user_id",
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    # Cookies setup (for frontend integration)
+    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE_REFRESH": "refresh_token",
+    "AUTH_COOKIE_SECURE": False,  # True only on HTTPS
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_PATH": "/",
+    "AUTH_COOKIE_SAMESITE": "Lax",
+}
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 # ==========================================
