@@ -1,0 +1,46 @@
+[2025-11-07 11:48:56,381] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: (urls.W005) URL namespace 'authentication' isn't unique. You may not be able to reverse all URLs in this namespace
+
+System check identified 3 issues (0 silenced).
+[2025-11-07 11:49:00,366] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1856 - [BULK_UPLOAD] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
+[2025-11-07 11:49:00,618] DEBUG apps.kyc.issuer_kyc.serializers.CompanyDocumentSerializer:48 - Validating bulk document upload: ['certificate_of_incorporation', 'moa_aoa_type', 'moa_aoa_file', 'msme_udyam_type', 'msme_udyam_file', 'import_export_certificate']
+[2025-11-07 11:49:00,630] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/bulkupload/ HTTP/1.1" 400 318
+[2025-11-07 11:49:15,746] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1930 - [LIST_DOCS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
+[2025-11-07 11:49:15,747] DEBUG apps.kyc.issuer_kyc.utils.DocumentUtils:24 - [STATUS] Checking document status for company_id=eb6e858e-349b-46ac-918e-608f85c149ff
+[2025-11-07 11:49:15,748] DEBUG apps.kyc.issuer_kyc.models.CompanyDocumentModel:366 - Fetching optional documents: ['MOA', 'AOA', 'MSME', 'UDYAM', 'IEC']
+[2025-11-07 11:49:15,749] INFO apps.kyc.issuer_kyc.utils.DocumentUtils:124 - [STATUS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff | mandatory=1/1 | step_completed=True
+[2025-11-07 11:49:15,755] INFO django.server:213 - "GET /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/ HTTP/1.1" 200 1475
+[2025-11-07 12:39:10,628] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
+[2025-11-07 12:39:10,628] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
+[2025-11-07 12:41:42,194] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
+[2025-11-07 12:41:42,204] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
+[2025-11-07 13:26:10,069] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
+[2025-11-07 13:26:10,069] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 13:26:10,540] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
+[2025-11-07 13:26:10,540] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
+[2025-11-07 13:39:53,174] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
+[2025-11-07 13:39:59,979] INFO django.server:81 - - Broken pipe from ('205.210.31.132', 62596)
+[2025-11-07 13:53:25,311] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
+[2025-11-07 13:53:25,311] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
+[2025-11-07 16:06:07,064] WARNING django.server:213 - "GET / HTTP/1.1" 404 3427
+[2025-11-07 16:47:31,449] WARNING django.server:213 - "GET / HTTP/1.1" 404 3433
+[2025-11-07 20:41:13,239] INFO django.server:213 - code 400, message Bad request version ('À\x13À')
+[2025-11-07 20:41:13,242] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 20:41:13,864] INFO django.server:213 - code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x00ß\x01\x00\x00Û\x03\x03\x12ü0:K#¨¤\x11.ö@í')
+[2025-11-07 20:41:13,864] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 20:41:14,679] INFO django.server:213 - code 400, message Bad request syntax ("\x16\x03\x01\x00Ó\x01\x00\x00Ï\x03\x03|¯|½²îyØMÈôÌÑ\x90`²\x145\x9ax2Ù\x98\x90l\x8b©Ydu\x82&\x00\x008À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ")
+[2025-11-07 20:41:14,679] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 22:25:53,168] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
+[2025-11-07 22:25:53,173] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 22:25:53,204] INFO django.server:213 - code 400, message Bad HTTP/0.9 request type ("\x16\x03\x01\x00{\x01\x00\x00w\x03\x03ñíïà2!ÉF\x0f^ù8'EÓWÀo\x8dÇÔ[¥[4e\x9bü(¶®ò\x00\x00\x1aÀ/À+À\x11À\x07À\x13À")
+[2025-11-07 22:25:53,204] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-07 22:25:53,249] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
+[2025-11-07 22:25:53,297] WARNING django.server:213 - "GET /login HTTP/1.1" 404 3463
+[2025-11-07 23:41:55,255] WARNING django.server:213 - "GET / HTTP/1.1" 404 3437
+[2025-11-08 01:30:35,783] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
+[2025-11-08 02:22:31,807] WARNING django.server:213 - "GET / HTTP/1.1" 404 3429
