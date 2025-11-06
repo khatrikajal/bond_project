@@ -29,7 +29,7 @@ class HybridDatabaseRouter:
     route_app_labels = {
         # Django built-in apps (usually on default)
         'authentication': 'default',
-        # 'contenttypes': 'default',
+        'kyc': 'default',
         # 'sessions': 'default',
         # 'admin': 'default',
         

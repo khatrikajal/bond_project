@@ -2,6 +2,7 @@ from django.contrib import admin
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.models.CompanyOnboardingApplicationModel import CompanyOnboardingApplication
+from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 
 
 @admin.register(CompanyAddress)
@@ -52,3 +53,6 @@ class CompanyInformationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CompanyOnboardingApplication)
+
+
+admin.site.register(BankDetails)

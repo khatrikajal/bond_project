@@ -6,12 +6,19 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
+# from apps.kyc.issuer_kyc.models.DematAccountModel  import DematAccount
+from datetime import timezone
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ✅ Central mapping of steps to model classes (scalable)
 STEP_MODEL_MAP = {
     1: CompanyInformation,
     2: CompanyAddress,
+    4: [BankDetails],
     # add more steps here (KYC, Documents, Directors etc.)
 }
 
@@ -67,3 +74,98 @@ def get_step_data(application, step_number: int):
         model.objects.filter(company=application.company_information)
         .order_by("-created_at")  # optional, but useful
     )
+
+
+
+# def update_step_4_status(application, bank_ids=None, demat_ids=None):
+#     """
+#     Updates Step 4 completion in onboarding JSON.
+
+#     Args:
+#         application: CompanyOnboardingApplication instance
+#         bank_ids: list of bank_detail_ids (optional, from serializer)
+#         demat_ids: list of demat_account_ids (optional, from serializer)
+#     """
+#     company = application.company_information
+#     if not company:
+#         return
+
+#     step_state = application.step_completion.get("4", {})
+#     record_id = step_state.get("record_id", {})
+
+#     # Update partial record IDs if provided
+#     if bank_ids is not None:
+#         record_id["bank_details"] = bank_ids
+#     if demat_ids is not None:
+#         record_id["demat_account"] = demat_ids
+
+#     # Determine step completion
+#     step_completed = bool(record_id.get("bank_details")) and bool(record_id.get("demat_account"))
+
+#     # Update step_state
+#     step_state.update({
+#         "completed": step_completed,
+#         "record_id": record_id
+#     })
+
+#     if step_completed:
+#         step_state["completed_at"] = timezone.now().isoformat()
+
+#     # Update application
+#     application.step_completion["4"] = step_state
+#     if application.status == "INITIATED":
+#         application.status = "IN_PROGRESS"
+
+#     application.save(update_fields=["step_completion", "status", "updated_at"])
+
+
+
+def update_step_4_status(application, bank_ids=None, demat_ids=None):
+    """
+    Safely updates Step 4 completion in onboarding JSON.
+
+    Args:
+        application: CompanyOnboardingApplication instance
+        bank_ids: list of bank_detail_ids (optional)
+        demat_ids: list of demat_account_ids (optional)
+    """
+    company = application.company_information
+    if not company:
+        return
+
+    step_state = application.step_completion.get("4", {})
+    record_id = step_state.get("record_id", {})
+
+    print("step_state   ",step_state)
+
+    # 🧩 Fix: Convert record_id to dict if it’s a string
+    if not isinstance(record_id, dict):
+        record_id = {}
+
+    # Update partial record IDs if provided
+    if bank_ids is not None:
+        record_id["bank_details"] = bank_ids
+    if demat_ids is not None:
+        record_id["demat_account"] = demat_ids
+
+    # Determine if both sides are complete
+    step_completed = bool(record_id.get("bank_details")) and bool(record_id.get("demat_account"))
+
+    # Update step state
+    step_state.update({
+        "completed": step_completed,
+        "record_id": record_id,
+    })
+
+    if step_completed:
+        step_state["completed_at"] = timezone.now().isoformat()
+
+    # Update the application record
+    application.step_completion["4"] = step_state
+
+    if application.status == "INITIATED":
+        application.status = "IN_PROGRESS"
+
+    application.save(update_fields=["step_completion", "status", "updated_at"])
+
+    print("hhhhhhhhhhhhhhhh",application)
