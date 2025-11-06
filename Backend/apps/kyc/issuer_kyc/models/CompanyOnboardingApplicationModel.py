@@ -42,9 +42,11 @@ class CompanyOnboardingApplication(BaseModel):
         default='INITIATED',
         db_index=True
     )
-    last_accessed_step = models.IntegerField(default=1)
 
-    # current_step = models.IntegerField(default=1)
+    last_accessed_step = models.IntegerField(
+        default=1,
+        help_text="Last step user visited (analytics only)"
+    )
 
     step_completion = models.JSONField(
         default=dict,
@@ -68,39 +70,31 @@ class CompanyOnboardingApplication(BaseModel):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', 'status']),
-            models.Index(fields=['last_accessed_step']),
+
         ]
 
     def __str__(self):
-        return f"Application #{self.application_id} - {self.user.username}"
+        return f"Application #{self.application_id} - {self.user.user_id}"
 
-    # ---------------------------------------------------
-    # ✅ Resume Logic Helper Methods
-    # ---------------------------------------------------
+    # ==========================================
+    # Core State Management
+    # ==========================================
 
-    def is_step_completed(self, step):
-        return self.step_completion.get(str(step), {}).get("completed", False)
+    def update_state(self, step_number: int, completed=True, record_ids=None):
+        """
+        Lightweight state tracker for onboarding steps.
+        No validation logic here — validation is handled in serializers/views/models.
 
-    def get_next_incomplete_step(self):
-        for step in range(1, 6):
-            if not self.is_step_completed(step):
-                return step
-        return 5
+        Behavior:
+            ✅ Merge and dedupe record_ids
+            ✅ Remove IDs of deleted DB records (auto-clean)
+            ✅ Track completed status
+            ✅ Save timestamps when completed
+            ✅ Mark application IN_PROGRESS automatically
+        """
 
-    def can_proceed_to_step(self, target_step):
-        if target_step == 1:
-            return True
-        for s in range(1, target_step):
-            if not self.is_step_completed(s):
-                return False
-        return True
-
-    def mark_step_complete(self, step, record_id=None):
-        self.step_completion[str(step)] = {
-            "completed": True,
-            "completed_at": timezone.now().isoformat(),
-            "record_id": record_id,
-        }
+        step_key = str(step_number)
+        logger.debug(f"[update_state] Called for step_number={step_key}, completed={completed}, record_ids={record_ids}")
 
         # Get existing state
         state = self.step_completion or {}
@@ -150,6 +144,7 @@ class CompanyOnboardingApplication(BaseModel):
         self.step_completion = state
         logger.debug(f"[update_state] Updated step_completion JSON: {state}")
 
+        # Move to IN_PROGRESS if starting journey
         if self.status == "INITIATED":
             self.status = "IN_PROGRESS"
             logger.debug("[update_state] Status moved from INITIATED → IN_PROGRESS")
@@ -231,5 +226,3 @@ class CompanyOnboardingApplication(BaseModel):
         total_steps = 5
         completed = sum(1 for s in range(1, 6) if self.is_step_completed(s))
         return int((completed / total_steps) * 100)
-
-

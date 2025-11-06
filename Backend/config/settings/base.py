@@ -504,6 +504,8 @@ if os.path.isfile(local_env_file):
 LOG_DIR = BASE_DIR / "logs"
 LOG_DIR.mkdir(exist_ok=True)
 
+ROOT_URLCONF = 'config.urls'
+
 # Application definition
 
 DJANGO_APPS = [
@@ -612,25 +614,23 @@ DATABASE_ROUTERS = ['config.routers.database_router.HybridDatabaseRouter']
 DATABASES = {
     "transformation": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "bond_platform"),
-        "USER": os.getenv("POSTGRES_USER", "bond_user"), 
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "bond_password"),
-        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
-        "PORT": os.getenv("POSTGRES_PORT", "5432"),
-        # "OPTIONS": {
-        #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        # },
-        "CONN_MAX_AGE": 60,  # Connection pooling
+        "NAME": os.getenv("DB_TRANSFORMATION_NAME","bond_platform"),
+        "USER": os.getenv("DB_TRANSFORMATION_USER","postgres"),
+        "PASSWORD": os.getenv("DB_TRANSFORMATION_PASSWORD",'postgres'),
+        "HOST": os.getenv("DB_TRANSFORMATION_HOST","localhost"),
+        "PORT": os.getenv("DB_TRANSFORMATION_PORT",5432),
+        "CONN_MAX_AGE": 60,  
     },
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB_Main'),
-        'USER': os.getenv('POSTGRES_USER_Main'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD_Main'),
-        'HOST': os.getenv('POSTGRES_HOST_Main'),
-        'PORT': os.getenv('POSTGRES_PORT_Main', '5432'),
+        "NAME": os.getenv("DB_MAIN_NAME"),
+        "USER": os.getenv("DB_MAIN_USER"),
+        "PASSWORD": os.getenv("DB_MAIN_PASSWORD"),
+        "HOST": os.getenv("DB_MAIN_HOST"),
+        "PORT": os.getenv("DB_MAIN_PORT"),
         'CONN_MAX_AGE': 60,
-    }
+    },
+   
 }
 
 # Fallback to SQLite for development if PostgreSQL is not available
