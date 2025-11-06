@@ -10,9 +10,6 @@ import uuid
 
 
 
-
-
-
 class CompanyInfoSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
     corporate_identification_number = serializers.CharField(max_length=21)
@@ -155,7 +152,8 @@ class CompanyInfoSerializer(serializers.Serializer):
             user=user,
             defaults={
                 "status": "IN_PROGRESS",
-                "current_step": 1,
+                'last_accessed_step':1,
+                # "current_step": 1,
                 "company_information": company_info,
                 "step_completion": {},
             }
