@@ -41,7 +41,8 @@ class BankDetails(BaseModel):
 
     is_verified = models.BooleanField(default=False)
     verified_at = models.DateTimeField(null=True)
-   
+    verified_data_hash = models.CharField(max_length=64, null=True, blank=True)
+    
     class Meta:
         db_table = "bank_details"
         indexes = [
