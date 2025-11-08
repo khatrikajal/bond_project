@@ -3,9 +3,10 @@ from django.db import transaction
 from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.services.onboarding_service import update_step_4_status
+from apps.kyc.issuer_kyc.services.bank_details.constants import BankDetailsConfig
 import re
 import logging
-from django.utils import timezone
+
 
 
 logger = logging.getLogger(__name__)
@@ -51,38 +52,95 @@ class BankDetailsSerializer(serializers.ModelSerializer):
 
         return data
 
-
-    def save(self, company_id):
+    def create(self, validated_data):
+        """Handle POST - Create new bank details"""
+        company_id = validated_data.pop('company_id')
         company = CompanyInformation.objects.get(pk=company_id)
+        
         with transaction.atomic():
-            bank, _ = BankDetails.objects.get_or_create(company=company)
-
-            # Update all provided fields
-            for field, value in self.validated_data.items():
-                setattr(bank, field, value)
-
-            # Only verify if not already verified
-            if not bank.is_verified:
-                from apps.kyc.issuer_kyc.services.bank_details.verify_bank_details import verify_bank_details
-                result = verify_bank_details(bank)
-
-                if result.get("success"):
-                    bank.is_verified = True
-                    bank.verified_at = timezone.now()
-
-            bank.save()
-
-            # -------------------------
+            # Get or create
+            bank, created = BankDetails.objects.get_or_create(
+                company=company,
+                defaults=validated_data
+            )
+            
+            # If already exists, update it
+            if not created:
+                for field, value in validated_data.items():
+                    setattr(bank, field, value)
+                
+                # New record is always unverified
+                bank.is_verified = False
+                bank.verified_at = None
+                bank.verified_data_hash = None
+                bank.save()
+            
             # Update onboarding step 4
-            # -------------------------
-            try:
-                if hasattr(company, "application") and company.application:
-                    application = company.application
-                    print("ffffffffffffffffffffffffffff")
-                    update_step_4_status(application, bank_ids=bank.bank_detail_id)
-            except Exception as e:
-                raise serializers.ValidationError(
-                    f"Failed to update onboarding step: {str(e)}"
-                )
-
+            self._update_onboarding_step(company, bank)
+            
             return bank
+
+    def update(self, instance, validated_data):
+        """Handle PUT/PATCH - Update existing bank details"""
+        company_id = validated_data.pop('company_id', None)
+        
+        with transaction.atomic():
+            # ✅ CHECK: If verified, check for critical field changes
+            should_invalidate = False
+            if instance.is_verified:
+                should_invalidate = self._critical_fields_changed(instance, validated_data)
+            
+            # Update all provided fields
+            for field, value in validated_data.items():
+                setattr(instance, field, value)
+            
+            # ✅ INVALIDATE verification if critical fields changed
+            if should_invalidate:
+                instance.is_verified = False
+                instance.verified_at = None
+                instance.verified_data_hash = None
+                logger.info(
+                    f"Invalidated verification for bank_detail_id={instance.bank_detail_id} "
+                    f"due to critical field changes"
+                )
+            
+            instance.save()
+            
+            # Update onboarding step 4
+            if company_id:
+                company = CompanyInformation.objects.get(pk=company_id)
+                self._update_onboarding_step(company, instance)
+            
+            return instance
+
+    def _critical_fields_changed(self, instance, new_data):
+        """Check if any critical field changed"""
+        for field in BankDetailsConfig.CRITICAL_FIELDS:
+            # Only check fields that are being updated
+            if field not in new_data:
+                continue
+            
+            old_value = str(getattr(instance, field, '')).strip().lower()
+            new_value = str(new_data.get(field, '')).strip().lower()
+            
+            if old_value != new_value:
+                logger.info(f"Critical field '{field}' changed for bank_detail_id={instance.bank_detail_id}")
+                return True
+        
+        return False
+    
+    def _update_onboarding_step(self, company, bank):
+        """Update onboarding step 4 status"""
+        try:
+            if hasattr(company, "application") and company.application:
+                update_step_4_status(company.application, bank_ids=bank.bank_detail_id)
+        except Exception as e:
+            logger.exception(f"Failed to update onboarding step for company {company.pk}")
+            raise serializers.ValidationError(
+                f"Failed to update onboarding step: {str(e)}"
+            )
+        
+
+
+
+

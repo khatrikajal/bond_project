@@ -173,6 +173,33 @@ class Migration(migrations.Migration):
                 'db_table': 'demat_accounts',
             },
         ),
+        migrations.CreateModel(
+            name='DematAccount',
+            fields=[
+                ('del_flag', models.SmallIntegerField(default=0, help_text='Soft delete flag')),
+                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('demat_account_id', models.BigAutoField(primary_key=True, serialize=False)),
+                ('dp_name', models.CharField(max_length=50)),
+                ('depository_participant', models.CharField(choices=[('NSDL', 'NSDL'), ('CDSL', 'CDSL')], max_length=10)),
+                ('dp_id', models.CharField(max_length=20)),
+                ('demat_account_number', models.CharField(max_length=50, unique=True)),
+                ('client_id_bo_id', models.CharField(blank=True, max_length=20, null=True)),
+                ('user_id_updated_by', models.BigIntegerField(blank=True, null=True)),
+                ('company', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='demat_account', to='issuer_kyc.companyinformation')),
+            ],
+            options={
+                'db_table': 'demat_accounts',
+            },
+        ),
+        migrations.AddIndex(
+            model_name='companyinformation',
+            index=models.Index(fields=['user', 'del_flag'], name='company_kyc_user_id_341cde_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='companyinformation',
+            index=models.Index(fields=['company_pan_number'], name='company_kyc_company_8eb3de_idx'),
+        ),
         migrations.AddIndex(
             model_name='companyinformation',
             index=models.Index(fields=['user', 'del_flag'], name='company_kyc_user_id_341cde_idx'),
