@@ -29,7 +29,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.BigAutoField(primary_key=True, unique=True)
 
     # Credentials
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(blank=True, null=True, unique=False)
+
+
     password = models.CharField(max_length=128, null=True, blank=True)
     mobile_number = models.CharField(max_length=15, unique=True)
     password_hash = models.CharField(max_length=255, null=True, blank=True)
@@ -55,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     email_verified = models.BooleanField(default=False)
     mobile_verified = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)  # Needed for admin
+    is_staff = models.BooleanField(default=False)
 
     # Device tracking
     device_fingerprint = models.CharField(max_length=100, null=True, blank=True)
@@ -75,8 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['mobile_number']
+    USERNAME_FIELD = 'mobile_number'
+    REQUIRED_FIELDS = ['email']
+
 
     class Meta:
         db_table = 'users'
