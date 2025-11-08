@@ -122,3 +122,34 @@ System check identified 3 issues (0 silenced).
 [2025-11-08 08:51:55,046] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
 [2025-11-08 08:51:58,242] INFO django.server:213 - "GET /api/bonds/bonds/search?isin=cccccccccccccc HTTP/1.1" 301 0
 [2025-11-08 08:51:58,285] INFO django.server:213 - "GET /api/bonds/bonds/search/?isin=cccccccccccccc HTTP/1.1" 200 42
+[2025-11-08 09:00:17,587] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/kyc/issuer_kyc/models/__init__.py changed, reloading.
+Performing system checks...
+
+November 08, 2025 - 05:38:15
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-08 09:00:19,421] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+?: (urls.W005) URL namespace 'authentication' isn't unique. You may not be able to reverse all URLs in this namespace
+
+System check identified 3 issues (0 silenced).
+Performing system checks...
+
+
+You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): issuer_kyc.
+Run 'python manage.py migrate' to apply them.
+November 08, 2025 - 09:00:19
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
