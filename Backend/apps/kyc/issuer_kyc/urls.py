@@ -13,7 +13,7 @@ from .views.CompanyDocumentView import (
     CompanySingleDocumentUploadView,
 )
 from .views.DemateAccountView import DematAccountCreateView,DematAccountGetView,DematAccountUpdateView,DematAccountDelateView
-
+from .views.CompanySignatoryView import CompanySignatoryCreateView,CompanySignatoryListView,CompanySignatoryDetailView,CompanySignatoryUpdateView,CompanySignatoryDelete,CompanySignatoryStatusUpdate
 app_name = 'issuer_kyc'
 
 urlpatterns = [
@@ -82,6 +82,17 @@ urlpatterns = [
         CompanyDocumentListView.as_view(),
         name='document-list'
     ),
+
+
+     #--- Signatory Details ----
+     path("company/<uuid:company_id>/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
+     path("company/<uuid:company_id>/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
+     path("company/<int:signatory_id>/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
+     path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
+     path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
+     path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+
+
 ]
 
 

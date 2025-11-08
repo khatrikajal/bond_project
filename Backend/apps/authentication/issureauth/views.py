@@ -86,6 +86,7 @@ class VerifyEmailOtpView(APIView):
                         "user_id": data["user_id"],
                         "email": data["email"],
                         "email_verified": data["email_verified"],
+                        "mobile_number":data["mobile_number"],
                         "kyc_status":data['kyc_status'],
                         "access_token": data['access_token']
                     }
