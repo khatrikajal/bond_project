@@ -427,6 +427,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file")
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             file_hash = self._compute_file_hash(file)
 
@@ -453,7 +455,6 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             document = FinancialDocument(
                 company_id=company_id,
-                version=version,
                 file_hash=file_hash,
                 user_id_updated_by=request.user,
                 **vd,
@@ -503,6 +504,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file", None)
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             # CASE 1 — new version due to file change
             if file:
@@ -570,6 +573,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file", None)
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             # FILE update (optional)
             if file:
