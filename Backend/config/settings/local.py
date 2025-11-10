@@ -187,8 +187,8 @@ JWT_SECRET_KEY = getenv("JWT_SECRET_KEY", SECRET_KEY)
 SIMPLE_JWT = {
     "SIGNING_KEY": JWT_SECRET_KEY,
     "ALGORITHM": "HS256",
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=6),  # ⏱ valid for 6 hours
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # ♻️ valid for 7 days
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=14),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
@@ -250,18 +250,18 @@ CORS_ALLOW_METHODS = [
 # ==========================================
 # JWT Settings for Cookie-Based Auth
 # ==========================================
-SIMPLE_JWT.update({
-    "SIGNING_KEY": SECRET_KEY,
-    # CRITICAL: Must be False for HTTP connections
-    "AUTH_COOKIE_SECURE": False,  # Set to True only when using HTTPS
-    "AUTH_COOKIE_DOMAIN": None,   # No domain restriction
-    # CRITICAL: Must be "Lax" or "None" for cross-origin requests
-    "AUTH_COOKIE_SAMESITE": "Lax",  # Changed from "Strict"
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_COOKIE_HTTP_ONLY": True,
-    "AUTH_COOKIE_PATH": "/",
-})
+# SIMPLE_JWT.update({
+#     "SIGNING_KEY": SECRET_KEY,
+#     # CRITICAL: Must be False for HTTP connections
+#     "AUTH_COOKIE_SECURE": False,  # Set to True only when using HTTPS
+#     "AUTH_COOKIE_DOMAIN": None,   # No domain restriction
+#     # CRITICAL: Must be "Lax" or "None" for cross-origin requests
+#     "AUTH_COOKIE_SAMESITE": "Lax",  # Changed from "Strict"
+#     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+#     "AUTH_COOKIE_HTTP_ONLY": True,
+#     "AUTH_COOKIE_PATH": "/",
+# })
 
 # Session and CSRF cookies - Must match JWT cookie settings
 SESSION_COOKIE_SECURE = False  # False for HTTP
