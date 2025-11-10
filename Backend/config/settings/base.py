@@ -547,6 +547,7 @@ LOCAL_APPS = [
     "apps.settlement",
     "apps.trading",
     "apps.kyc.issuer_kyc.apps.IssuerKycConfig",
+    "apps.roi"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

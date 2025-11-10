@@ -53,15 +53,15 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
         request = self.context.get("request")
         company_id = self.context.get("company_id")
 
-        # Check if company exists and belongs to the logged-in user
+        # ✅ Verify company ownership
         try:
             company = CompanyInformation.objects.get(company_id=company_id, user=request.user)
         except CompanyInformation.DoesNotExist:
             raise serializers.ValidationError({"company": "Company not found or not accessible."})
 
-        user = request.user if request else None
+        user = request.user
 
-        # Read uploaded files
+        # ✅ Read uploaded files
         pan_file = validated_data.pop("document_file_pan")
         aadhaar_file = validated_data.pop("document_file_aadhaar")
         dsc_file = validated_data.pop("dsc_upload", None)
@@ -73,7 +73,7 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
         extracted_pan = extract_pan_from_file(pan_bytes)
         extracted_aadhaar = extract_aadhaar_from_file(aadhaar_bytes)
 
-        # Validate extraction results
+        # ✅ Validate OCR results
         if not extracted_pan or not validate_pan_format(extracted_pan):
             raise serializers.ValidationError(
                 {"document_file_pan": "Unable to extract a valid PAN number. Please upload a clearer file."}
@@ -95,17 +95,13 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
                 {"document_file_aadhaar": f"This Aadhaar number ({extracted_aadhaar}) is already registered with another signatory."}
             )
 
-        # Save files with unique names
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        pan_filename = f"pan_{timestamp}.pdf"
-        aadhaar_filename = f"aadhaar_{timestamp}.pdf"
-        dsc_filename = f"dsc_{timestamp}.pdf" if dsc_file else None
+        # ✅ Save files
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        pan_file_obj = ContentFile(pan_bytes, name=f"pan_{timestamp}.pdf")
+        aadhaar_file_obj = ContentFile(aadhaar_bytes, name=f"aadhaar_{timestamp}.pdf")
+        dsc_file_obj = ContentFile(dsc_file.read(), name=f"dsc_{timestamp}.pdf") if dsc_file else None
 
-        pan_file_obj = ContentFile(pan_bytes, name=pan_filename)
-        aadhaar_file_obj = ContentFile(aadhaar_bytes, name=aadhaar_filename)
-        dsc_file_obj = ContentFile(dsc_file.read(), name=dsc_filename) if dsc_file else None
-
-        # ✅ Create new signatory record
+        # ✅ Create signatory record
         signatory = CompanySignatory.objects.create(
             company=company,
             name_of_signatory=validated_data["name_of_signatory"],
@@ -120,27 +116,34 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
             user_id_updated_by=user,
         )
 
-        # ✅ Update onboarding progress (Step 5)
-        onboarding_app, _ = CompanyOnboardingApplication.objects.get_or_create(
+        # ✅ Update onboarding (Step 5)
+        onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
             user=user,
             defaults={
                 "status": "IN_PROGRESS",
-                "last_accessed_step": 5,
+                "last_accessed_step": 6,
                 "company_information": company,
                 "step_completion": {},
             },
         )
 
+        # ✅ Ensure step completion & last_accessed_step update even if record exists
         step_completion = onboarding_app.step_completion or {}
-        step_completion["5"] = {
+        step_completion["6"] = {
             "completed": True,
             "record_id": str(signatory.signatory_id),
         }
 
         onboarding_app.step_completion = step_completion
         onboarding_app.company_information = company
-        onboarding_app.save(update_fields=["step_completion", "company_information"])
 
+        if not created and onboarding_app.last_accessed_step < 6:
+            onboarding_app.last_accessed_step = 6
+
+        onboarding_app.status = "IN_PROGRESS"
+        onboarding_app.save(update_fields=["step_completion", "company_information", "last_accessed_step", "status"])
+
+        # ✅ Return response
         return {
             "signatory_id": signatory.signatory_id,
             "company_id": company.company_id,
@@ -150,8 +153,152 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
             "pan_number": signatory.pan_number,
             "aadhaar_number": signatory.aadhaar_number,
             "email_address": signatory.email_address,
+            "last_accessed_step": onboarding_app.last_accessed_step,  # added for clarity
             "message": "Signatory added successfully with extracted PAN/Aadhaar details.",
         }
+# class CompanySignatoryCreateSerializer(serializers.Serializer):
+#     """
+#     Serializer to create a signatory record for a given company.
+#     PAN and Aadhaar numbers are extracted automatically from uploaded documents using OCR.
+#     """
+
+#     name_of_signatory = serializers.CharField(max_length=255)
+#     designation = serializers.ChoiceField(choices=CompanySignatory.DESIGNATION_CHOICES)
+#     din = serializers.CharField(max_length=8)
+#     email_address = serializers.EmailField(max_length=255)
+
+#     # File uploads
+#     document_file_pan = serializers.FileField()
+#     document_file_aadhaar = serializers.FileField()
+#     dsc_upload = serializers.FileField(required=False, allow_null=True)
+
+#     # ---------------- VALIDATIONS ---------------- #
+
+#     def validate_din(self, value):
+#         if not re.match(r"^\d{8}$", value):
+#             raise serializers.ValidationError("DIN must be an 8-digit numeric string.")
+#         if CompanySignatory.objects.filter(din=value).exists():
+#             raise serializers.ValidationError("This DIN is already associated with another signatory.")
+#         return value
+
+#     def validate_document_file_pan(self, value):
+#         """Ensure uploaded PAN file is image or PDF."""
+#         if not value.name.lower().endswith((".jpg", ".jpeg", ".png", ".pdf")):
+#             raise serializers.ValidationError("Only image or PDF files allowed for PAN upload.")
+#         return value
+
+#     def validate_document_file_aadhaar(self, value):
+#         """Ensure uploaded Aadhaar file is image or PDF."""
+#         if not value.name.lower().endswith((".jpg", ".jpeg", ".png", ".pdf")):
+#             raise serializers.ValidationError("Only image or PDF files allowed for Aadhaar upload.")
+#         return value
+
+#     # ---------------- CREATE LOGIC ---------------- #
+
+#     def create(self, validated_data):
+#         """Create a new signatory for the given company, with OCR extraction."""
+#         request = self.context.get("request")
+#         company_id = self.context.get("company_id")
+
+#         # Check if company exists and belongs to the logged-in user
+#         try:
+#             company = CompanyInformation.objects.get(company_id=company_id, user=request.user)
+#         except CompanyInformation.DoesNotExist:
+#             raise serializers.ValidationError({"company": "Company not found or not accessible."})
+
+#         user = request.user if request else None
+
+#         # Read uploaded files
+#         pan_file = validated_data.pop("document_file_pan")
+#         aadhaar_file = validated_data.pop("document_file_aadhaar")
+#         dsc_file = validated_data.pop("dsc_upload", None)
+
+#         pan_bytes = pan_file.read()
+#         aadhaar_bytes = aadhaar_file.read()
+
+#         # ✅ Use helper functions for OCR extraction
+#         extracted_pan = extract_pan_from_file(pan_bytes)
+#         extracted_aadhaar = extract_aadhaar_from_file(aadhaar_bytes)
+
+#         # Validate extraction results
+#         if not extracted_pan or not validate_pan_format(extracted_pan):
+#             raise serializers.ValidationError(
+#                 {"document_file_pan": "Unable to extract a valid PAN number. Please upload a clearer file."}
+#             )
+
+#         if not extracted_aadhaar or not validate_aadhaar_format(extracted_aadhaar):
+#             raise serializers.ValidationError(
+#                 {"document_file_aadhaar": "Unable to extract a valid Aadhaar number. Please upload a clearer file."}
+#             )
+
+#         # ✅ Check for duplicates
+#         if CompanySignatory.objects.filter(pan_number=extracted_pan).exists():
+#             raise serializers.ValidationError(
+#                 {"document_file_pan": f"This PAN number ({extracted_pan}) is already registered with another signatory."}
+#             )
+
+#         if CompanySignatory.objects.filter(aadhaar_number=extracted_aadhaar).exists():
+#             raise serializers.ValidationError(
+#                 {"document_file_aadhaar": f"This Aadhaar number ({extracted_aadhaar}) is already registered with another signatory."}
+#             )
+
+#         # Save files with unique names
+#         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+#         pan_filename = f"pan_{timestamp}.pdf"
+#         aadhaar_filename = f"aadhaar_{timestamp}.pdf"
+#         dsc_filename = f"dsc_{timestamp}.pdf" if dsc_file else None
+
+#         pan_file_obj = ContentFile(pan_bytes, name=pan_filename)
+#         aadhaar_file_obj = ContentFile(aadhaar_bytes, name=aadhaar_filename)
+#         dsc_file_obj = ContentFile(dsc_file.read(), name=dsc_filename) if dsc_file else None
+
+#         # ✅ Create new signatory record
+#         signatory = CompanySignatory.objects.create(
+#             company=company,
+#             name_of_signatory=validated_data["name_of_signatory"],
+#             designation=validated_data["designation"],
+#             din=validated_data["din"],
+#             pan_number=extracted_pan,
+#             aadhaar_number=extracted_aadhaar,
+#             email_address=validated_data["email_address"],
+#             document_file_pan=pan_file_obj,
+#             document_file_aadhaar=aadhaar_file_obj,
+#             dsc_upload=dsc_file_obj,
+#             user_id_updated_by=user,
+#         )
+
+#         # ✅ Update onboarding progress (Step 5)
+#         onboarding_app, _ = CompanyOnboardingApplication.objects.get_or_create(
+#             user=user,
+#             defaults={
+#                 "status": "IN_PROGRESS",
+#                 "last_accessed_step": 5,
+#                 "company_information": company,
+#                 "step_completion": {},
+#             },
+#         )
+
+#         step_completion = onboarding_app.step_completion or {}
+#         step_completion["5"] = {
+#             "completed": True,
+#             "record_id": str(signatory.signatory_id),
+#         }
+
+#         onboarding_app.step_completion = step_completion
+#         onboarding_app.company_information = company
+#         onboarding_app.save(update_fields=["step_completion", "company_information"])
+
+#         return {
+#             "signatory_id": signatory.signatory_id,
+#             "company_id": company.company_id,
+#             "name_of_signatory": signatory.name_of_signatory,
+#             "designation": signatory.designation,
+#             "din": signatory.din,
+#             "pan_number": signatory.pan_number,
+#             "aadhaar_number": signatory.aadhaar_number,
+#             "email_address": signatory.email_address,
+#             "message": "Signatory added successfully with extracted PAN/Aadhaar details.",
+#         }
 
 # class CompanySignatoryCreateSerializer(serializers.Serializer):
 #     """
@@ -472,13 +619,13 @@ class CompanySignatoryUpdateSerializer(serializers.Serializer):
                 user=user,
                 defaults={
                     "status": "IN_PROGRESS",
-                    "last_accessed_step": 5,
+                    "last_accessed_step": 6,
                     "company_information": instance.company,
                     "step_completion": {},
                 },
             )
             step_completion = onboarding_app.step_completion or {}
-            step_completion["5"] = {
+            step_completion["6"] = {
                 "completed": True,
                 "record_id": str(instance.signatory_id),
             }
