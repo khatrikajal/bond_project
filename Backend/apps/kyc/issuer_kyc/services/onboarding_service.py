@@ -9,6 +9,8 @@ from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformatio
 from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 # from apps.kyc.issuer_kyc.models.DematAccountModel  import DematAccount
 from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument
+from apps.kyc.issuer_kyc.models.CompanyDocumentModel import CompanyDocument
+from apps.kyc.issuer_kyc.models.DemateAccountDetailsModel import DematAccount
 from datetime import timezone
 import logging
 
@@ -21,6 +23,9 @@ STEP_MODEL_MAP = {
     2: CompanyAddress,
     4: [BankDetails],
     5:FinancialDocument,
+    3:CompanyDocument,
+    4: [BankDetails, DematAccount],
+
     # add more steps here (KYC, Documents, Directors etc.)
 }
 

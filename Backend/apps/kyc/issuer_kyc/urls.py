@@ -149,6 +149,15 @@ urlpatterns = [
         FinancialDocumentViewSet.as_view({'get': 'missing_documents'}),
         name="financial-documents-missing"
     ),
+     #--- Signatory Details ----
+     path("company/<uuid:company_id>/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
+     path("company/<uuid:company_id>/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
+     path("company/<int:signatory_id>/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
+     path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
+     path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
+     path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+
+
 ]
 
 

@@ -7,6 +7,7 @@ from .models import User,Otp
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 # from .utils import log_activity,raise_validation_error
 from rest_framework.permissions import IsAuthenticated
+from apps.kyc.issuer_kyc.models.CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 # from ..models import Otp  
 
 
@@ -25,16 +26,6 @@ class MobileOtpRequestSerializer(serializers.Serializer):
 
         # Validate: must be 10 digits and start with 6–9
         if not (value.isdigit() and len(value) == 10 and value[0] in "6789"):
-            # raise_validation_error(
-            #     "Enter a valid 10-digit Indian mobile number.",
-            #     activity_type="MOBILE_OTP_REQUEST_FAILED",
-            #     severity="ERROR",
-            #     request=self.context.get("request"),
-            #     metadata={"otp_type": "SMS"},
-            #     related_table="otp",
-               
-                
-            # )
             
             
             
@@ -60,21 +51,7 @@ class MobileOtpRequestSerializer(serializers.Serializer):
             otp_type="SMS",
             expiry_time=timezone.now() + timedelta(minutes=5)
         )
-
-#         log_activity(
-#     user=user,
-#     activity_type="MOBILE_OTP_SENT",
-#     description=f"OTP sent to mobile {user.mobile_number}",
-#     severity="INFO",
-#     related_table="otp",
-#     related_record_id=otp_obj.otp_id,
-#     metadata={"otp_type": "SMS"},
-#     request=self.context.get("request") 
-# )
-
-
-        
-
+  
         return {
             "user_id": user.user_id,
             "mobile_number": user.mobile_number,
@@ -82,84 +59,159 @@ class MobileOtpRequestSerializer(serializers.Serializer):
             "message": "OTP sent successfully to your mobile number."
         }
     
-
 class VerifyMobileOtpSerializer(serializers.Serializer):
     mobile_number = serializers.CharField(max_length=15)
     otp_code = serializers.CharField(max_length=6)
 
-    def validate(self,attrs):
-        mobile_number = attrs.get('mobile_number')
-        otp_code = attrs.get('otp_code')
+    def validate(self, attrs):
+        mobile_number = attrs.get("mobile_number")
+        otp_code = attrs.get("otp_code")
 
-        if mobile_number.startswith('+91'):
+        # Normalize mobile number
+        if mobile_number.startswith("+91"):
             mobile_number = mobile_number[3:]
         elif mobile_number.startswith("91") and len(mobile_number) == 12:
             mobile_number = mobile_number[2:]
-        if not (mobile_number.isdigit() and len(mobile_number)==10 and mobile_number[0] in "6789"):
+
+        if not (mobile_number.isdigit() and len(mobile_number) == 10 and mobile_number[0] in "6789"):
             raise serializers.ValidationError("Enter a valid 10-digit Indian mobile number.")
         mobile_number = f"+91{mobile_number}"
 
-# user find
+        # Find user
         try:
             user = User.objects.get(mobile_number=mobile_number)
         except User.DoesNotExist:
             raise serializers.ValidationError("User does not exist")
-            # raise_validation_error(
-            #     "Invalid user_id. User not found.",
-            #     activity_type="LOGIN_FAILED",
-            #     severity="ERROR",
-            #     request=request,
-            #     metadata={"user_id": user_id, "otp_type": otp_type}
-            # )
-        
-        # otp check
+
+        # Find OTP record
         try:
-            otp_obj =(
-                Otp.objects.filter(user=user,otp_type="SMS", is_used=False, is_del=False).latest('created_at')
+            otp_obj = (
+                Otp.objects.filter(
+                    user=user,
+                    otp_type="SMS",
+                    is_used=False,
+                    is_del=False
+                ).latest("created_at")
             )
         except Otp.DoesNotExist:
             raise serializers.ValidationError("No active OTP found. Please request a new one.")
-        
-        # validate otp
+
+        # Validate OTP
         if otp_obj.otp_code != otp_code:
             raise serializers.ValidationError("Invalid OTP code.")
-        
+
         if otp_obj.is_expired():
             raise serializers.ValidationError("OTP has expired. Please request a new one.")
-        
+
         attrs["user"] = user
-        attrs['otp_obj'] = otp_obj
+        attrs["otp_obj"] = otp_obj
         return attrs
-    
+
     def create(self, validated_data):
         otp_obj = validated_data["otp_obj"]
         user = validated_data["user"]
 
+        # Mark OTP as used
         otp_obj.is_used = True
         otp_obj.save(update_fields=["is_used"])
 
+        # Mark mobile as verified
         user.mobile_verified = True
         user.save(update_fields=["mobile_verified"])
 
-    #     log_activity(
-    #     user=user,
-    #     activity_type="MOBILE_OTP_VERIFIED",
-    #     description="Mobile number successfully verified.",
-    #     severity="INFO",
-    #     related_table="otp",
-    #     related_record_id=otp_obj.otp_id,
-    #     metadata={"otp_type": "SMS"}
-    # )
+        # Generate JWT token
+        refresh = RefreshToken.for_user(user)
+        access_token= str(refresh.access_token)
 
-        return {
+        # Check email verification status
+        email_verified = getattr(user, "email_verified", False)
+
+        # Get onboarding record if exists
+        onboarding = CompanyOnboardingApplication.objects.filter(user=user).first()
+
+        if email_verified:
+            last_accessed_step = onboarding.last_accessed_step if onboarding else 0
+        else:
+            last_accessed_step = 0
+
+        # ✅ Build response payload
+        response_data = {
             "user_id": user.user_id,
             "mobile_number": user.mobile_number,
+            "email": user.email,
+            "email_verified": email_verified,
+            "last_accessed_step": last_accessed_step,
+            "access_token": access_token,
             "message": "Mobile number verified successfully.",
         }
+        return response_data
+
+# class VerifyMobileOtpSerializer(serializers.Serializer):
+#     mobile_number = serializers.CharField(max_length=15)
+#     otp_code = serializers.CharField(max_length=6)
+
+#     def validate(self,attrs):
+#         mobile_number = attrs.get('mobile_number')
+#         otp_code = attrs.get('otp_code')
+
+#         if mobile_number.startswith('+91'):
+#             mobile_number = mobile_number[3:]
+#         elif mobile_number.startswith("91") and len(mobile_number) == 12:
+#             mobile_number = mobile_number[2:]
+#         if not (mobile_number.isdigit() and len(mobile_number)==10 and mobile_number[0] in "6789"):
+#             raise serializers.ValidationError("Enter a valid 10-digit Indian mobile number.")
+#         mobile_number = f"+91{mobile_number}"
+
+# # user find
+#         try:
+#             user = User.objects.get(mobile_number=mobile_number)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError("User does not exist")
+#             # raise_validation_error(
+#             #     "Invalid user_id. User not found.",
+#             #     activity_type="LOGIN_FAILED",
+#             #     severity="ERROR",
+#             #     request=request,
+#             #     metadata={"user_id": user_id, "otp_type": otp_type}
+#             # )
+        
+#         # otp check
+#         try:
+#             otp_obj =(
+#                 Otp.objects.filter(user=user,otp_type="SMS", is_used=False, is_del=False).latest('created_at')
+#             )
+#         except Otp.DoesNotExist:
+#             raise serializers.ValidationError("No active OTP found. Please request a new one.")
+        
+#         # validate otp
+#         if otp_obj.otp_code != otp_code:
+#             raise serializers.ValidationError("Invalid OTP code.")
+        
+#         if otp_obj.is_expired():
+#             raise serializers.ValidationError("OTP has expired. Please request a new one.")
+        
+#         attrs["user"] = user
+#         attrs['otp_obj'] = otp_obj
+#         return attrs
+    
+#     def create(self, validated_data):
+#         otp_obj = validated_data["otp_obj"]
+#         user = validated_data["user"]
+
+#         otp_obj.is_used = True
+#         otp_obj.save(update_fields=["is_used"])
+
+#         user.mobile_verified = True
+#         user.save(update_fields=["mobile_verified"])
+
+#         return {
+#             "user_id": user.user_id,
+#             "mobile_number": user.mobile_number,
+#             "message": "Mobile number verified successfully.",
+#         }
     
 
 class EmailOtpRequestSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField()
     name = serializers.CharField(max_length=255)
     email = serializers.EmailField(max_length=255)
 
@@ -168,17 +220,15 @@ class EmailOtpRequestSerializer(serializers.Serializer):
         return value.strip().lower()
 
     def validate(self, attrs):
-        user_id = attrs.get("user_id")
+        request = self.context.get("request")
+        user = request.user if request else None
         email = attrs.get("email")
 
-        # ✅ Ensure user exists
-        try:
-            user = User.objects.get(user_id=user_id, is_del=0)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("Invalid user_id. User does not exist.")
+        if not user or not user.is_authenticated:
+            raise serializers.ValidationError("Authentication required to send OTP.")
 
         # ✅ Ensure email not taken by another user
-        if User.objects.filter(email=email).exclude(user_id=user_id).exists():
+        if User.objects.filter(email=email).exclude(pk=user.pk).exists():
             raise serializers.ValidationError("This email is already registered with another account.")
 
         attrs["user"] = user
@@ -189,105 +239,226 @@ class EmailOtpRequestSerializer(serializers.Serializer):
         name = validated_data["name"]
         email = validated_data["email"]
 
-        # ✅ Update user’s email and (if present) name
+        # ✅ Update user’s email and name (if field exists)
         user.email = email
         if hasattr(user, "name"):
             user.name = name
         user.save(update_fields=["email"] + (["name"] if hasattr(user, "name") else []))
 
-        # ✅ Create static OTP (1111) for email
+        # ✅ Create OTP (you can switch to random if needed)
         otp_obj = Otp.objects.create(
             user=user,
-            otp_code="1111",  # static OTP
+            otp_code="1111",  # static for now — can replace with random
             otp_type="EMAIL",
-            expiry_time=timezone.now() + timedelta(minutes=5)
+            expiry_time=timezone.now() + timedelta(minutes=5),
         )
 
-    #     log_activity(
-    #     user=user,
-    #     activity_type="EMAIL_OTP_SENT",
-    #     description=f"OTP sent to email {user.email}",
-    #     severity="INFO",
-    #     related_table="otp",
-    #     related_record_id=otp_obj.otp_id,
-    #     metadata={"otp_type": "EMAIL"}
-    # )
-
         return {
-            "user_id": user.user_id,   # actual integer value
+            "user_id": user.user_id,
             "email": user.email,
             "otp_id": otp_obj.otp_id,
-            "message": "OTP sent successfully to your email address."
+            "message": f"OTP sent successfully to {user.email}.",
         }
+# class EmailOtpRequestSerializer(serializers.Serializer):
+#     user_id = serializers.IntegerField()
+#     name = serializers.CharField(max_length=255)
+#     email = serializers.EmailField(max_length=255)
+
+#     def validate_email(self, value):
+#         """Ensure email is lowercase and properly formatted."""
+#         return value.strip().lower()
+
+#     def validate(self, attrs):
+#         user_id = attrs.get("user_id")
+#         email = attrs.get("email")
+
+#         # ✅ Ensure user exists
+#         try:
+#             user = User.objects.get(user_id=user_id, is_del=0)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError("Invalid user_id. User does not exist.")
+
+#         # ✅ Ensure email not taken by another user
+#         if User.objects.filter(email=email).exclude(user_id=user_id).exists():
+#             raise serializers.ValidationError("This email is already registered with another account.")
+
+#         attrs["user"] = user
+#         return attrs
+
+#     def create(self, validated_data):
+#         user = validated_data["user"]
+#         name = validated_data["name"]
+#         email = validated_data["email"]
+
+#         # ✅ Update user’s email and (if present) name
+#         user.email = email
+#         if hasattr(user, "name"):
+#             user.name = name
+#         user.save(update_fields=["email"] + (["name"] if hasattr(user, "name") else []))
+
+#         # ✅ Create static OTP (1111) for email
+#         otp_obj = Otp.objects.create(
+#             user=user,
+#             otp_code="1111",  # static OTP
+#             otp_type="EMAIL",
+#             expiry_time=timezone.now() + timedelta(minutes=5)
+#         )
+
+#     #     log_activity(
+#     #     user=user,
+#     #     activity_type="EMAIL_OTP_SENT",
+#     #     description=f"OTP sent to email {user.email}",
+#     #     severity="INFO",
+#     #     related_table="otp",
+#     #     related_record_id=otp_obj.otp_id,
+#     #     metadata={"otp_type": "EMAIL"}
+#     # )
+
+#         return {
+#             "user_id": user.user_id,   # actual integer value
+#             "email": user.email,
+#             "otp_id": otp_obj.otp_id,
+#             "message": "OTP sent successfully to your email address."
+#         }
+
 
 class VerifyEmailOtpSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField()
     email = serializers.EmailField(max_length=255)
     otp_code = serializers.CharField(max_length=6)
 
-    def validate(self,attrs):
-        user_id = attrs.get('user_id')
-        email = attrs.get("email").strip().lower()
-        otp_code = attrs.get('otp_code')
+    def validate(self, attrs):
+        request = self.context.get("request")
+        user = request.user if request else None
 
-        try:
-            user = User.objects.get(user_id=user_id,is_del=0)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("Invalid user_id. User not found.")
-        
-        if user.email != email:
-            raise serializers.ValidationError("Email does not match the registered user.")
-        
+        if not user or not user.is_authenticated:
+            raise serializers.ValidationError("Authentication required to verify OTP.")
+
+        email = attrs.get("email").strip().lower()
+        otp_code = attrs.get("otp_code")
+
+        # ✅ Email match check
+        if user.email.strip().lower() != email:
+            raise serializers.ValidationError("Email does not match the logged-in user.")
+
+        # ✅ Get latest active OTP
         otp_obj = (
-            Otp.objects.filter(user=user,otp_type="EMAIL",is_used=False,is_del=False).order_by("-created_at").first()
-        
+            Otp.objects.filter(
+                user=user,
+                otp_type="EMAIL",
+                is_used=False,
+                is_del=False
+            ).order_by("-created_at").first()
         )
 
         if not otp_obj:
             raise serializers.ValidationError("No active OTP found. Please request a new one.")
-        
+
         if otp_obj.is_expired():
             raise serializers.ValidationError("OTP has expired. Please request a new one.")
-        
+
         if otp_obj.otp_code != otp_code:
             raise serializers.ValidationError("Invalid OTP code.")
-        
-              
-        attrs['user']=user
-        attrs["otp_obj"]= otp_obj
 
+        attrs["user"] = user
+        attrs["otp_obj"] = otp_obj
         return attrs
-    
-    def create(self,validated_data):
+
+    def create(self, validated_data):
         user = validated_data["user"]
         otp_obj = validated_data["otp_obj"]
-        
+
+        # ✅ Mark OTP used
         otp_obj.is_used = True
+        otp_obj.updated_at = timezone.now()
         otp_obj.save(update_fields=["is_used", "updated_at"])
+
+        # ✅ Mark user email verified
         user.email_verified = True
+        user.updated_at = timezone.now()
         user.save(update_fields=["email_verified", "updated_at"])
+
+        # ✅ Generate JWT Access Token
         refresh = RefreshToken.for_user(user)
-        access_token= str(refresh.access_token)
-
-    #     log_activity(
-    #     user=user,
-    #     activity_type="EMAIL_OTP_VERIFIED",
-    #     description="Email verified successfully.",
-    #     severity="INFO",
-    #     related_table="otp",
-    #     related_record_id=otp_obj.otp_id,
-    #     metadata={"otp_type": "EMAIL"}
-    # )
-
+        access_token = str(refresh.access_token)
 
         return {
             "user_id": user.user_id,
             "email": user.email,
             "email_verified": user.email_verified,
-            "kyc_status":user.kyc_status,
-            "access_token":access_token,
+            "mobile_number": user.mobile_number,
+            # "kyc_status": user.kyc_status,
+            "access_token": access_token,
             "message": "Email verified successfully."
         }
+# class VerifyEmailOtpSerializer(serializers.Serializer):
+#     user_id = serializers.IntegerField()
+#     email = serializers.EmailField(max_length=255)
+#     otp_code = serializers.CharField(max_length=6)
+
+#     def validate(self,attrs):
+#         user_id = attrs.get('user_id')
+#         email = attrs.get("email").strip().lower()
+#         otp_code = attrs.get('otp_code')
+
+#         try:
+#             user = User.objects.get(user_id=user_id,is_del=0)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError("Invalid user_id. User not found.")
+        
+#         if user.email != email:
+#             raise serializers.ValidationError("Email does not match the registered user.")
+        
+#         otp_obj = (
+#             Otp.objects.filter(user=user,otp_type="EMAIL",is_used=False,is_del=False).order_by("-created_at").first()
+        
+#         )
+
+#         if not otp_obj:
+#             raise serializers.ValidationError("No active OTP found. Please request a new one.")
+        
+#         if otp_obj.is_expired():
+#             raise serializers.ValidationError("OTP has expired. Please request a new one.")
+        
+#         if otp_obj.otp_code != otp_code:
+#             raise serializers.ValidationError("Invalid OTP code.")
+        
+              
+#         attrs['user']=user
+#         attrs["otp_obj"]= otp_obj
+
+#         return attrs
+    
+#     def create(self,validated_data):
+#         user = validated_data["user"]
+#         otp_obj = validated_data["otp_obj"]
+        
+#         otp_obj.is_used = True
+#         otp_obj.save(update_fields=["is_used", "updated_at"])
+#         user.email_verified = True
+#         user.save(update_fields=["email_verified", "updated_at"])
+#         refresh = RefreshToken.for_user(user)
+#         access_token= str(refresh.access_token)
+
+#     #     log_activity(
+#     #     user=user,
+#     #     activity_type="EMAIL_OTP_VERIFIED",
+#     #     description="Email verified successfully.",
+#     #     severity="INFO",
+#     #     related_table="otp",
+#     #     related_record_id=otp_obj.otp_id,
+#     #     metadata={"otp_type": "EMAIL"}
+#     # )
+
+
+#         return {
+#             "user_id": user.user_id,
+#             "email": user.email,
+#             "email_verified": user.email_verified,
+#             "mobile_number":user.mobile_number,
+#             "kyc_status":user.kyc_status,
+#             "access_token":access_token,
+#             "message": "Email verified successfully."
+#         }
     
 
 class LoginRequestSerializer(serializers.Serializer):
