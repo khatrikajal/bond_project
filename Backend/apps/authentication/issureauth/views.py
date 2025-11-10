@@ -44,6 +44,7 @@ class VerifyMobileOtpView(APIView):
                 "email":data["email"],
                 "email_verified":data["email_verified"],
                 "last_accessed_step":data["last_accessed_step"],
+                "company_information_id" : data["company_information_id"],
                 "access_token":data["access_token"],
             }},
                 status=status.HTTP_200_OK,)
