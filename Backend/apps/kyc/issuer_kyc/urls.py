@@ -13,7 +13,23 @@ from .views.CompanyDocumentView import (
     CompanySingleDocumentUploadView,
 )
 from .views.DemateAccountView import DematAccountCreateView,DematAccountGetView,DematAccountUpdateView,DematAccountDelateView
-from .views.CompanySignatoryView import CompanySignatoryCreateView,CompanySignatoryListView,CompanySignatoryDetailView,CompanySignatoryUpdateView,CompanySignatoryDelete,CompanySignatoryStatusUpdate
+from rest_framework.routers import DefaultRouter
+from .views.FinancialDocumentView import FinancialDocumentViewSet
+
+financial_documents = FinancialDocumentViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+financial_document_detail = FinancialDocumentViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
+
+
 app_name = 'issuer_kyc'
 
 urlpatterns = [
@@ -84,6 +100,55 @@ urlpatterns = [
     ),
 
 
+    # ----------------FinancialDocuments-------------
+
+    path(
+        "company/<uuid:company_id>/financial-documents/",
+        financial_documents,
+        name="financial-documents"
+    ),
+
+    path(
+        "company/<uuid:company_id>/financial-documents/<int:document_id>/",
+        financial_document_detail,
+        name="financial-document-detail"
+    ),
+
+    #bulk actions
+    path(
+        "company/<uuid:company_id>/financial-documents/bulk_upload/",
+        FinancialDocumentViewSet.as_view({'post': 'bulk_upload'}),
+        name="financial-documents-bulk-upload"
+    ),
+    path(
+        "company/<uuid:company_id>/financial-documents/bulk_update/",
+        FinancialDocumentViewSet.as_view({'patch': 'bulk_update'}),
+        name="financial-documents-bulk-update"
+    ),
+    path(
+        "company/<uuid:company_id>/financial-documents/bulk_delete/",
+        FinancialDocumentViewSet.as_view({'delete': 'bulk_delete'}),
+        name="financial-documents-bulk-delete"
+    ),
+
+    # extra actions
+    path(
+        "company/<uuid:company_id>/financial-documents/<int:pk>/verify/",
+        FinancialDocumentViewSet.as_view({'post': 'verify'}),
+        name="financial-document-verify"
+    ),
+
+    path(
+        "company/<uuid:company_id>/financial-documents/<int:pk>/download/",
+        FinancialDocumentViewSet.as_view({'get': 'download'}),
+        name="financial-document-download"
+    ),
+
+    path(
+        "company/<uuid:company_id>/financial-documents/missing/",
+        FinancialDocumentViewSet.as_view({'get': 'missing_documents'}),
+        name="financial-documents-missing"
+    ),
      #--- Signatory Details ----
      path("company/<uuid:company_id>/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
      path("company/<uuid:company_id>/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
