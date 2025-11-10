@@ -360,7 +360,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
     serializer_class = FinancialDocumentSerializer
     lookup_field = "document_id"
     
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         qs = super().get_queryset()
@@ -455,7 +455,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 company_id=company_id,
                 version=version,
                 file_hash=file_hash,
-                # user_id_updated_by=request.user,
+                user_id_updated_by=request.user,
                 **vd,
             )
 
@@ -533,7 +533,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             for k, v in vd.items():
                 setattr(document, k, v)
 
-            # document.user_id_updated_by = request.user
+            document.user_id_updated_by = request.user
             document.save()
 
 
@@ -598,7 +598,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             for k, v in vd.items():
                 setattr(document, k, v)
 
-            # document.user_id_updated_by = request.user
+            document.user_id_updated_by = request.user
             document.save()
 
             return api_response(
@@ -623,7 +623,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
         try:
             document = self.get_object()
             document.del_flag = 1
-            # document.user_id_updated_by = request.user
+            document.user_id_updated_by = request.user
             document.save()
 
             return api_response("success", "Document deleted successfully")
@@ -704,7 +704,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                         company_id=company_id,
             
                         file_hash=file_hash,
-                        # user_id_updated_by=request.user,
+                        user_id_updated_by=request.user,
                         **vd
                     )
 
