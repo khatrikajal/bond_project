@@ -41,6 +41,7 @@ class VerifyMobileOtpView(APIView):
             return Response({"status": "success", "message": data["message"], "data": {
                 "user_id":data["user_id"],
                 "mobile_number":data["mobile_number"],
+                "email":data["email"],
                 "email_verified":data["email_verified"],
                 "last_accessed_step":data["last_accessed_step"],
                 "access_token":data["access_token"],
@@ -115,7 +116,7 @@ class VerifyEmailOtpView(APIView):
                 {
                     "status": "success",
                     "message": data["message"],
-                    "last_accessed_step":1,
+                    "last_accessed_step":0,
                     "data": {
                         "user_id": data["user_id"],
                         "email": data["email"],

@@ -130,14 +130,15 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
         onboarding = CompanyOnboardingApplication.objects.filter(user=user).first()
 
         if email_verified:
-            last_accessed_step = onboarding.last_accessed_step if onboarding else 1
+            last_accessed_step = onboarding.last_accessed_step if onboarding else 0
         else:
-            last_accessed_step = 1
+            last_accessed_step = 0
 
         # ✅ Build response payload
         response_data = {
             "user_id": user.user_id,
             "mobile_number": user.mobile_number,
+            "email": user.email,
             "email_verified": email_verified,
             "last_accessed_step": last_accessed_step,
             "access_token": access_token,
