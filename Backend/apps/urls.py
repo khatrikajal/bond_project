@@ -14,7 +14,11 @@ urlpatterns = [
     # # Bonds app
     path('bonds/', include('apps.bonds.urls')),
 
-    path('kyc/',include('apps.kyc.urls'))
+    path('kyc/',include('apps.kyc.urls')),
+    
+    
+    path('roi/',include('apps.roi.urls'))
+
 
     # # Compliance app
     # path('api/compliance/', include('apps.compliance.urls')),
