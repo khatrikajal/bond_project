@@ -8,6 +8,10 @@ urlpatterns = [
     # Authentication app
     path('auth/', include('apps.authentication.urls')),
 
+ 
+
+    path('bond_estimate/',include('apps.bond_estimate.urls')),
+
     # # Audit app
     # path('audit/', include('apps.audit.urls')),
 
