@@ -83,7 +83,7 @@ class BorrowingDetail(models.Model):
 # ---------- 4. Capital Details ----------
 class CapitalDetail(models.Model):
     capital_detail_id = models.BigAutoField(primary_key=True)
-    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="capital_details")
+    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="capital_details_old")
     share_capital = models.DecimalField(max_digits=18, decimal_places=2)
     reserves_surplus = models.DecimalField(max_digits=18, decimal_places=2)
     net_worth = models.DecimalField(max_digits=18, decimal_places=2)
