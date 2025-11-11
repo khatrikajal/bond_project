@@ -4,7 +4,7 @@ import uuid
 from django.db import models
 from apps.authentication.issureauth.models import User
 from django.utils import timezone
-
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 
 
 
@@ -32,7 +32,7 @@ class BondEstimationApplication(models.Model):
     )
 
     company = models.ForeignKey(
-        "kyc.CompanyInformation",
+        CompanyInformation,
         on_delete=models.CASCADE,
         related_name="bond_estimations"
     )
