@@ -1,11 +1,12 @@
 # services/bond_estimation_service.py
 
 from apps.bond_estimate.model.BondEstimationApplicationModel import BondEstimationApplication
+from apps.bond_estimate.model.CapitalDetailsModel import CapitalDetails
 STEP_MODEL_MAP = {
     # Add step and its model here
     # "1.1":FundPostion,
     # "1.2":Creditrating,
-    # "2.2": CapitalDetails,
+    "2.2":CapitalDetails
 }
 
 
