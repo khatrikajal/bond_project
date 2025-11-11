@@ -22,7 +22,7 @@ from calendar import month_name
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from django.http import Http404
-from kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
+from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
 import hashlib
 import logging
 
