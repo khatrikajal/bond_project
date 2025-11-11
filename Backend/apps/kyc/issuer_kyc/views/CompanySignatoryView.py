@@ -85,31 +85,25 @@ class CompanySignatoryListView(APIView):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+
+
+
 class CompanySignatoryDetailView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request, signatory_id):
         try:
-            # Ensure company belongs to this user
-            company = CompanyInformation.objects.get(user=request.user)
-        except CompanyInformation.DoesNotExist:
-            return Response(
-                {
-                    "status": "error",
-                    "message": "Company not found or not accessible."
-                },
-                status=status.HTTP_404_NOT_FOUND
+            # ✅ Fetch the signatory directly and ensure it belongs to a company owned by this user
+            signatory = CompanySignatory.objects.select_related("company").get(
+                signatory_id=signatory_id,
+                company__user=request.user
             )
-
-        try:
-            # Get specific signatory of this company
-            signatory = CompanySignatory.objects.get(company=company, signatory_id=signatory_id)
         except CompanySignatory.DoesNotExist:
             return Response(
                 {
                     "status": "error",
-                    "message": "Signatory not found for this company."
+                    "message": "Signatory not found or not accessible."
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
@@ -119,13 +113,55 @@ class CompanySignatoryDetailView(APIView):
         return Response(
             {
                 "status": "success",
-                "company_id": str(company.company_id),
-                "company_name": company.company_name,
+                "company_id": str(signatory.company.company_id),
+                "company_name": signatory.company.company_name,
                 "signatory_id": str(signatory.signatory_id),
                 "data": serializer.data,
             },
             status=status.HTTP_200_OK
         )
+
+# class CompanySignatoryDetailView(APIView):
+#     authentication_classes = [JWTAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request, signatory_id):
+#         try:
+#             # Ensure company belongs to this user
+#             company = CompanyInformation.objects.get(user=request.user)
+#         except CompanyInformation.DoesNotExist:
+#             return Response(
+#                 {
+#                     "status": "error",
+#                     "message": "Company not found or not accessible."
+#                 },
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+
+#         try:
+#             # Get specific signatory of this company
+#             signatory = CompanySignatory.objects.get(company=company, signatory_id=signatory_id)
+#         except CompanySignatory.DoesNotExist:
+#             return Response(
+#                 {
+#                     "status": "error",
+#                     "message": "Signatory not found for this company."
+#                 },
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+
+#         serializer = CompanySignatoryListSerializer(signatory)
+
+#         return Response(
+#             {
+#                 "status": "success",
+#                 "company_id": str(company.company_id),
+#                 "company_name": company.company_name,
+#                 "signatory_id": str(signatory.signatory_id),
+#                 "data": serializer.data,
+#             },
+#             status=status.HTTP_200_OK
+#         )
 
 
 class CompanySignatoryUpdateView(APIView):
