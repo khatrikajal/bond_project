@@ -174,7 +174,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.BigAutoField(primary_key=True, unique=True)
 
     # Credentials
-    email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True, unique=False)
+
+
     password = models.CharField(max_length=128, null=True, blank=True)
     mobile_number = models.CharField(max_length=15, unique=True)
     password_hash = models.CharField(max_length=255, null=True, blank=True)

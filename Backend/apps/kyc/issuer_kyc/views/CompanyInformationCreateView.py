@@ -108,7 +108,7 @@ class CompanyInfoDeleteView(APIView):
             },status=status.HTTP_404_NOT_FOUND)
         
         
-        CompanyOnboardingApplication.objects.filter(company_information=company,user=request.user).delete()
+        # CompanyOnboardingApplication.objects.filter(company_information=company,user=request.user).delete()
 
         company.delete()
 
