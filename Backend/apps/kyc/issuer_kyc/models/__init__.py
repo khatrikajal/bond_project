@@ -3,3 +3,4 @@ from .CompanyInformationModel import CompanyInformation
 from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 from .BankDetailsModel import BankDetails
 from .CompanySignatoryModel import CompanySignatory
+from .CompanyDocumentModel import CompanyDocument
