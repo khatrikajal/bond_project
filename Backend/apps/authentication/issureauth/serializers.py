@@ -121,7 +121,7 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
 
         # Generate JWT token
         refresh = RefreshToken.for_user(user)
-        access_token= str(refresh.access_token)
+        access_token = str(refresh.access_token)
 
         # Check email verification status
         email_verified = getattr(user, "email_verified", False)
@@ -129,10 +129,20 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
         # Get onboarding record if exists
         onboarding = CompanyOnboardingApplication.objects.filter(user=user).first()
 
-        if email_verified:
-            last_accessed_step = onboarding.last_accessed_step if onboarding else 0
-        else:
-            last_accessed_step = 0
+        last_accessed_step = 0
+        company_information_id = None
+
+        if onboarding:
+            last_accessed_step = onboarding.last_accessed_step
+            company_information_id = (
+                str(onboarding.company_information.company_id)
+                if onboarding.company_information
+                else None
+            )
+
+        # ✅ If email not verified yet, reset progress
+        if not email_verified:
+            last_accessed_step = 1
 
         # ✅ Build response payload
         response_data = {
@@ -141,10 +151,98 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
             "email": user.email,
             "email_verified": email_verified,
             "last_accessed_step": last_accessed_step,
+            "company_information_id": company_information_id,
             "access_token": access_token,
             "message": "Mobile number verified successfully.",
         }
         return response_data
+
+# class VerifyMobileOtpSerializer(serializers.Serializer):
+#     mobile_number = serializers.CharField(max_length=15)
+#     otp_code = serializers.CharField(max_length=6)
+
+#     def validate(self, attrs):
+#         mobile_number = attrs.get("mobile_number")
+#         otp_code = attrs.get("otp_code")
+
+#         # Normalize mobile number
+#         if mobile_number.startswith("+91"):
+#             mobile_number = mobile_number[3:]
+#         elif mobile_number.startswith("91") and len(mobile_number) == 12:
+#             mobile_number = mobile_number[2:]
+
+#         if not (mobile_number.isdigit() and len(mobile_number) == 10 and mobile_number[0] in "6789"):
+#             raise serializers.ValidationError("Enter a valid 10-digit Indian mobile number.")
+#         mobile_number = f"+91{mobile_number}"
+
+#         # Find user
+#         try:
+#             user = User.objects.get(mobile_number=mobile_number)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError("User does not exist")
+
+#         # Find OTP record
+#         try:
+#             otp_obj = (
+#                 Otp.objects.filter(
+#                     user=user,
+#                     otp_type="SMS",
+#                     is_used=False,
+#                     is_del=False
+#                 ).latest("created_at")
+#             )
+#         except Otp.DoesNotExist:
+#             raise serializers.ValidationError("No active OTP found. Please request a new one.")
+
+#         # Validate OTP
+#         if otp_obj.otp_code != otp_code:
+#             raise serializers.ValidationError("Invalid OTP code.")
+
+#         if otp_obj.is_expired():
+#             raise serializers.ValidationError("OTP has expired. Please request a new one.")
+
+#         attrs["user"] = user
+#         attrs["otp_obj"] = otp_obj
+#         return attrs
+
+#     def create(self, validated_data):
+#         otp_obj = validated_data["otp_obj"]
+#         user = validated_data["user"]
+
+#         # Mark OTP as used
+#         otp_obj.is_used = True
+#         otp_obj.save(update_fields=["is_used"])
+
+#         # Mark mobile as verified
+#         user.mobile_verified = True
+#         user.save(update_fields=["mobile_verified"])
+
+#         # Generate JWT token
+#         refresh = RefreshToken.for_user(user)
+#         access_token= str(refresh.access_token)
+
+#         # Check email verification status
+#         email_verified = getattr(user, "email_verified", False)
+
+#         # Get onboarding record if exists
+#         onboarding = CompanyOnboardingApplication.objects.filter(user=user).first()
+
+#         if email_verified:
+#             last_accessed_step = onboarding.last_accessed_step if onboarding else 0
+#         else:
+#             last_accessed_step = 0
+
+#         # ✅ Build response payload
+#         response_data = {
+#             "user_id": user.user_id,
+#             "mobile_number": user.mobile_number,
+#             "email": user.email,
+#             "email_verified": email_verified,
+#             "last_accessed_step": last_accessed_step,
+#             "access_token": access_token,
+#             "message": "Mobile number verified successfully.",
+#         }
+#         return response_data
 
 # class VerifyMobileOtpSerializer(serializers.Serializer):
 #     mobile_number = serializers.CharField(max_length=15)
