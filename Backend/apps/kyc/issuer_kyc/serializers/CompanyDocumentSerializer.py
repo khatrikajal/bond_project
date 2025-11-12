@@ -23,10 +23,8 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
     Serializer for bulk document upload.
     """
 
-    # Mandatory on FIRST upload only
     certificate_of_incorporation = serializers.FileField(required=False)
 
-    # Optional fields
     moa_aoa_type = serializers.ChoiceField(
         choices=[('MOA', 'MOA'), ('AOA', 'AOA')],
         required=False,
@@ -49,30 +47,35 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
         errors = {}
         company_id = self.context["company_id"]
 
-        # ✅ Import here to avoid circular import
-        from ..models.CompanyDocumentModel import CompanyDocument
+        #Correct document name constant
+        certificate_name = "CERTIFICATE_OF_INCORPORATION"
 
-        # ✅ 1. Certificate mandatory on FIRST upload
+        #  Certificate existence check
         cert_exists = CompanyDocument.objects.filter(
             company_id=company_id,
-            document_name="CERTIFICATE_INC",
+            document_name=certificate_name,
             del_flag=0
         ).exists()
 
+        # Certificate must exist first time
         if not cert_exists and not data.get("certificate_of_incorporation"):
             errors["certificate_of_incorporation"] = (
                 "Certificate of Incorporation is mandatory for first upload."
             )
 
-        # ✅ 2. Mapping to detect duplicate uploads
+        #  Prevent re-upload if already exists
+        if cert_exists and data.get("certificate_of_incorporation"):
+            errors["certificate_of_incorporation"] = (
+                "Certificate of Incorporation already exists. Delete it before uploading again."
+            )
+
+        #  Duplicate prevention for other docs
         upload_map = {
-            "certificate_of_incorporation": "CERTIFICATE_INC",
             "moa_aoa_file": data.get("moa_aoa_type"),
             "msme_udyam_file": data.get("msme_udyam_type"),
             "import_export_certificate": "IEC",
         }
 
-        # ✅ 3. Check duplicates — if exists, user must delete first
         for field_name, document_name in upload_map.items():
             file = data.get(field_name)
             if not file or not document_name:
@@ -89,35 +92,27 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
                     f"{document_name} already exists. Delete it before uploading again."
                 )
 
-        if errors:
-            raise serializers.ValidationError(errors)
-
-        # ✅ 4. Validate MOA/AOA dropdown logic
+        # Validate file pairing
         if data.get('moa_aoa_type') and not data.get('moa_aoa_file'):
             errors['moa_aoa_file'] = "File required for selected MOA/AOA"
-
         if data.get('moa_aoa_file') and not data.get('moa_aoa_type'):
             errors['moa_aoa_type'] = "Please select MOA or AOA"
 
-        # ✅ 5. Validate MSME/Udyam dropdown logic
         if data.get('msme_udyam_type') and not data.get('msme_udyam_file'):
             errors['msme_udyam_file'] = "File required for selected MSME/Udyam"
-
         if data.get('msme_udyam_file') and not data.get('msme_udyam_type'):
             errors['msme_udyam_type'] = "Please select MSME or Udyam"
 
-        # ✅ 6. File validation (size + extension)
+        # File validation
         allowed_extensions = ['pdf', 'jpeg', 'jpg', 'png']
         max_size = 5 * 1024 * 1024  # 5MB
 
-        files_to_validate = {
+        for field_name, file in {
             'certificate_of_incorporation': data.get('certificate_of_incorporation'),
             'moa_aoa_file': data.get('moa_aoa_file'),
             'msme_udyam_file': data.get('msme_udyam_file'),
             'import_export_certificate': data.get('import_export_certificate'),
-        }
-
-        for field_name, file in files_to_validate.items():
+        }.items():
             if not file:
                 continue
 
@@ -135,55 +130,47 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
-        """Create all documents (new row for each upload attempt)."""
+        """Create all documents."""
         company_id = self.context['company_id']
         request = self.context.get('request')
         user = request.user if request and request.user.is_authenticated else None
 
-        from ..models.CompanyDocumentModel import CompanyDocument
-
         created_documents = []
-        document_ids = []
+        certificate_name = "CERTIFICATE_OF_INCORPORATION"
 
         with transaction.atomic():
-
-            # ✅ Certificate
+            #  Certificate
             cert_file = validated_data.get('certificate_of_incorporation')
             if cert_file:
-                doc = self._create_document(company_id, "CERTIFICATE_INC", cert_file, user)
+                doc = self._create_document(company_id, certificate_name, cert_file, user)
                 created_documents.append(doc)
-                document_ids.append(str(doc.document_id))
 
-            # ✅ MOA/AOA
+            #  MOA/AOA
             moa_type = validated_data.get('moa_aoa_type')
             moa_file = validated_data.get('moa_aoa_file')
             if moa_type and moa_file:
                 doc = self._create_document(company_id, moa_type, moa_file, user)
                 created_documents.append(doc)
-                document_ids.append(str(doc.document_id))
 
-            # ✅ MSME/Udyam
+            #  MSME/Udyam
             msme_type = validated_data.get('msme_udyam_type')
             msme_file = validated_data.get('msme_udyam_file')
             if msme_type and msme_file:
                 doc = self._create_document(company_id, msme_type, msme_file, user)
                 created_documents.append(doc)
-                document_ids.append(str(doc.document_id))
 
-            # ✅ IEC
+            #  IEC
             iec_file = validated_data.get('import_export_certificate')
             if iec_file:
                 doc = self._create_document(company_id, 'IEC', iec_file, user)
                 created_documents.append(doc)
-                document_ids.append(str(doc.document_id))
 
         return created_documents
 
     def _create_document(self, company_id, document_name, file, user):
-        """Create a single document row (new entry always)."""
+        """Helper: Create single document row."""
         document_type = CompanyDocument.detect_file_type(file.name)
-
-        doc = CompanyDocument.objects.create(
+        return CompanyDocument.objects.create(
             company_id=company_id,
             document_name=document_name,
             document_type=document_type,
@@ -191,7 +178,7 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
             file_size=file.size,
             user_id_updated_by=user
         )
-        return doc
+
 
 class CompanyDocumentListSerializer(serializers.ModelSerializer):
     """Serializer for listing documents without file data"""
@@ -232,8 +219,12 @@ class CompanyDocumentListSerializer(serializers.ModelSerializer):
         return None
 
 
+
+
+
+
 class CompanyDocumentDetailSerializer(serializers.ModelSerializer):
-    """Serializer for retrieving document with file URL"""
+    """Serializer for retrieving document (no file URL exposed)"""
     document_name_display = serializers.CharField(
         source='get_document_name_display',
         read_only=True
@@ -251,22 +242,26 @@ class CompanyDocumentDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_file_url(self, obj):
-        """Return the file URL if available"""
-        try:
-            if obj.document_file:
-                request = self.context.get('request')
-                if request:
-                    return request.build_absolute_uri(obj.document_file.url)
-                return obj.document_file.url
-        except Exception as e:
-            logger.error(
-                f"Error generating file URL for document_id={obj.document_id}: {str(e)}",
-                exc_info=True
-            )
-        return None
-    
+        """Intentionally hidden for security reasons"""
+        return None  # always hide file URL
+        
+    #  def get_file_url(self, obj):
+    #     """Return the file URL if available"""
+    #     try:
+    #         if obj.document_file:
+    #             request = self.context.get('request')
+    #             if request:
+    #                 return request.build_absolute_uri(obj.document_file.url)
+    #             return obj.document_file.url
+    #     except Exception as e:
+    #         logger.error(
+    #             f"Error generating file URL for document_id={obj.document_id}: {str(e)}",
+    #             exc_info=True
+    #         )
+    #     return None 
+
     def get_file_path(self, obj):
-        """Return the file storage path"""
+        """Return the internal file path"""
         return obj.document_file.name if obj.document_file else None
 
     def get_uploaded_by(self, obj):
@@ -276,7 +271,6 @@ class CompanyDocumentDetailSerializer(serializers.ModelSerializer):
                 'uploaded_at': obj.uploaded_at.isoformat()
             }
         return None
-
 
 class CompanyDocumentStatusSerializer(serializers.Serializer):
     """Serializer for checking document upload status"""
@@ -302,7 +296,7 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
     )
     file = serializers.FileField(required=True)
 
-    # ✅ Validate file: size + extension
+    #  Validate file: size + extension
     def validate_file(self, value):
         max_size = 5 * 1024 * 1024
         if value.size > max_size:
@@ -318,12 +312,12 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
 
         return value
 
-    # ✅ Validate MOA/AOA & MSME/Udyam exclusivity
+    #  Validate MOA/AOA & MSME/Udyam exclusivity
     def validate(self, data):
         company_id = self.context['company_id']
         document_name = data['document_name']
 
-        # ✅ MOA/AOA validation
+        #  MOA/AOA validation
         if document_name in CompanyDocument.MOA_AOA_GROUP:
             other = CompanyDocument.MOA_AOA_GROUP.copy()
             other.remove(document_name)
@@ -339,7 +333,7 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
                     "document_name": f"Another MOA/AOA already exists. Delete it first."
                 })
 
-        # ✅ MSME/Udyam validation
+        #  MSME/Udyam validation
         if document_name in CompanyDocument.MSME_UDYAM_GROUP:
             other = CompanyDocument.MSME_UDYAM_GROUP.copy()
             other.remove(document_name)
@@ -357,14 +351,14 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
 
         return data
 
-    # ✅ CREATE document (safe for AnonymousUser)
+    #  CREATE document (safe for AnonymousUser)
     def create(self, validated_data):
         file = validated_data["file"]
         document_name = validated_data["document_name"]
         company_id = self.context['company_id']
         request = self.context.get("request")
 
-        # ✅ SAFE USER HANDLING (never crash)
+        #  SAFE USER HANDLING (never crash)
         user = getattr(request, "user", None)
         safe_user = user if getattr(user, "is_authenticated", False) else None
 
