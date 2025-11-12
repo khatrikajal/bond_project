@@ -101,16 +101,20 @@ class CompanyInfoDeleteView(APIView):
 
     def delete(self,request,company_id):
         try:
-            company = CompanyInformation.objects.get(company_id=company_id, user=request.user)
+            company = CompanyInformation.objects.get(company_id=company_id, user=request.user,del_flag=0)
         except CompanyInformation.DoesNotExist:
             return Response({
                 "status": "error", "message": "Company information not found."
             },status=status.HTTP_404_NOT_FOUND)
         
+        company.del_flag = 1
+        company.user_id_updated_by = request.user
+        company.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
+        
         
         # CompanyOnboardingApplication.objects.filter(company_information=company,user=request.user).delete()
 
-        company.delete()
+        # company.delete()
 
         return Response({
             "status": "success",

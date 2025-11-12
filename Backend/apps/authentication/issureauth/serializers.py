@@ -121,7 +121,7 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
 
         # Generate JWT token
         refresh = RefreshToken.for_user(user)
-        access_token= str(refresh.access_token)
+        access_token = str(refresh.access_token)
 
         # Check email verification status
         email_verified = getattr(user, "email_verified", False)
@@ -129,10 +129,20 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
         # Get onboarding record if exists
         onboarding = CompanyOnboardingApplication.objects.filter(user=user).first()
 
-        if email_verified:
-            last_accessed_step = onboarding.last_accessed_step if onboarding else 0
-        else:
-            last_accessed_step = 0
+        last_accessed_step = 0
+        company_information_id = None
+
+        if onboarding:
+            last_accessed_step = onboarding.last_accessed_step
+            company_information_id = (
+                str(onboarding.company_information.company_id)
+                if onboarding.company_information
+                else None
+            )
+
+        # ✅ If email not verified yet, reset progress
+        if not email_verified:
+            last_accessed_step = 1
 
         # ✅ Build response payload
         response_data = {
@@ -141,6 +151,7 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
             "email": user.email,
             "email_verified": email_verified,
             "last_accessed_step": last_accessed_step,
+            "company_information_id": company_information_id,
             "access_token": access_token,
             "message": "Mobile number verified successfully.",
         }

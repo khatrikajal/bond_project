@@ -4,10 +4,14 @@ from io import BytesIO
 from PIL import Image
 import re
 import pytesseract
-from ..models.CompanyInformationModel import CompanyInformation,CompanyOnboardingApplication
+from ..models.CompanyInformationModel import CompanyInformation,CompanyOnboardingApplication,ActiveCompanyManager
 from django.core.files.base import ContentFile
 import uuid
 
+
+
+
+    
 class CompanyInfoSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
     corporate_identification_number = serializers.CharField(max_length=21)
@@ -18,17 +22,13 @@ class CompanyInfoSerializer(serializers.Serializer):
     entity_type = serializers.CharField(max_length=50)
     company_or_individual_pan_card_file = serializers.FileField(required=True)
     gstin = serializers.CharField(max_length=15)
-    msme_udyam_registration_no = serializers.CharField(
-        max_length=50, required=False, allow_blank=True
-    )
+    msme_udyam_registration_no = serializers.CharField(max_length=50, required=False, allow_blank=True)
 
-    # PAN details: extracted OR manually overridden
     company_pan_number = serializers.CharField(max_length=10, required=False, allow_blank=True)
     pan_holder_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
 
     # ---------------- VALIDATIONS ---------------- #
-
     def validate_company_or_individual_pan_card_file(self, value):
         """Ensure uploaded file is a valid image or PDF."""
         if not value.name.lower().endswith((".jpg", ".jpeg", ".png", ".pdf")):
@@ -36,28 +36,27 @@ class CompanyInfoSerializer(serializers.Serializer):
         return value
 
     def validate(self, attrs):
-        """Validate CIN and GSTIN uniqueness before saving."""
+        """Validate CIN and GSTIN uniqueness before saving (ignore deleted)."""
         cin = attrs.get("corporate_identification_number")
         gstin = attrs.get("gstin")
 
-        # ✅ Check for duplicate CIN
-        if CompanyInformation.objects.filter(corporate_identification_number=cin).exists():
-            raise serializers.ValidationError(
-                {"corporate_identification_number": "This Corporate Identification Number (CIN) is already registered."}
-            )
+        # ✅ Check for duplicate CIN (only active)
+        if CompanyInformation.active.filter(corporate_identification_number=cin).exists():
+            raise serializers.ValidationError({
+                "corporate_identification_number": "This Corporate Identification Number (CIN) is already registered."
+            })
 
-        # ✅ Check for duplicate GSTIN
-        if CompanyInformation.objects.filter(gstin=gstin).exists():
-            raise serializers.ValidationError(
-                {"gstin": "This GSTIN number is already registered with another company."}
-            )
+        # ✅ Check for duplicate GSTIN (only active)
+        if CompanyInformation.active.filter(gstin=gstin).exists():
+            raise serializers.ValidationError({
+                "gstin": "This GSTIN number is already registered with another company."
+            })
 
         return attrs
 
     # ---------------- OCR EXTRACTION ---------------- #
-
     def extract_pan_details(self, file_bytes):
-        """Extract PAN details from the uploaded file using OCR."""
+        """Extract PAN details from uploaded image/PDF using OCR."""
         try:
             img = Image.open(BytesIO(file_bytes))
             text = pytesseract.image_to_string(img).upper()
@@ -68,64 +67,40 @@ class CompanyInfoSerializer(serializers.Serializer):
             dob_match = re.search(r"\d{2}/\d{2}/\d{4}", text)
 
             pan_number = pan_match.group(0) if pan_match else None
-            dob = (
-                datetime.strptime(dob_match.group(0), "%d/%m/%Y").date()
-                if dob_match
-                else None
-            )
+            dob = datetime.strptime(dob_match.group(0), "%d/%m/%Y").date() if dob_match else None
 
-            # Try to find name line
+            # Try to find name
             name_line = None
             for i, line in enumerate(lines):
                 if "नाम" in line or "NAME" in line:
                     if i + 1 < len(lines):
                         next_line = lines[i + 1].strip()
-                        if not any(
-                            k in next_line
-                            for k in [
-                                "FATHER",
-                                "INCOME TAX",
-                                "GOVT",
-                                "PERMANENT ACCOUNT",
-                                "DEPARTMENT",
-                            ]
-                        ):
+                        if not any(k in next_line for k in ["FATHER", "INCOME TAX", "GOVT", "PERMANENT ACCOUNT", "DEPARTMENT"]):
                             name_line = next_line
                             break
-
             if not name_line and pan_match:
                 for i, line in enumerate(lines):
                     if pan_match.group(0) in line and i > 0:
                         name_line = lines[i - 1]
                         break
 
-            return {
-                "pan_number": pan_number,
-                "pan_holder_name": name_line,
-                "dob": dob,
-            }
-
+            return {"pan_number": pan_number, "pan_holder_name": name_line, "dob": dob}
         except Exception as e:
             print("OCR extraction error:", e)
             return {"pan_number": None, "pan_holder_name": None, "dob": None}
 
     # ---------------- CREATE LOGIC ---------------- #
-
     def create(self, validated_data):
-        """Create CompanyInformation with extracted or manually overridden PAN data."""
+        """Create CompanyInformation and update onboarding state."""
         user = self.context["request"].user
         file = validated_data.pop("company_or_individual_pan_card_file", None)
 
         if not file:
-            raise serializers.ValidationError(
-                {"company_or_individual_pan_card_file": "PAN card upload is required."}
-            )
+            raise serializers.ValidationError({"company_or_individual_pan_card_file": "PAN card upload is required."})
 
-        # Step 1: Extract PAN details using OCR
         file_bytes = file.read()
         extracted = self.extract_pan_details(file_bytes)
 
-        # Step 2: If user provided manual fields, override the extracted ones
         manual_pan = validated_data.pop("company_pan_number", None)
         manual_name = validated_data.pop("pan_holder_name", None)
         manual_dob = validated_data.pop("date_of_birth", None)
@@ -134,23 +109,16 @@ class CompanyInfoSerializer(serializers.Serializer):
         pan_holder_name = manual_name or extracted["pan_holder_name"]
         date_of_birth = manual_dob or extracted["dob"]
 
-        # Step 3: Validate PAN number is found (either from OCR or manual)
         if not company_pan_number:
-            raise serializers.ValidationError(
-                {"company_pan_number": "PAN number could not be extracted or entered manually."}
-            )
+            raise serializers.ValidationError({"company_pan_number": "PAN number could not be extracted or entered manually."})
 
-        # Step 4: Prevent duplicate PANs
-        if CompanyInformation.objects.filter(company_pan_number=company_pan_number).exists():
-            raise serializers.ValidationError(
-                {"company_pan_number": "This PAN number is already registered with another company."}
-            )
+        # ✅ Ignore deleted records in duplicate check
+        if CompanyInformation.active.filter(company_pan_number=company_pan_number).exists():
+            raise serializers.ValidationError({"company_pan_number": "This PAN number is already registered with another company."})
 
-        # Step 5: Save the PAN file
         filename = f"pan_{uuid.uuid4().hex}.pdf"
         file_obj = ContentFile(file_bytes, name=filename)
 
-        # Step 6: Create CompanyInformation record
         company_info = CompanyInformation.objects.create(
             user=user,
             company_or_individual_pan_card_file=file_obj,
@@ -160,7 +128,6 @@ class CompanyInfoSerializer(serializers.Serializer):
             **validated_data,
         )
 
-        # Step 7: Update onboarding application
         onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
             user=user,
             defaults={
@@ -172,10 +139,7 @@ class CompanyInfoSerializer(serializers.Serializer):
         )
 
         step_completion = onboarding_app.step_completion or {}
-        step_completion["1"] = {
-            "completed": True,
-            "record_id": str(company_info.company_id),
-        }
+        step_completion["1"] = {"completed": True, "record_id": str(company_info.company_id)}
         onboarding_app.step_completion = step_completion
         onboarding_app.company_information = company_info
         onboarding_app.save(update_fields=["step_completion", "company_information"])
@@ -188,7 +152,6 @@ class CompanyInfoSerializer(serializers.Serializer):
             "date_of_birth": company_info.date_of_birth,
             "message": "Company information and PAN details saved successfully.",
         }
-
 # class CompanyInfoSerializer(serializers.Serializer):
 #     user_id = serializers.IntegerField(required=False)
 #     corporate_identification_number = serializers.CharField(max_length=21)
@@ -197,29 +160,48 @@ class CompanyInfoSerializer(serializers.Serializer):
 #     place_of_incorporation = serializers.CharField(max_length=100)
 #     state_of_incorporation = serializers.CharField(max_length=100)
 #     entity_type = serializers.CharField(max_length=50)
-#     company_or_individual_pan_card_file = serializers.FileField()
+#     company_or_individual_pan_card_file = serializers.FileField(required=True)
 #     gstin = serializers.CharField(max_length=15)
 #     msme_udyam_registration_no = serializers.CharField(
 #         max_length=50, required=False, allow_blank=True
 #     )
 
-#     # Extracted PAN details
-#     company_pan_number = serializers.CharField(max_length=10, read_only=True)
-#     pan_holder_name = serializers.CharField(max_length=255, read_only=True)
-#     date_of_birth = serializers.DateField(read_only=True)
+#     # PAN details: extracted OR manually overridden
+#     company_pan_number = serializers.CharField(max_length=10, required=False, allow_blank=True)
+#     pan_holder_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+#     date_of_birth = serializers.DateField(required=False, allow_null=True)
+
+#     # ---------------- VALIDATIONS ---------------- #
 
 #     def validate_company_or_individual_pan_card_file(self, value):
 #         """Ensure uploaded file is a valid image or PDF."""
 #         if not value.name.lower().endswith((".jpg", ".jpeg", ".png", ".pdf")):
-#             raise serializers.ValidationError(
-#                 "Only image or PDF files are allowed for PAN upload."
-#             )
+#             raise serializers.ValidationError("Only image or PDF files are allowed for PAN upload.")
 #         return value
 
+#     def validate(self, attrs):
+#         """Validate CIN and GSTIN uniqueness before saving."""
+#         cin = attrs.get("corporate_identification_number")
+#         gstin = attrs.get("gstin")
+
+#         # ✅ Check for duplicate CIN
+#         if CompanyInformation.objects.filter(corporate_identification_number=cin).exists():
+#             raise serializers.ValidationError(
+#                 {"corporate_identification_number": "This Corporate Identification Number (CIN) is already registered."}
+#             )
+
+#         # ✅ Check for duplicate GSTIN
+#         if CompanyInformation.objects.filter(gstin=gstin).exists():
+#             raise serializers.ValidationError(
+#                 {"gstin": "This GSTIN number is already registered with another company."}
+#             )
+
+#         return attrs
+
+#     # ---------------- OCR EXTRACTION ---------------- #
+
 #     def extract_pan_details(self, file_bytes):
-#         """
-#         Extract PAN details using OCR — detect name via 'नाम/Name' marker.
-#         """
+#         """Extract PAN details from the uploaded file using OCR."""
 #         try:
 #             img = Image.open(BytesIO(file_bytes))
 #             text = pytesseract.image_to_string(img).upper()
@@ -236,9 +218,8 @@ class CompanyInfoSerializer(serializers.Serializer):
 #                 else None
 #             )
 
+#             # Try to find name line
 #             name_line = None
-
-#             # Step 1: Try to find 'नाम/NAME' and extract the next line as the holder's name
 #             for i, line in enumerate(lines):
 #                 if "नाम" in line or "NAME" in line:
 #                     if i + 1 < len(lines):
@@ -256,7 +237,6 @@ class CompanyInfoSerializer(serializers.Serializer):
 #                             name_line = next_line
 #                             break
 
-#             # Step 2: If still not found, fallback to older logic (line above PAN number)
 #             if not name_line and pan_match:
 #                 for i, line in enumerate(lines):
 #                     if pan_match.group(0) in line and i > 0:
@@ -271,14 +251,12 @@ class CompanyInfoSerializer(serializers.Serializer):
 
 #         except Exception as e:
 #             print("OCR extraction error:", e)
-#             return {
-#                 "pan_number": None,
-#                 "pan_holder_name": None,
-#                 "dob": None,
-#             }
+#             return {"pan_number": None, "pan_holder_name": None, "dob": None}
+
+#     # ---------------- CREATE LOGIC ---------------- #
 
 #     def create(self, validated_data):
-#         """Create a CompanyInformation record with OCR auto-fill."""
+#         """Create CompanyInformation with extracted or manually overridden PAN data."""
 #         user = self.context["request"].user
 #         file = validated_data.pop("company_or_individual_pan_card_file", None)
 
@@ -287,42 +265,46 @@ class CompanyInfoSerializer(serializers.Serializer):
 #                 {"company_or_individual_pan_card_file": "PAN card upload is required."}
 #             )
 
-#         # Extract details via OCR
+#         # Step 1: Extract PAN details using OCR
 #         file_bytes = file.read()
 #         extracted = self.extract_pan_details(file_bytes)
 
-#         if not extracted["pan_number"]:
+#         # Step 2: If user provided manual fields, override the extracted ones
+#         manual_pan = validated_data.pop("company_pan_number", None)
+#         manual_name = validated_data.pop("pan_holder_name", None)
+#         manual_dob = validated_data.pop("date_of_birth", None)
+
+#         company_pan_number = manual_pan or extracted["pan_number"]
+#         pan_holder_name = manual_name or extracted["pan_holder_name"]
+#         date_of_birth = manual_dob or extracted["dob"]
+
+#         # Step 3: Validate PAN number is found (either from OCR or manual)
+#         if not company_pan_number:
 #             raise serializers.ValidationError(
-#                 {
-#                     "company_or_individual_pan_card_file": "PAN number could not be extracted. Please upload a clearer image."
-#                 }
+#                 {"company_pan_number": "PAN number could not be extracted or entered manually."}
 #             )
 
-#         # Prevent duplicate PAN
-#         if CompanyInformation.objects.filter(
-#             company_pan_number=extracted["pan_number"]
-#         ).exists():
+#         # Step 4: Prevent duplicate PANs
+#         if CompanyInformation.objects.filter(company_pan_number=company_pan_number).exists():
 #             raise serializers.ValidationError(
-#                 {
-#                     "company_or_individual_pan_card_file": "This PAN number is already registered with another company."
-#                 }
+#                 {"company_pan_number": "This PAN number is already registered with another company."}
 #             )
 
-#         # Save PAN file
+#         # Step 5: Save the PAN file
 #         filename = f"pan_{uuid.uuid4().hex}.pdf"
 #         file_obj = ContentFile(file_bytes, name=filename)
 
-#         # Create company record
+#         # Step 6: Create CompanyInformation record
 #         company_info = CompanyInformation.objects.create(
 #             user=user,
 #             company_or_individual_pan_card_file=file_obj,
-#             company_pan_number=extracted["pan_number"],
-#             pan_holder_name=extracted["pan_holder_name"],
-#             date_of_birth=extracted["dob"],
+#             company_pan_number=company_pan_number,
+#             pan_holder_name=pan_holder_name,
+#             date_of_birth=date_of_birth,
 #             **validated_data,
 #         )
 
-#         # Create or update onboarding record
+#         # Step 7: Update onboarding application
 #         onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
 #             user=user,
 #             defaults={
@@ -333,7 +315,6 @@ class CompanyInfoSerializer(serializers.Serializer):
 #             },
 #         )
 
-#         # ✅ Fix: safely mark step complete without relying on a missing model method
 #         step_completion = onboarding_app.step_completion or {}
 #         step_completion["1"] = {
 #             "completed": True,
@@ -343,7 +324,6 @@ class CompanyInfoSerializer(serializers.Serializer):
 #         onboarding_app.company_information = company_info
 #         onboarding_app.save(update_fields=["step_completion", "company_information"])
 
-#         # Return extracted + saved info
 #         return {
 #             "company_id": company_info.company_id,
 #             "company_name": company_info.company_name,
@@ -352,7 +332,8 @@ class CompanyInfoSerializer(serializers.Serializer):
 #             "date_of_birth": company_info.date_of_birth,
 #             "message": "Company information and PAN details saved successfully.",
 #         }
-    
+
+
 
 
 class PanExtractionSerializer(serializers.Serializer):
