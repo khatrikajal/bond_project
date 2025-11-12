@@ -1,6 +1,6 @@
 """
 Admin package for bond_estimate app.
-You can split admin registrations into multiple files here.
+Imports all admin configurations.
 """
 from django.contrib import admin
 # Example placeholder
@@ -11,3 +11,6 @@ from django.contrib import admin
 
 
 from apps.bond_estimate.admin import ganesh
+
+from .BondEstimationApplicationAdmin import *
+from .borrowing_admin import *
