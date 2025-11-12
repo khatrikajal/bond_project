@@ -1,15 +1,11 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views import defaults as default_views
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-    SpectacularRedocView,
-)
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views import defaults as default_views
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
 
 # Default error handlers
 handler400 = default_views.bad_request
@@ -37,6 +33,11 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    path(
+    "api/redoc/",
+    SpectacularRedocView.as_view(url_name="api-schema"),
+    name="api-redoc",
+),
     # Placeholder for your app URLs (create apps/urls.py later)
     path("api/", include("apps.urls")),
 
