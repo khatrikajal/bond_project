@@ -1,7 +1,8 @@
 #
 
 from rest_framework import serializers
-from apps.bond_estimate.model.CapitalDetailsModel import CapitalDetails
+from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+# from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 
 
