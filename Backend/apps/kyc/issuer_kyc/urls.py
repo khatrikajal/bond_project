@@ -68,42 +68,42 @@ urlpatterns = [
     path("company/demat/<int:demat_account_id>/delete", DematAccountDelateView.as_view(), name="delete-demat-account"),
    
   
-    # Bulk upload all documents at once (used during onboarding)
+    # Bulk upload all documents at once 
     path(
         'companies/<uuid:company_id>/documents/bulkupload/',
         CompanyDocumentBulkUploadView.as_view(),
         name='document-bulk-upload'
     ),
     
-    # Get document upload status (must be before document-list)
+    # Get document upload status 
     path(
         'companies/<uuid:company_id>/documents/status/',
         CompanyDocumentStatusView.as_view(),
         name='document-status'
     ),
     
-    # Upload single document (must be before document-detail)
+    # Upload single document
     path(
         'companies/<uuid:company_id>/documents/upload/',
         CompanySingleDocumentUploadView.as_view(),
         name='document-single-upload'
     ),
     
-    # Admin verification endpoint (must be before document-detail)
+    # Admin verification endpoint 
     path(
         'companies/<uuid:company_id>/documents/<uuid:document_id>/verify/',
         CompanyDocumentVerificationView.as_view(),
         name='document-verify'
     ),
     
-    # Get, update, delete specific document (UUID pattern)
+    # Get, update, delete specific document
     path(
         'companies/<uuid:company_id>/documents/<uuid:document_id>/',
         CompanyDocumentDetailView.as_view(),
         name='document-detail'
     ),
     
-    # List all documents for company (must be LAST)
+    # List all documents for company 
     path(
         'companies/<uuid:company_id>/documents/',
         CompanyDocumentListView.as_view(),
