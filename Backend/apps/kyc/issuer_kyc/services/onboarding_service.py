@@ -11,6 +11,8 @@ from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument
 from apps.kyc.issuer_kyc.models.CompanyDocumentModel import CompanyDocument
 from apps.kyc.issuer_kyc.models.DemateAccountDetailsModel import DematAccount
+from apps.kyc.issuer_kyc.models.CompanySignatoryModel import CompanySignatory
+
 from datetime import timezone
 import logging
 
@@ -21,10 +23,10 @@ logger = logging.getLogger(__name__)
 STEP_MODEL_MAP = {
     1: CompanyInformation,
     2: CompanyAddress,
-    4: [BankDetails],
-    5:FinancialDocument,
     3:CompanyDocument,
     4: [BankDetails, DematAccount],
+    5:FinancialDocument,
+    6:CompanySignatory
 
     # add more steps here (KYC, Documents, Directors etc.)
 }

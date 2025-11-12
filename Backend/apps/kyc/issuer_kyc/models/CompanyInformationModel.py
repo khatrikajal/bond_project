@@ -2,7 +2,7 @@ from .BaseModel import BaseModel
 from django.db import models
 from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 from apps.authentication.issureauth.models import User
-
+from django.db import Q
 import uuid
 
 class ActiveCompanyManager(models.Manager):
