@@ -2,8 +2,13 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated
-from apps.bond_estimate.model.CapitalDetailsModel import CapitalDetails
-from apps.bond_estimate.model.BondEstimationApplicationModel import BondEstimationApplication
+
+# from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+# from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
+# from apps.bond_estimate.serializers.CapitalDetailsSerializer import CapitalDetailsSerializer
+
+from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.serializers.CapitalDetailsSerializer import CapitalDetailsSerializer
 
 

@@ -1,18 +1,19 @@
 # services/bond_estimation_service.py
 
-from apps.bond_estimate.model.BondEstimationApplicationModel import BondEstimationApplication
-from apps.bond_estimate.model.CapitalDetailsModel import CapitalDetails
+from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
+from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+from apps.bond_estimate.models.CreditRatingDetailsModel import CreditRatingDetails
 STEP_MODEL_MAP = {
     # Add step and its model here
     # "1.1":FundPostion,
-    # "1.2":Creditrating,
+    "1.2":CreditRatingDetails,
     "2.2":CapitalDetails
 }
 
 
 def create_or_get_application(user, company):
     """
-    Returns existing active application or creates a new one.
+    Returns existing active application or creates a new one.P
     """
     app, created = BondEstimationApplication.objects.get_or_create(
         user=user,

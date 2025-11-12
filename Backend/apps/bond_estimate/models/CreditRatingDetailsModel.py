@@ -1,4 +1,5 @@
-from apps.bond_estimate.models import BaseModel
+from apps.bond_estimate.models.BaseModel import BaseModel
+
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.authentication.issureauth.models import User
 from django.db import models
