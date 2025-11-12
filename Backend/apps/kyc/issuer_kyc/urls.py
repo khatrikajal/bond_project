@@ -26,6 +26,7 @@ CompanySignatoryUpdateView,
 CompanySignatoryDelete,
 CompanySignatoryStatusUpdate)
 
+from .views.FinalSubmitAPIView import FinalSubmitAPIView
 
 financial_documents = FinancialDocumentViewSet.as_view({
     'get': 'list',
@@ -167,6 +168,13 @@ urlpatterns = [
      path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
      path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
      path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+
+
+
+    #------- Final Submit -------------
+   
+    path("company/<uuid:company_id>/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
+
 
 
 ]
