@@ -1,0 +1,28 @@
+#
+
+from rest_framework import serializers
+from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+# from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+
+
+class CapitalDetailsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CapitalDetails
+        fields = [
+            "capital_detail_id",
+            "company",
+            "share_capital",
+            "reserves_surplus",
+            "net_worth",
+            "created_at",
+            "updated_at",
+            "del_flag",
+        ]
+        read_only_fields = ["capital_detail_id", "created_at", "updated_at", "del_flag"]
+
+    def validate_company(self, value):
+        if not CompanyInformation.objects.filter(pk=value.company_id, del_flag=0).exists():
+            raise serializers.ValidationError("Invalid company ID.")
+        return value

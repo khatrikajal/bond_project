@@ -22,306 +22,12 @@ from calendar import month_name
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from django.http import Http404
-# from .services import DocumentVerificationService
+from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
 import hashlib
 import logging
 
 logger = logging.getLogger(__name__)
 
-
-
-
-
-    # @transaction.atomic
-    # def create(self, request, company_id,*args, **kwargs):
-    #     if not company_id:
-    #         return Response({
-    #             "status": "error",
-    #             "message": "Company not found for this",
-    #         }, status=404)
-    #     upload = FinancialDocumentUploadSerializer(data=request.data,context={"company_id": company_id})
-    #     upload.is_valid(raise_exception=True)
-    #     vd = upload.validated_data
-    #     file = vd.pop('file')
-    #     auto_verify = vd.pop('auto_verify', True)
-
-    #     # compute hash
-    #     file_hash = self._compute_file_hash(file)
-
-    #     # get latest version
-    #     latest = self._get_latest_version(
-    #         company_id,
-    #         vd['document_type'],
-    #         vd['period_start_date'],
-    #         vd['period_end_date'],
-    #         vd['document_tag']
-    #     )
-
-    #     if latest and latest.file_hash == file_hash:
-    #         return Response({
-    #             'success': False,
-    #             'message': 'This exact file is already uploaded',
-    #             'document_id': latest.document_id,
-    #             'version': latest.version
-    #         }, status=status.HTTP_400_BAD_REQUEST)
-
-    #     version = latest.version + 1 if latest else 1
-
-    #     document = FinancialDocument(
-    #         company_id=company_id,
-    #         document_type=vd['document_type'],
-    #         document_tag=vd['document_tag'],
-    #         financial_year=vd['financial_year'],
-    #         period_type=vd['period_type'],
-    #         period_start_date=vd['period_start_date'],
-    #         period_end_date=vd['period_end_date'],
-    #         period_code=vd.get('period_code'),
-    #         version=version,
-
-    #         file_hash=file_hash,
-
-    #         auditor_name=vd.get('auditor_name'),
-    #         audit_report_date=vd.get('audit_report_date'),
-    #         audit_firm_name=vd.get('audit_firm_name'),
-            
-
-            
-    #         # user_id_updated_by=request.user,
-    #     )
-
-    #     document.file_name = file.name
-    #     document.file_size = file.size
-    #     document.mime_type = getattr(file, 'content_type', 'application/pdf')
-
-    #     document.file_path.save(file.name, file, save=True)
-
-    #     if auto_verify:
-    #         self._trigger_verification(document)
-
-    #     return Response({
-    #         'success': True,
-    #         'message': 'Document uploaded successfully',
-    #         'data': FinancialDocumentSerializer(document).data,
-    #         'verification_triggered': auto_verify
-    #     }, status=status.HTTP_201_CREATED)
-
-    
-    # @action(detail=False, methods=['post'])
-    # @transaction.atomic
-    # def bulk_upload(self, request,company_id):
-    #     if not company_id:
-    #         return Response({
-    #             "status": "error",
-    #             "message": "Company not found for this",
-    #         }, status=404)
-    #     bulk = BulkUploadSerializer(data=request.data,context={"company_id":company_id})
-    #     bulk.is_valid(raise_exception=True)
-
-    #     docs = bulk.validated_data['documents']
-
-    #     results = {'success': [], 'failed': []}
-
-    #     for idx, payload in enumerate(docs, start=1):
-    #         item = dict(payload)
-    #         item['company'] = company_id
-
-    #         upload = FinancialDocumentUploadSerializer(data=item)
-    #         if not upload.is_valid():
-    #             results['failed'].append({'index': idx, 'errors': upload.errors})
-    #             continue
-
-    #         vd = upload.validated_data
-    #         file = vd.pop('file')
-    #         auto_verify = vd.pop('auto_verify', True)
-
-    #         try:
-    #             file_hash = self._compute_file_hash(file)
-
-    #             latest = self._get_latest_version(
-    #                 company_id,
-    #                 vd['document_type'],
-    #                 vd['period_start_date'],
-    #                 vd['period_end_date'],
-    #                 vd['document_tag']
-    #             )
-
-    #             if latest and latest.file_hash == file_hash:
-    #                 results['failed'].append({
-    #                     'index': idx,
-    #                     'error': 'File already uploaded (duplicate)'
-    #                 })
-    #                 continue
-
-    #             version = latest.version + 1 if latest else 1
-
-    #             document = FinancialDocument(
-    #                 company_id=company_id,
-    #                 document_type=vd['document_type'],
-    #                 document_tag=vd['document_tag'],
-    #                 financial_year=vd['financial_year'],
-    #                 period_type=vd['period_type'],
-    #                 period_start_date=vd['period_start_date'],
-    #                 period_end_date=vd['period_end_date'],
-    #                 period_code=vd.get('period_code'),
-    #                 version=version,
-    #                 file_hash=file_hash,
-    #                 auditor_name=vd.get('auditor_name'),
-    #                 audit_report_date=vd.get('audit_report_date'),
-    #                 audit_firm_name=vd.get('audit_firm_name'),
-                  
-                    
-    #                 # user_id_updated_by=request.user,
-    #             )
-
-    #             document.file_name = file.name
-    #             document.file_size = file.size
-    #             document.mime_type = getattr(file, 'content_type', 'application/pdf')
-    #             document.file_path.save(file.name, file, save=True)
-
-    #             if auto_verify:
-    #                 self._trigger_verification(document)
-
-    #             results['success'].append({
-    #                 'index': idx,
-    #                 'document_id': document.document_id,
-    #                 'file_name': document.file_name,
-    #                 'version': document.version
-    #             })
-    #         except Exception as e:
-    #             logger.exception("Bulk upload failed")
-    #             results['failed'].append({'index': idx, 'error': str(e)})
-
-    #     return Response({
-    #         'success': True,
-    #         'message': f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
-    #         'results': results
-    #     }, status=status.HTTP_200_OK)
-    
-    # def update(self, request,company_id, *args, **kwargs):
-    #     if not company_id:
-    #         return Response({
-    #             "status": "error",
-    #             "message": "Company not found for this",
-    #         }, status=404)
-    #     document = self.get_object()
-
-    #     upload = FinancialDocumentUploadSerializer(data=request.data, partial=True)
-    #     upload.is_valid(raise_exception=True)
-    #     vd = upload.validated_data
-
-    #     file = vd.pop('file', None)
-    #     auto_verify = vd.pop('auto_verify', True)
-
-    #     if file:
-    #         new_hash = self._compute_file_hash(file)
-
-    #         if new_hash == document.file_hash:
-    #             return Response({
-    #                 'success': False,
-    #                 'message': 'Uploaded file is identical to existing version'
-    #             }, status=status.HTTP_400_BAD_REQUEST)
-
-    #         new_version = document.version + 1
-
-    #         new_doc = FinancialDocument.objects.create(
-    #             company=document.company,
-    #             document_type=document.document_type,
-    #             document_tag=document.document_tag,
-    #             financial_year=document.financial_year,
-    #             period_type=document.period_type,
-    #             period_start_date=document.period_start_date,
-    #             period_end_date=document.period_end_date,
-    #             period_code=document.period_code,
-    #             version=new_version,
-    #             file_hash=new_hash,
-    #             auditor_name=vd.get('auditor_name', document.auditor_name),
-    #             audit_report_date=vd.get('audit_report_date', document.audit_report_date),
-    #             audit_firm_name=vd.get('audit_firm_name', document.audit_firm_name),
-                
-                
-    #             # user_id_updated_by=request.user,
-    #         )
-
-    #         new_doc.file_name = file.name
-    #         new_doc.file_size = file.size
-    #         new_doc.mime_type = getattr(file, 'content_type', 'application/pdf')
-    #         new_doc.file_path.save(file.name, file, save=True)
-
-    #         self._invalidate_verification(new_doc)
-
-    #         if auto_verify:
-    #             self._trigger_verification(new_doc)
-
-    #         return Response({
-    #             'success': True,
-    #             'message': 'New document version created',
-    #             'data': FinancialDocumentSerializer(new_doc).data
-    #         })
-
-    #     for key, value in vd.items():
-    #         setattr(document, key, value)
-
-    #     document.user_id_updated_by = request.user
-    #     document.save()
-
-    #     return Response({
-    #         'success': True,
-    #         'message': 'Document metadata updated',
-    #         'data': FinancialDocumentSerializer(document).data
-    #     })
-
-    # def destroy(self, request, *args, **kwargs):
-    #     """Soft delete document"""
-        
-    #     document = self.get_object()
-    #     document.del_flag = 1
-    #     document.user_id_updated_by = request.user
-    #     document.save()
-        
-    #     return Response({
-    #         'success': True,
-    #         'message': 'Document deleted successfully'
-    #     }, status=status.HTTP_200_OK)
-    
-    # @action(detail=True, methods=['post'])
-    # def verify(self, request, pk=None):
-    #     """
-    #     Manually trigger verification for a document
-        
-    #     POST /api/documents/{id}/verify/
-    #     {
-    #         "verification_provider": "GST_PORTAL"  # Optional
-    #     }
-    #     """
-        
-    #     document = self.get_object()
-    #     verification_provider = request.data.get('verification_provider')
-        
-    #     try:
-    #         result = DocumentVerificationService.verify_document(
-    #             document,
-    #             provider=verification_provider,
-    #             user=request.user
-    #         )
-            
-    #         return Response({
-    #             'success': True,
-    #             'message': 'Verification completed',
-    #             'data': {
-    #                 'is_verified': result['is_verified'],
-    #                 'verification_source': result['verification_source'],
-    #                 'verification_reference_id': result['verification_reference_id'],
-    #                 'verified_at': result['verified_at']
-    #             }
-    #         }, status=status.HTTP_200_OK)
-        
-    #     except Exception as e:
-    #         logger.error(f"Verification failed for document {pk}: {str(e)}")
-    #         return Response({
-    #             'success': False,
-    #             'message': 'Verification failed',
-    #             'error': str(e)
-    #         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -427,6 +133,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file")
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             file_hash = self._compute_file_hash(file)
 
@@ -453,7 +161,6 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             document = FinancialDocument(
                 company_id=company_id,
-                version=version,
                 file_hash=file_hash,
                 user_id_updated_by=request.user,
                 **vd,
@@ -463,6 +170,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             document.file_size = file.size
             document.mime_type = getattr(file, "content_type", "application/pdf")
             document.file_path.save(file.name, file, save=True)
+            FinancialDocumentService.update_onboarding_state(company_id)
+
 
             if auto_verify:
                 logger.info(f"Triggering verification for document {document.document_id}")
@@ -503,6 +212,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file", None)
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             # CASE 1 — new version due to file change
             if file:
@@ -535,6 +246,17 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             document.user_id_updated_by = request.user
             document.save()
+            if any(field in vd for field in [
+                "financial_year",
+                "period_type",
+                "period_start_date",
+                "period_end_date",
+                "period_month",
+                "period_quarter",
+                "document_type",
+            ]):
+                FinancialDocumentService.update_onboarding_state(company_id)
+
 
 
             return api_response(
@@ -570,6 +292,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             file = vd.pop("file", None)
             auto_verify = vd.pop("auto_verify", True)
+            vd.pop("period_month", None)
+            vd.pop("period_quarter", None)
 
             # FILE update (optional)
             if file:
@@ -600,6 +324,15 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             document.user_id_updated_by = request.user
             document.save()
+            if any(field in vd for field in [
+                "financial_year",
+                "period_type",
+                "period_start_date",
+                "period_end_date",
+                "period_month",
+                "period_quarter",
+            ]):
+                FinancialDocumentService.update_onboarding_state(company_id)
 
             return api_response(
                 "success",
@@ -625,7 +358,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             document.del_flag = 1
             document.user_id_updated_by = request.user
             document.save()
-
+            company_id = document.company_id
+            FinancialDocumentService.update_onboarding_state(company_id)
             return api_response("success", "Document deleted successfully")
         
         except Exception as e:
@@ -712,6 +446,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                     document.file_size = file.size
                     document.mime_type = getattr(file, "content_type", "application/pdf")
                     document.file_path.save(file.name, file, save=True)
+                    
+
 
                     if auto_verify:
                         self._trigger_verification(document)
@@ -725,6 +461,9 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 except Exception as e:
                     logger.error(f"Bulk item {idx} failed: {e}", exc_info=True)
                     results["failed"].append({"index": idx, "error": str(e)})
+            
+            # after loop
+            FinancialDocumentService.update_onboarding_state(company_id)
 
             return api_response(
                 "success",
@@ -760,7 +499,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             results = {"success": [], "failed": []}
 
-            
+            needs_state_update = False
             for idx, item in enumerate(updates):
                 try:
                     doc_id = item.get("document_id")
@@ -821,12 +560,25 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                         setattr(document, k, v)
 
                     document.save()
+                    if any(field in vd for field in [
+                        "financial_year",
+                        "period_type",
+                        "period_start_date",
+                        "period_end_date",
+                        "period_month",
+                        "period_quarter",
+                        "document_type",
+                    ]):
+                        needs_state_update = True
 
                     results["success"].append({"index": idx, "document_id": doc_id})
 
                 except Exception as e:
                     logger.error(f"Bulk update item {idx} failed: {e}", exc_info=True)
                     results["failed"].append({"index": idx, "error": str(e)})
+            
+            if needs_state_update:
+                FinancialDocumentService.update_onboarding_state(company_id)
 
             return api_response(
                 "success",
@@ -872,7 +624,8 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                         "document_id": doc_id,
                         "error": str(e)
                     })
-
+            
+            FinancialDocumentService.update_onboarding_state(company_id)
             return api_response(
                 "success",
                 f"{len(results['success'])} succeeded, {len(results['failed'])} failed",

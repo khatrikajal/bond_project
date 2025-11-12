@@ -131,10 +131,8 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
 
         if email_verified:
             last_accessed_step = onboarding.last_accessed_step if onboarding else 0
-            company_information_id = onboarding.company_information_id if onboarding else 0
         else:
             last_accessed_step = 0
-            company_information_id = 0
 
         # ✅ Build response payload
         response_data = {
@@ -143,7 +141,6 @@ class VerifyMobileOtpSerializer(serializers.Serializer):
             "email": user.email,
             "email_verified": email_verified,
             "last_accessed_step": last_accessed_step,
-            "company_information_id": company_information_id,
             "access_token": access_token,
             "message": "Mobile number verified successfully.",
         }
