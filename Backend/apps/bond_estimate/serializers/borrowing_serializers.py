@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from decimal import Decimal
-from ..model.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
+from ..models.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
 
 
 class BorrowingDetailsSerializer(serializers.ModelSerializer):

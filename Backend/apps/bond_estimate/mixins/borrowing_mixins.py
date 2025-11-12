@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.db.models import Q, Sum, Avg, Count
 from decimal import Decimal
-from ..model.borrowing_details import BorrowingType, RepaymentTerms
+from ..models.borrowing_details import BorrowingType, RepaymentTerms
 
 
 class SoftDeleteMixin:

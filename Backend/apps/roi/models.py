@@ -28,7 +28,7 @@ class FundPosition(models.Model):
 # ---------- 2. Credit Rating Details ----------
 class CreditRating(models.Model):
     credit_rating_id = models.BigAutoField(primary_key=True)
-    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="credit_ratings")
+    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="credit_ratings_old")
     agency = models.CharField(max_length=50)
     rating = models.CharField(max_length=10)
     valid_till = models.DateField()
@@ -60,7 +60,7 @@ class BorrowingDetail(models.Model):
     ]
 
     borrowing_id = models.BigAutoField(primary_key=True)
-    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="borrowings")
+    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="borrowings_old")
     lender_name = models.CharField(max_length=255)
     lender_amount = models.DecimalField(max_digits=18, decimal_places=2)
     borrowing_type = models.CharField(max_length=50, choices=BORROWING_TYPE_CHOICES)
@@ -102,7 +102,7 @@ class CapitalDetail(models.Model):
 # ---------- 5. Profitability & Ratios ----------
 class ProfitabilityRatio(models.Model):
     ratio_id = models.BigAutoField(primary_key=True)
-    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="profitability_ratios")
+    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="profitability_ratios_old")
     net_worth = models.DecimalField(max_digits=18, decimal_places=2)
     ebitda = models.DecimalField(max_digits=18, decimal_places=2)
     debt_equity_ratio = models.DecimalField(max_digits=10, decimal_places=4)

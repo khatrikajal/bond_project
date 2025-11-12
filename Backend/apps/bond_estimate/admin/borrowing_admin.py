@@ -6,7 +6,7 @@ Optimized with search, filters, actions, formatted fields, and summary insights.
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db.models import Sum
-from ..model.borrowing_details import BorrowingDetails
+from ..models.borrowing_details import BorrowingDetails
 
 
 @admin.register(BorrowingDetails)

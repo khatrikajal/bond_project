@@ -6,7 +6,7 @@ from django.db import transaction
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 
-from ..model.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
+from ..models.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
 from ..serializers.borrowing_serializers import (
     BorrowingDetailsSerializer,
     BorrowingDetailsListSerializer,
@@ -22,7 +22,7 @@ from ..mixins.borrowing_mixins import (
     SearchFilterMixin,
     BorrowingSummaryMixin
 )
-from ..model.BondEstimationApplicationModel import BondEstimationApplication
+from ..models.BondEstimationApplicationModel import BondEstimationApplication
 
 
 class BorrowingDetailsViewSet(

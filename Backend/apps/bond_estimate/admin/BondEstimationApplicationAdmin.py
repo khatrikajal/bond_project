@@ -4,7 +4,7 @@ Provides detailed view, filtering, and searching options.
 """
 
 from django.contrib import admin
-from apps.bond_estimate.model.BondEstimationApplicationModel import BondEstimationApplication
+from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 
 
 @admin.register(BondEstimationApplication)

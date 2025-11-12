@@ -34,7 +34,7 @@ class BondEstimationApplication(models.Model):
     company = models.ForeignKey(
         CompanyInformation,
         on_delete=models.CASCADE,
-        related_name='credit_ratings',
+        related_name='bond_estimations',
         help_text="Linked company for which the rating is issued."
     )
 

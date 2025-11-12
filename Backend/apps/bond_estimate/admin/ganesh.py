@@ -1,6 +1,5 @@
 from django.contrib import admin
-from apps.bond_estimate.model.CapitalDetailsModel import CapitalDetails
-from apps.bond_estimate.model.BondEstimationApplicationModel import BondEstimationApplication
+from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
+
 
 admin.site.register(CapitalDetails)
-admin.site.register(BondEstimationApplication)
