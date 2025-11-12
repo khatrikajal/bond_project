@@ -9,6 +9,10 @@ STEP_MODEL_MAP = {
     "2.2":CapitalDetails
 }
 
+REQUIRED_SUB_STEPS = {
+    "2": ["2.1", "2.2"],
+    "1": ["1.1", "1.2"],
+}
 
 def create_or_get_application(user, company):
     """

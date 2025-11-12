@@ -8,3 +8,6 @@ from django.contrib import admin
 # @admin.register(Bond)
 # class BondAdmin(admin.ModelAdmin):
 #     pass
+
+
+from apps.bond_estimate.admin import ganesh
