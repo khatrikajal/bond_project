@@ -1,7 +1,7 @@
 
 from django.db import models
-from apps.bond_estimate.model.BaseModel import BaseModel
-
+from apps.bond_estimate.models.BaseModel import BaseModel
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 
 
 class CapitalDetails(BaseModel):
@@ -12,9 +12,10 @@ class CapitalDetails(BaseModel):
     capital_detail_id = models.BigAutoField(primary_key=True)
 
     company = models.ForeignKey(
-        "kyc.CompanyInformation",
+        CompanyInformation,
         on_delete=models.CASCADE,
-        related_name="capital_details"
+        related_name='credit_ratings',
+        help_text="Linked company for which the rating is issued."
     )
 
     share_capital = models.DecimalField(
