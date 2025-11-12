@@ -82,9 +82,9 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
             record_ids=[instance.pk]
         )
 
-        return api_response(
-            "success",
-            "Capital details created successfully",
+        return APIResponse.success(
+            
+            message="Capital details created successfully",
             data=serializer.data,
             status_code=201
         )
