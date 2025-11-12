@@ -124,14 +124,18 @@ class DematAccountDelateView(APIView):
         try:
             demat_account = DematAccount.objects.get(
                 demat_account_id=demat_account_id,
-                company__user=request.user
+                company__user=request.user,del_flag=0
             )
         except DematAccount.DoesNotExist:
             return Response({
                 "status":"error",
                 "message":"Demate account details is not found."
             },status=status.HTTP_404_NOT_FOUND)
-        demat_account.delete()
+        
+        demat_account.del_flag = 1
+        demat_account.user_id_updated_by = request.user.user_id
+        demat_account.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
+        # demat_account.delete()
 
         return Response({
              "status": "success",

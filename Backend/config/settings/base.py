@@ -547,7 +547,8 @@ LOCAL_APPS = [
     "apps.settlement",
     "apps.trading",
     "apps.kyc.issuer_kyc.apps.IssuerKycConfig",
-    "apps.roi"
+    "apps.roi",
+    "apps.bond_estimate"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -897,7 +898,7 @@ REST_FRAMEWORK = {
     # OpenAPI/Schema
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # Custom exception handler
-    "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
+    "EXCEPTION_HANDLER": "config.common.exceptions.custom_exception_handler",
     # Datetime format
     "DATETIME_FORMAT": "%d-%m-%y %H:%M:%S",
 }

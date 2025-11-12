@@ -2,6 +2,9 @@ from django.db import models
 from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 
+class ActiveDematManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(del_flag=0)
 
 class DematAccount(BaseModel):
     """
@@ -41,8 +44,12 @@ class DematAccount(BaseModel):
     # Audit tracking
     user_id_updated_by = models.BigIntegerField(null=True, blank=True)
 
+    objects = models.Manager()  # Default
+    active = ActiveDematManager()
+
     class Meta:
         db_table = "demat_accounts"
+        managed = False
         indexes = [
             models.Index(fields=["company", "del_flag"]),
             models.Index(fields=["dp_id"]),

@@ -8,13 +8,21 @@ urlpatterns = [
     # Authentication app
     path('auth/', include('apps.authentication.urls')),
 
+ 
+
+    path('bond_estimate/',include('apps.bond_estimate.urls')),
+
     # # Audit app
     # path('audit/', include('apps.audit.urls')),
 
     # # Bonds app
     path('bonds/', include('apps.bonds.urls')),
 
-    path('kyc/',include('apps.kyc.urls'))
+    path('kyc/',include('apps.kyc.urls')),
+    
+    
+    path('roi/',include('apps.roi.urls'))
+
 
     # # Compliance app
     # path('api/compliance/', include('apps.compliance.urls')),
