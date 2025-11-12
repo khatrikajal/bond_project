@@ -3,6 +3,9 @@ from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.authentication.issureauth.models import User
 
+class ActiveSignatoryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(del_flag=0)
 class CompanySignatory(BaseModel):
     """
     Stores signatory details (Director / Signatory / Manager) for each company.
@@ -74,6 +77,9 @@ class CompanySignatory(BaseModel):
         blank=True,
         related_name='signatory_updates'
     )
+
+    objects = models.Manager()  # Default
+    active = ActiveSignatoryManager()
 
     class Meta:
         db_table = "company_signatory"

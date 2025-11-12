@@ -28,6 +28,7 @@ class CompanyOnboardingTransition(BaseModel):
     class Meta:
         db_table = "company_onboarding_transitions"
         ordering = ["-created_at"]
+        
         indexes = [
             models.Index(fields=["application", "created_at"]),
         ]

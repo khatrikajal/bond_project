@@ -5,8 +5,13 @@ from apps.authentication.issureauth.models import User
 
 import uuid
 
+class ActiveCompanyManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(del_flag=0)
+    
 
 class CompanyInformation(BaseModel):
+    
     """
     Stores company legal information (KYC).
     """
@@ -52,8 +57,12 @@ class CompanyInformation(BaseModel):
     gstin = models.CharField(max_length=15)
     msme_udyam_registration_no = models.CharField(max_length=50, null=True, blank=True)
 
+    objects = models.Manager()  # Default
+    active = ActiveCompanyManager()
+
     class Meta:
         db_table = "company_kyc"
+        managed = False
         indexes = [
             models.Index(fields=["user", "del_flag"]),
             models.Index(fields=["company_pan_number"]),

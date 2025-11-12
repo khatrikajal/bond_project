@@ -169,7 +169,7 @@ class CompanySignatoryDelete(APIView):
 
     def delete(self,request,signatory_id):
         try:
-            signatory_account = CompanySignatory.objects.get(signatory_id=signatory_id,company__user=request.user)
+            signatory_account = CompanySignatory.objects.get(signatory_id=signatory_id,company__user=request.user,del_flag=0)
 
         except CompanySignatory.DoesNotExist:
             return Response({
@@ -177,7 +177,11 @@ class CompanySignatoryDelete(APIView):
                 "message":"Signatory not found or not accessible."
             },status=status.HTTP_404_NOT_FOUND)
         
-        signatory_account.delete()
+        signatory_account.del_flag = 1
+        signatory_account.user_id_updated_by = request.user
+        signatory_account.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
+        
+        # signatory_account.delete()
 
         return Response({
             "status": "success",
