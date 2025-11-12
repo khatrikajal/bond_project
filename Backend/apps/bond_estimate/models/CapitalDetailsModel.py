@@ -39,3 +39,9 @@ class CapitalDetails(BaseModel):
 
     def __str__(self):
         return f"Capital Details – {self.company.company_name}"
+    
+    def save(self, *args, **kwargs):
+        # auto calculate net worth every time
+        self.net_worth = (self.share_capital or 0) + (self.reserves_surplus or 0)
+        super().save(*args, **kwargs)
+

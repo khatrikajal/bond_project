@@ -278,7 +278,9 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny', 
-    )
+    ),
+    # Custom exception handler
+    "EXCEPTION_HANDLER": "config.common.exceptions.custom_exception_handler",
 }
 
 CACHES = {

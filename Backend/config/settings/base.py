@@ -898,7 +898,7 @@ REST_FRAMEWORK = {
     # OpenAPI/Schema
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # Custom exception handler
-    "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
+    "EXCEPTION_HANDLER": "config.common.exceptions.custom_exception_handler",
     # Datetime format
     "DATETIME_FORMAT": "%d-%m-%y %H:%M:%S",
 }

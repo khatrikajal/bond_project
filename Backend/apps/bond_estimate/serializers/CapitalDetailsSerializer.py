@@ -12,15 +12,14 @@ class CapitalDetailsSerializer(serializers.ModelSerializer):
         model = CapitalDetails
         fields = [
             "capital_detail_id",
-            "company",
             "share_capital",
             "reserves_surplus",
             "net_worth",
             "created_at",
             "updated_at",
-            "del_flag",
+            
         ]
-        read_only_fields = ["capital_detail_id", "created_at", "updated_at", "del_flag"]
+        read_only_fields = ["net_worth","capital_detail_id", "created_at", "updated_at"]
 
     def validate_company(self, value):
         if not CompanyInformation.objects.filter(pk=value.company_id, del_flag=0).exists():

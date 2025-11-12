@@ -1,9 +1,12 @@
 from datetime import date
 from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument, DocumentType, PeriodType
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+import logging
+
+logger = logging.getLogger(__name__)
 
 class FinancialDocumentService:
-
+ 
     USE_VERIFICATION_RULE = False   # feature flag (switch logic without code changes)
 
     # Dynamic mapping – PERIOD → expected document count per FY
@@ -108,8 +111,26 @@ class FinancialDocumentService:
 
     @staticmethod
     def update_onboarding_state(company_id):
-        company = CompanyInformation.objects.get(pk=company_id)
+        """
+        Marks onboarding step 5 (Financial Documents) as completed/incomplete.
+        """
+        try:
+            company = CompanyInformation.objects.get(pk=company_id)
 
-        is_completed = FinancialDocumentService.is_step_completed(company_id)
+            # get onboarding application
+            application = getattr(company, "application", None)
+            if not application:
+                logger.warning(f"No onboarding application found for company {company_id}.")
+                return
 
-        company.update_state(step_number=5, completed=is_completed)
+            # check completion
+            is_completed = FinancialDocumentService.is_step_completed(company_id)
+
+            # ✅ correct object to call update_state on
+            application.update_state(
+                step_number=5,
+                completed=is_completed
+            )
+
+        except Exception as e:
+            logger.error(f"update_onboarding_state failed for company {company_id}: {e}", exc_info=True)

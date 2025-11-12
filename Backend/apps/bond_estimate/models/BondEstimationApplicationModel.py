@@ -106,15 +106,29 @@ class BondEstimationApplication(models.Model):
 
             if metadata:
                 sub["metadata"] = metadata
+            
+            from apps.bond_estimate.services.bond_estimation_service import REQUIRED_SUB_STEPS
+            required = REQUIRED_SUB_STEPS.get(main, [])
 
-            # auto-complete main when all substeps complete
-            all_done = all(
-                x.get("completed", False)
-                for x in progress[main]["sub"].values()
-            )
-            progress[main]["completed"] = all_done
-            if all_done:
-                progress[main]["completed_at"] = now
+            if required:
+                # Must check each required substep
+                all_required_done = all(
+                    progress[main]["sub"].get(sub_step, {}).get("completed", False)
+                    for sub_step in required
+                )
+                progress[main]["completed"] = all_required_done
+                if all_required_done:
+                    progress[main]["completed_at"] = now
+            else:
+                # fallback: no required substeps configured
+                all_done = all(
+                    x.get("completed", False)
+                    for x in progress[main]["sub"].values()
+                )
+                progress[main]["completed"] = all_done
+                if all_done:
+                    progress[main]["completed_at"] = now
+
 
         else:
             # main step update
