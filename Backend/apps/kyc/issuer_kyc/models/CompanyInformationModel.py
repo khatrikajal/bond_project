@@ -36,7 +36,7 @@ class CompanyInformation(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # ENCRYPT WHEN READY
-    corporate_identification_number = models.CharField(max_length=21, unique=True)
+    corporate_identification_number = models.CharField(max_length=21)
     company_name = models.CharField(max_length=255)
     date_of_incorporation = models.DateField()
     place_of_incorporation = models.CharField(max_length=100)
@@ -50,7 +50,7 @@ class CompanyInformation(BaseModel):
         null=True,
         blank=True
     )
-    company_pan_number = models.CharField(max_length=10, unique=True)
+    company_pan_number = models.CharField(max_length=10)
     pan_holder_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
 
@@ -66,6 +66,23 @@ class CompanyInformation(BaseModel):
         indexes = [
             models.Index(fields=["user", "del_flag"]),
             models.Index(fields=["company_pan_number"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['corporate_identification_number'],
+                condition=Q(del_flag=0),
+                name='unique_cin_active_only'
+            ),
+            models.UniqueConstraint(
+                fields=['company_pan_number'],
+                condition=Q(del_flag=0),
+                name='unique_pan_active_only'
+            ),
+            models.UniqueConstraint(
+                fields=['gstin'],
+                condition=Q(del_flag=0),
+                name='unique_gstin_active_only'
+            ),
         ]
 
     def __str__(self):
