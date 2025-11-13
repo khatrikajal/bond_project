@@ -3,10 +3,13 @@
 from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
 from apps.bond_estimate.models.CreditRatingDetailsModel import CreditRatingDetails
+from apps.bond_estimate.models.FundPositionModel import FundPosition
+from apps.bond_estimate.models.borrowing_details import BorrowingDetails
 STEP_MODEL_MAP = {
     # Add step and its model here
-    # "1.1":FundPostion,
+    "1.1":FundPosition,
     "1.2":CreditRatingDetails,
+    "2.1":BorrowingDetails,
     "2.2":CapitalDetails
 }
 

@@ -2,6 +2,11 @@
 from django.urls import path
 from apps.bond_estimate.views.CapitalDetailsView import CapitalDetailsViewSet
 from apps.bond_estimate.views.CreditRatingView import CreditRatingCreateView
+from apps.bond_estimate.views.FundPositionViews import (
+    FundPositionListCreateView,
+    FundPositionDetailView,
+    FundPositionBulkView,
+)
 
 capital_details = CapitalDetailsViewSet.as_view({
     'get': 'list',

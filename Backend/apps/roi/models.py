@@ -7,7 +7,7 @@ from apps.authentication.issureauth.models import User
 # ---------- 1. Fund Position ----------
 class FundPosition(models.Model):
     fund_position_id = models.BigAutoField(primary_key=True)
-    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="fund_positions")
+    company = models.ForeignKey(CompanyInformation, on_delete=models.CASCADE, related_name="roi_fund_positions")
     cash_balance_as_on_date = models.DateField()
     bank_balance_as_on_date = models.DateField()
     cash_balance_amount = models.DecimalField(max_digits=18, decimal_places=2)

@@ -1,8 +1,15 @@
 from django.urls import path
 from .views.CompanyAddressView import ComapnyAdressAPIView
 from .views.CompanyAllAddressView import ComapnyAllAdressAPIView
-from .views.CompanyInformationCreateView import CompanyInformationCreateView,PanExtractionView
-from .views.CompanyInformationCreateView import CompanyInformationCreateView,PanExtractionView,CompanyInfoGetView,CompanyInformationUpdateView,CompanyInfoDeleteView
+
+from .views.CompanyInformationCreateView import (
+    CompanyInformationCreateView,
+    PanExtractionView,
+    CompanyInfoGetView,
+    CompanyInformationUpdateView,
+    CompanyInfoDeleteView,
+    CompanyInfoByCINView
+    )
 from .views import BankDetailsView
 from .views.CompanyDocumentView import (
     CompanyDocumentBulkUploadView,
@@ -26,6 +33,8 @@ CompanySignatoryUpdateView,
 CompanySignatoryDelete,
 CompanySignatoryStatusUpdate)
 
+from .views.FinalSubmitAPIView import FinalSubmitAPIView
+
 
 financial_documents = FinancialDocumentViewSet.as_view({
     'get': 'list',
@@ -44,7 +53,6 @@ financial_document_detail = FinancialDocumentViewSet.as_view({
 app_name = 'issuer_kyc'
 
 urlpatterns = [
-    path('temp/', ComapnyAdressAPIView.as_view(), name='temp'),
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
     path("company/<uuid:company_id>/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
     path("addresses/",ComapnyAllAdressAPIView.as_view(),name="create-company-address"),
@@ -54,6 +62,8 @@ urlpatterns = [
     path('company-info/<uuid:company_id>/', CompanyInfoGetView.as_view(), name='company-info-get'),
     path('company-info/<uuid:company_id>/update/', CompanyInformationUpdateView.as_view(), name='company-info-update'),
     path("company-info/<uuid:company_id>/delete/", CompanyInfoDeleteView.as_view(), name="company-info-delete"),
+    # Fetch Through CIN
+    path('company-info/cin/<str:cin>/', CompanyInfoByCINView.as_view(), name='company-info-by-cin'),
 
     #--- Bank Details ----
     path("bank-details/<uuid:company_id>/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
@@ -167,6 +177,13 @@ urlpatterns = [
      path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
      path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
      path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+
+
+
+    #------- Final Submit -------------
+   
+    path("company/<uuid:company_id>/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
+
 
 
 ]

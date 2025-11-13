@@ -13,7 +13,6 @@ from django.utils.decorators import method_decorator
 # from silk.profiling.profiler import silk_profile
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import BondFilter
-from .pagination import BondCursorPagination
 from django.core.cache import cache
 from rest_framework import status
 from .services.bond_elastic_service import BondElasticService
@@ -35,7 +34,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import ISINBasicInfo, ISINRating
 from .serializers import ISINBasicInfoSerializer
 from .filters import BondFilter
-from .pagination import BondCursorPagination
+from .pagination import BondCursorPagination,BondPageNumberPagination
 
 
 # Create your views here.
@@ -63,7 +62,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     ]
 
     serializer_class = ISINBasicInfoSerializer
-    pagination_class = BondCursorPagination
+    pagination_class = BondPageNumberPagination
 
     def get_queryset(self):
         isin = self.request.query_params.get('isin')
@@ -98,6 +97,9 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
             ),
             priority=Value(1, output_field=IntegerField()),
         ).prefetch_related(ratings_prefetch).filter(isin_active=True)
+
+        # ✅ REMOVE ALREADY MATURED BONDS
+        queryset = queryset.filter(maturity_date__gte=Now())
 
         # Apply filters
         if isin:
@@ -145,9 +147,11 @@ class HomePageFeaturedBonds(SwaggerParamAPIView):
                 latest_rating=Subquery(latest_rating_qs.values("credit_rating")[:1]),
                 latest_agency=Subquery(latest_rating_qs.values("rating_agency")[:1]),
             )
+            .filter(maturity_date__gte=Now())
             .order_by("-issue_date")[:min(limit, 100)]
+        
+            
         )
-
         serializer = ISINBasicInfoSerializer(featured_bonds, many=True)
         cache.set(cache_key, serializer.data, 60 * 5)  # cache 5 min
         return Response(serializer.data)
@@ -169,7 +173,7 @@ class BondsListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = BondFilter
     ordering_fields = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent']
-    pagination_class = BondCursorPagination
+    pagination_class = BondPageNumberPagination
 
     swagger_parameters = [
         OpenApiParameter("isin", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Prioritize by ISIN"),
@@ -212,6 +216,9 @@ class BondsListView(generics.ListAPIView):
             .prefetch_related(ratings_prefetch)
             .filter(isin_active=True)
         )
+
+        # ✅ REMOVE ALREADY MATURED BONDS
+        queryset = queryset.filter(maturity_date__gte=Now())
 
         isin = self.request.query_params.get('isin')
         issuer_name = self.request.query_params.get('issuer_name')
@@ -343,10 +350,11 @@ class SimilarBondsView(SwaggerParamAPIView):
             ytm_percent__gte=ytm_min,
             ytm_percent__lte=ytm_max
         ).exclude(isin_code=isin_code)
-
+        similar_bonds_qs = similar_bonds_qs.filter(tenure_days__gte=0)
+        
         if rating_value:
-            similar_bonds_qs = similar_bonds_qs.filter(latest_rating=rating_value)
-
+            similar_bonds_qs = similar_bonds_qs.filter(maturity_date__gte=Now())
+        
         # Prefetch ratings for serializer
         similar_bonds_qs = similar_bonds_qs.prefetch_related(
             Prefetch(
@@ -355,7 +363,7 @@ class SimilarBondsView(SwaggerParamAPIView):
                 to_attr="latest_ratings"
             )
         )[:limit]
-
+        
         serializer = ISINBasicInfoSerializer(similar_bonds_qs, many=True)
         return Response(serializer.data)
 
