@@ -57,6 +57,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     """
     permission_classes = [AllowAny]
     swagger_parameters = [
+        OpenApiParameter("q", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Filter bonds by isin or issuer name"),
         OpenApiParameter("isin", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Filter bonds by ISIN code"),
         OpenApiParameter("issuerName", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Filter bonds by issuer name")
     ]
@@ -67,8 +68,8 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     def get_queryset(self):
         isin = self.request.query_params.get('isin')
         issuer_name = self.request.query_params.get('issuerName')
-        query = self.request.query_params.get("query")
-
+        query = self.request.query_params.get("q")
+      
         # Prefetch ratings
         ratings_prefetch = Prefetch(
             "ratings",
@@ -105,7 +106,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
         # Apply filters
         if query:
             queryset = queryset.filter(
-                Q(isin_code__icontains=query) |
+                Q(isin_code__iexact=query) |
                 Q(issuer_name__icontains=query)
             )
         if isin:
@@ -228,6 +229,7 @@ class BondsListView(generics.ListAPIView):
 
         isin = self.request.query_params.get('isin')
         issuer_name = self.request.query_params.get('issuer_name')
+        query = self.request.query_params.get('q')
 
         # ✅ Prioritize ISIN
         if isin:
@@ -248,7 +250,11 @@ class BondsListView(generics.ListAPIView):
                     output_field=IntegerField()
                 )
             )
-
+        if query:
+            queryset = queryset.filter(
+                Q(isin_code__iexact=query) |
+                Q(issuer_name__icontains=query)
+            )
         # ✅ Order by priority first, then other fields
         queryset = queryset.order_by('priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code')
 
