@@ -14,7 +14,6 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
             "former_name",
             "interest_payment_frequency_raw",
             "percentage_sold",
-            "mode_of_issuance",
             "data_hash",
             "record_created_date",
             "last_updated",
@@ -47,7 +46,7 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
         latest_ratings = getattr(obj, "latest_ratings", None)
         if latest_ratings:
             return [
-                {"agency": r.rating_agency, "rating": r.credit_rating}
+                {"agency": r.rating_agency, "rating": r.credit_rating, "rating_date": r.rating_date}
                 for r in latest_ratings
             ]
 
