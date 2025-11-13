@@ -207,7 +207,7 @@ class FinalSubmitAPIView(APIView):
             "status": application.status,
             "redirect_to": decision["redirect_to"],
             "submitted_at": application.submitted_at,
-            "completion_percentage": application.get_completion_percentage(),
+            # "completion_percentage": application.get_completion_percentage(),
         }
 
         return APIResponse.success(
@@ -252,6 +252,6 @@ class FinalSubmitAPIView(APIView):
         return {
             "completed_steps": completed_steps,
             "incomplete_steps": incomplete_steps,
-            "missing_details": missing_details,
-            "all_completed": all_completed,
+            # "missing_details": missing_details,
+            # "all_completed": all_completed,
         }
