@@ -35,7 +35,7 @@ from .models import ISINBasicInfo, ISINRating
 from .serializers import ISINBasicInfoSerializer
 from .filters import BondFilter
 from .pagination import BondCursorPagination,BondPageNumberPagination
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -67,6 +67,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     def get_queryset(self):
         isin = self.request.query_params.get('isin')
         issuer_name = self.request.query_params.get('issuerName')
+        query = self.request.query_params.get("query")
 
         # Prefetch ratings
         ratings_prefetch = Prefetch(
@@ -102,6 +103,11 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
         queryset = queryset.filter(maturity_date__gte=Now())
 
         # Apply filters
+        if query:
+            queryset = queryset.filter(
+                Q(isin_code__icontains=query) |
+                Q(issuer_name__icontains=query)
+            )
         if isin:
             queryset = queryset.filter(isin_code__icontains=isin)
         if issuer_name:
