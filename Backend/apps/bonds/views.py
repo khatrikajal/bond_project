@@ -13,7 +13,6 @@ from django.utils.decorators import method_decorator
 # from silk.profiling.profiler import silk_profile
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import BondFilter
-from .pagination import BondCursorPagination
 from django.core.cache import cache
 from rest_framework import status
 from .services.bond_elastic_service import BondElasticService
@@ -35,7 +34,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import ISINBasicInfo, ISINRating
 from .serializers import ISINBasicInfoSerializer
 from .filters import BondFilter
-from .pagination import BondCursorPagination
+from .pagination import BondCursorPagination,BondPageNumberPagination
 
 
 # Create your views here.
@@ -63,7 +62,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     ]
 
     serializer_class = ISINBasicInfoSerializer
-    pagination_class = BondCursorPagination
+    pagination_class = BondPageNumberPagination
 
     def get_queryset(self):
         isin = self.request.query_params.get('isin')
@@ -174,7 +173,7 @@ class BondsListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = BondFilter
     ordering_fields = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent']
-    pagination_class = BondCursorPagination
+    pagination_class = BondPageNumberPagination
 
     swagger_parameters = [
         OpenApiParameter("isin", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Prioritize by ISIN"),
