@@ -2,6 +2,11 @@
 from django.urls import path
 from apps.bond_estimate.views.CapitalDetailsView import CapitalDetailsViewSet
 from apps.bond_estimate.views.CreditRatingView import CreditRatingCreateView
+from apps.bond_estimate.views.FundPositionViews import (
+    FundPositionListCreateView,
+    FundPositionDetailView,
+    FundPositionBulkView,
+)
 
 capital_details = CapitalDetailsViewSet.as_view({
     'get': 'list',
@@ -53,6 +58,24 @@ urlpatterns = [
 
      #---------  RatingDetails ------------
      path("company/<uuid:company_id>/credit-rating/", CreditRatingCreateView.as_view(), name="credit-rating-create"),
+
+
+
+   path(
+        'fund-positions/',
+        FundPositionListCreateView.as_view(),
+        name='fund-position-list-create'
+    ),
+    path(
+        'fund-positions/bulk/',
+        FundPositionBulkView.as_view(),
+        name='fund-position-bulk'
+    ),
+    path(
+        'fund-positions/<uuid:pk>/',  
+        FundPositionDetailView.as_view(),
+        name='fund-position-detail'
+    ),
 
 ]
 
