@@ -170,7 +170,7 @@ class FinalSubmitAPIView(APIView):
                 message="Please complete all KYC steps before submitting.",
                 errors={
                     "incomplete_steps": completion_info["incomplete_steps"],
-                    "missing_details": completion_info["missing_details"],
+                    # "missing_details": completion_info["missing_details"],
                 },
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
@@ -207,7 +207,7 @@ class FinalSubmitAPIView(APIView):
             "status": application.status,
             "redirect_to": decision["redirect_to"],
             "submitted_at": application.submitted_at,
-            "completion_percentage": application.get_completion_percentage(),
+            # "completion_percentage": application.get_completion_percentage(),
         }
 
         return APIResponse.success(
@@ -230,7 +230,8 @@ class FinalSubmitAPIView(APIView):
 
     def _evaluate_completion(self, application):
         total_steps = self.TOTAL_STEPS
-        completed_steps, incomplete_steps, missing_details = [], [], {}
+        # completed_steps, incomplete_steps, missing_details = [], [], {}
+        completed_steps, incomplete_steps = [], []
 
         for step in range(1, total_steps + 1):
             step_key = str(step)
@@ -240,18 +241,18 @@ class FinalSubmitAPIView(APIView):
             else:
                 incomplete_steps.append(step_key)
 
-                if step == 5:
-                    missing_details[step_key] = FinancialDocumentService.get_missing_details(
-                        application.company_information.company_id
-                    )
-                else:
-                    missing_details[step_key] = "Step incomplete"
+                # if step == 5:
+                #     missing_details[step_key] = FinancialDocumentService.get_missing_details(
+                #         application.company_information.company_id
+                #     )
+                # else:
+                #     missing_details[step_key] = "Step incomplete"
 
         all_completed = len(completed_steps) == total_steps
 
         return {
             "completed_steps": completed_steps,
             "incomplete_steps": incomplete_steps,
-            "missing_details": missing_details,
-            "all_completed": all_completed,
+            # "missing_details": missing_details,
+            # "all_completed": all_completed,
         }
