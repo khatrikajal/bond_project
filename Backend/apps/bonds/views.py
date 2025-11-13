@@ -213,6 +213,9 @@ class BondsListView(generics.ListAPIView):
             .filter(isin_active=True)
         )
 
+        # ✅ REMOVE ALREADY MATURED BONDS
+        queryset = queryset.filter(tenure_days__gte=0)
+
         isin = self.request.query_params.get('isin')
         issuer_name = self.request.query_params.get('issuer_name')
 
