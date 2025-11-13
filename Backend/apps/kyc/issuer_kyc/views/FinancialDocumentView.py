@@ -24,6 +24,7 @@ from rest_framework.exceptions import ValidationError
 from django.http import Http404
 from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
 import hashlib
+from config.common.response import APIResponse
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,20 +32,6 @@ logger = logging.getLogger(__name__)
 
 
 
-def api_response(status: str, message: str, data=None, http_status=200):
-    resp = {
-        "status": status,
-        "message": message
-    }
-
-    # attach payload correctly
-    if data is not None:
-        if status == "error":
-            resp["errors"] = data       # errors go here
-        else:
-            resp["data"] = data         # success payload goes here
-
-    return Response(resp, status=http_status)
 
 class FinancialDocumentViewSet(viewsets.ModelViewSet):
     """
@@ -90,39 +77,38 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             document = self.get_object()
             serializer = FinancialDocumentSerializer(document)
 
-            return api_response(
-                status="success",
+            return APIResponse.success(
                 message="Document fetched successfully",
                 data=serializer.data
             )
         
         except Http404:
-            return api_response("error", f"Document not found", http_status=404)
+            return APIResponse.error( message=f"Document not found", status_code=404)
         
         except Exception as e:
             logger.error(f"Retrieve document failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error( message="Internal server error", status_code=500)
 
     def list(self, request, company_id, *args, **kwargs):
         try:
             qs = self.filter_queryset(self.get_queryset())
 
             serializer = FinancialDocumentSerializer(qs, many=True)
-            return api_response(
-                status="success",
+            return APIResponse.success(
                 message="Documents fetched successfully",
-                data=serializer.data
+                data=serializer.data,
+                status_code=200
             )
         except Exception as e:
             logger.error(f"List documents failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error( message="Internal server error", status_code=500)
 
 
     @transaction.atomic
     def create(self, request, company_id, *args, **kwargs):
         try:
             if not company_id:
-                return api_response("error", "company_id missing", http_status=400)
+                return APIResponse.error( "company_id missing", status_code=400)
 
             serializer = FinancialDocumentUploadSerializer(
                 data=request.data,
@@ -147,14 +133,14 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             )
 
             if latest and latest.file_hash == file_hash:
-                return api_response(
-                    "error",
-                    "This exact file is already uploaded",
+                return APIResponse.error(
+                    
+                    message="This exact file is already uploaded",
                     data={
                         "document_id": latest.document_id,
                         "version": latest.version
                     },
-                    http_status=400
+                    status_code=400
                 )
 
             version = latest.version + 1 if latest else 1
@@ -177,26 +163,26 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 logger.info(f"Triggering verification for document {document.document_id}")
                 self._trigger_verification(document)
 
-            return api_response(
-                "success",
-                "Document uploaded successfully",
+            return APIResponse.success(
+                
+                message="Document uploaded successfully",
                 data={
                     "verification_triggered": auto_verify,
                     **FinancialDocumentSerializer(document).data
                 },
-                http_status=201
+                status_code=201
             )
         except ValidationError as e:
             # return proper serializer errors
-            return api_response(
-                "error",
-                "Validation failed",
+            return APIResponse.error(
+                
+                message="Validation failed",
                 data=e.detail,               # serializer error dict
-                http_status=400
+                status_code=400
             )
         except Exception as e:
             logger.error(f"CREATE document failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
         
    
     def update(self, request, company_id,document_id=None, *args, **kwargs):
@@ -220,10 +206,9 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 new_hash = self._compute_file_hash(file)
 
                 if new_hash == document.file_hash:
-                    return api_response(
-                        "error",
-                        "Uploaded file is identical to existing version",
-                        http_status=400
+                    return APIResponse.error(
+                        message="Uploaded file is identical to existing version",
+                        status_code=400
                     )
 
                 # replace PDF file
@@ -259,23 +244,22 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
 
 
-            return api_response(
-                "success",
-                "Document metadata updated",
+            return APIResponse.success(
+                message="Document metadata updated",
                 data=FinancialDocumentSerializer(document).data
             )
         except ValidationError as e:
             # return proper serializer errors
-            return api_response(
-                "error",
-                "Validation failed",
+            return APIResponse.error(
+              
+                message="Validation failed",
                 data=e.detail,               # serializer error dict
-                http_status=400
+                status_code=400
             )
         
         except Exception as e:
             logger.error(f"Update failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
 
 
     def partial_update(self, request, company_id, document_id=None, *args, **kwargs):
@@ -300,10 +284,10 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 new_hash = self._compute_file_hash(file)
 
                 if new_hash == document.file_hash:
-                    return api_response(
-                        "error",
-                        "Uploaded file is identical to existing version",
-                        http_status=400
+                    return APIResponse.error(
+                      
+                        message="Uploaded file is identical to existing version",
+                        status_code=400
                     )
 
                 # replace file
@@ -334,23 +318,22 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             ]):
                 FinancialDocumentService.update_onboarding_state(company_id)
 
-            return api_response(
-                "success",
-                "Document partially updated",
+            return APIResponse.success(
+                message="Document partially updated",
                 data=FinancialDocumentSerializer(document).data
             )
 
         except ValidationError as e:
-            return api_response(
-                "error",
-                "Validation failed",
+            return APIResponse.error(
+                
+                message="Validation failed",
                 data=e.detail,
-                http_status=400
+                status_code=400
             )
 
         except Exception as e:
             logger.error(f"Partial update failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
    
     def destroy(self, request, *args, **kwargs):
         try:
@@ -360,11 +343,11 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             document.save()
             company_id = document.company_id
             FinancialDocumentService.update_onboarding_state(company_id)
-            return api_response("success", "Document deleted successfully")
+            return APIResponse.success(message="Document deleted successfully")
         
         except Exception as e:
             logger.error(f"Delete failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
     
 
     #--------------- Bulk Operations ------------
@@ -374,7 +357,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
     def bulk_upload(self, request, company_id):
         try:
             if not company_id:
-                return api_response("error", "company_id missing", http_status=400)
+                return APIResponse.error(message="company_id missing", status_code=400)
 
             bulk = BulkUploadSerializer(
                 data=request.data,
@@ -465,23 +448,23 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             # after loop
             FinancialDocumentService.update_onboarding_state(company_id)
 
-            return api_response(
-                "success",
-                f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
+            return APIResponse.success(
+               
+                message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
                 data=results
             )
 
         except ValidationError as e:
-            return api_response(
-                "error",
-                "Validation failed",
+            return APIResponse.error(
+               
+                message="Validation failed",
                 errors=e.detail,
-                http_status=400
+                status_code=400
             )
 
         except Exception as e:
             logger.error(f"Bulk upload failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
 
     @action(detail=False, methods=["patch"])
     @transaction.atomic
@@ -494,7 +477,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             updates = bulk.validated_data["updates"]
 
             if not updates:
-                return api_response("error", "No update payloads provided", http_status=400)
+                return APIResponse.error(message="No update payloads provided", status_code=400)
             
 
             results = {"success": [], "failed": []}
@@ -580,15 +563,15 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             if needs_state_update:
                 FinancialDocumentService.update_onboarding_state(company_id)
 
-            return api_response(
-                "success",
-                f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
+            return APIResponse.success(
+                
+                message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
                 data=results
             )
 
         except Exception as e:
             logger.error(f"Bulk update failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
+            return APIResponse.error(message="Internal server error", status_code=500)
 
 
     @action(detail=False, methods=["delete"])
@@ -626,56 +609,64 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                     })
             
             FinancialDocumentService.update_onboarding_state(company_id)
-            return api_response(
-                "success",
-                f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
+            return APIResponse.success(
+                
+                message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
                 data=results
             )
 
         except Exception as e:
             logger.error(f"Bulk delete failed: {e}", exc_info=True)
-            return api_response("error", "Internal server error", http_status=500)
-
-
+            return APIResponse.error(message="Internal server error", status_code=500)
+    
     @action(detail=True, methods=['get'])
-    def download(self, request,company_id, pk=None):
+    def download(self, request, company_id, pk=None):
         if not company_id:
-            return Response({
-                "status": "error",
-                "message": "Company not found for this",
-            }, status=404)
+            return APIResponse.error(
+                message="Company not found for this",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
         document = self.get_object()
         if not document.file_path:
-            return Response({'success': False, 'message': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
+            return APIResponse.error(
+                message="File not found",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
 
-        return Response({
-            'success': True,
-            'data': {
-                'download_url': document.file_path.url,   # works for local or S3
-                'file_name': document.file_name,
-                'file_size': document.file_size
-            }
-        }, status=status.HTTP_200_OK)
+        return APIResponse.success(
+            message="File fetched successfully",
+            data={
+                "download_url": document.file_path.url,   # works for local or S3
+                "file_name": document.file_name,
+                "file_size": document.file_size
+            },
+            status_code=status.HTTP_200_OK
+        )
 
-    
+
     @action(detail=False, methods=['get'])
-    def missing_documents(self, request,company_id):
+    def missing_documents(self, request, company_id):
         if not company_id:
-            return Response({
-                "status": "error",
-                "message": "Company not found for this",
-            }, status=404)
-        company = get_object_or_404(CompanyInformation,pk=company_id)
+            return APIResponse.error(
+                message="Company not found for this",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        company = get_object_or_404(CompanyInformation, pk=company_id)
         financial_year = request.query_params.get('financial_year')
+
         if not company or not financial_year:
-            return Response({'success': False, 'message': 'company and financial_year are required'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return APIResponse.error(
+                message="company and financial_year are required",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
 
         # FY start year, e.g., "FY2023-24" -> 2023
         fy_num = int(financial_year.replace('FY', '').replace(' ', '').split('-')[0])
 
         # months in FY order: Apr..Dec (4..12) then Jan..Mar (1..3)
-        fy_months = [4,5,6,7,8,9,10,11,12,1,2,3]
+        fy_months = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
 
         existing = FinancialDocument.objects.filter(
             company_id=company,
@@ -699,15 +690,88 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                 del_flag=0
             ).exists()
             if not exists:
-                yearly_missing[dt] = ['Required']
+                yearly_missing[dt] = ["Required"]
 
-        return Response({
-            'success': True,
-            'data': {
-                'GSTR_3B': [month_name[m] for m in missing_months],
+        return APIResponse.success(
+            message="Missing documents fetched successfully",
+            data={
+                "GSTR_3B": [month_name[m] for m in missing_months],
                 **yearly_missing
-            }
-        }, status=status.HTTP_200_OK)
+            },
+            status_code=status.HTTP_200_OK
+        )
+
+    # @action(detail=True, methods=['get'])
+    # def download(self, request,company_id, pk=None):
+    #     if not company_id:
+    #         return Response({
+    #             "status": 
+    #             "message": "Company not found for this",
+    #         }, status=404)
+    #     document = self.get_object()
+    #     if not document.file_path:
+    #         return Response({'success': False, 'message': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    #     return Response({
+    #         'success': True,
+    #         'data': {
+    #             'download_url': document.file_path.url,   # works for local or S3
+    #             'file_name': document.file_name,
+    #             'file_size': document.file_size
+    #         }
+    #     }, status=status.HTTP_200_OK)
+
+    
+    # @action(detail=False, methods=['get'])
+    # def missing_documents(self, request,company_id):
+    #     if not company_id:
+    #         return Response({
+    #             "status": 
+    #             "message": "Company not found for this",
+    #         }, status=404)
+    #     company = get_object_or_404(CompanyInformation,pk=company_id)
+    #     financial_year = request.query_params.get('financial_year')
+    #     if not company or not financial_year:
+    #         return Response({'success': False, 'message': 'company and financial_year are required'},
+    #                         status=status.HTTP_400_BAD_REQUEST)
+
+    #     # FY start year, e.g., "FY2023-24" -> 2023
+    #     fy_num = int(financial_year.replace('FY', '').replace(' ', '').split('-')[0])
+
+    #     # months in FY order: Apr..Dec (4..12) then Jan..Mar (1..3)
+    #     fy_months = [4,5,6,7,8,9,10,11,12,1,2,3]
+
+    #     existing = FinancialDocument.objects.filter(
+    #         company_id=company,
+    #         financial_year=financial_year,
+    #         document_type=DocumentType.GSTR_3B,
+    #         period_type=PeriodType.MONTHLY,
+    #         del_flag=0
+    #     ).values_list('period_start_date', flat=True)
+
+    #     existing_months = set(d.month for d in existing)
+    #     missing_months = [m for m in fy_months if m not in existing_months]
+
+    #     # yearly docs
+    #     yearly_missing = {}
+    #     for dt in [DocumentType.GSTR_9, DocumentType.ITR, DocumentType.FINANCIAL_STATEMENT]:
+    #         exists = FinancialDocument.objects.filter(
+    #             company_id=company,
+    #             financial_year=financial_year,
+    #             document_type=dt,
+    #             period_type=PeriodType.YEARLY,
+    #             del_flag=0
+    #         ).exists()
+    #         if not exists:
+    #             yearly_missing[dt] = ['Required']
+
+    #     return Response({
+    #         'success': True,
+    #         'data': {
+    #             'GSTR_3B': [month_name[m] for m in missing_months],
+    #             **yearly_missing
+    #         }
+    #     }, status=status.HTTP_200_OK)
     
     
     #------------- Helper methods ----------------
