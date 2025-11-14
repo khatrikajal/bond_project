@@ -34,7 +34,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import ISINBasicInfo, ISINRating
 from .serializers import ISINBasicInfoSerializer
 from .filters import BondFilter
-from .pagination import BondCursorPagination,BondPageNumberPagination
+from .pagination import BondCursorPagination,BondSkipTakePagination
 from django.db.models import Q
 
 # Create your views here.
@@ -63,7 +63,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
     ]
 
     serializer_class = ISINBasicInfoSerializer
-    pagination_class = BondPageNumberPagination
+    pagination_class = BondSkipTakePagination
 
     def get_queryset(self):
         isin = self.request.query_params.get('isin')
@@ -180,7 +180,7 @@ class BondsListView(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = BondFilter
     ordering_fields = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent']
-    pagination_class = BondPageNumberPagination
+    pagination_class = BondSkipTakePagination
 
     swagger_parameters = [
         OpenApiParameter("isin", OpenApiTypes.STR, OpenApiParameter.QUERY, description="Prioritize by ISIN"),
@@ -356,7 +356,11 @@ class SimilarBondsView(SwaggerParamAPIView):
         )
 
         similar_bonds_qs = ISINBasicInfo.objects.annotate(
-            latest_rating=latest_rating_subquery
+            latest_rating=latest_rating_subquery,
+            tenure_days=ExpressionWrapper(
+                Extract(F('maturity_date') - Now(), 'epoch') / (24 * 60 * 60),
+                output_field=FloatField()
+            )
         ).filter(
             isin_active=True,
             ytm_percent__gte=ytm_min,
