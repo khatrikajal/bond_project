@@ -110,8 +110,9 @@ class ISINBasicInfo(models.Model):
     series = models.CharField(max_length=100, null=True, blank=True, help_text="Bond series identifier - stays in basic for identification")
     tax_free = models.BooleanField(default=False, help_text="True if bond is tax-free, False if taxable")  # -> Keep for backward compatibility, use tax_category instead
     option_type = models.CharField(max_length=20, choices=OptionType.choices, null=True, blank=True)  
-
+    
     seniority = models.CharField(max_length=255, null=True, blank=True)
+    prepetual = models.BooleanField(default=False, null=True) 
     
     # METADATA (Must stay)
     data_hash = models.CharField(max_length=64, null=True, blank=True)
