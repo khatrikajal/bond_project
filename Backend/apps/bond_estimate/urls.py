@@ -33,6 +33,15 @@ from .views.CreditRatingView import (
     CreditRatingAgencyChoicesView,
 )
 
+from .views.PreliminaryBondRequirementsViews import (
+    PreliminaryBondRequirementsListCreateView,
+    PreliminaryBondRequirementsDetailView,
+)
+from .views.CollateralAssetVerificationViews import (
+    CollateralAssetVerificationListCreateView,
+    CollateralAssetVerificationDetailView,
+)
+
 # Initialize the DRF router
 router = DefaultRouter()
 router.register(r'borrowing', BorrowingDetailsViewSet, basename='borrowing')
@@ -78,6 +87,31 @@ urlpatterns = [
     path('ratings/bulk-delete/<uuid:company_id>', CreditRatingBulkDeleteView.as_view(), name='credit-rating-bulk-delete'),
 
 
-   
+     path(
+        "preliminary-bond/<uuid:company_id>",
+        PreliminaryBondRequirementsListCreateView.as_view(),
+        name="preliminary-bond-list-create",
+    ),
+
+    path(
+        "preliminary-bond/<uuid:company_id>/<uuid:pbr_id>",
+        PreliminaryBondRequirementsDetailView.as_view(),
+        name="preliminary-bond-detail",
+    ),
+
+   path(
+        "collateral/<uuid:company_id>/",
+        CollateralAssetVerificationListCreateView.as_view(),
+        name="collateral-list-create"
+    ),
+
+    # -------------------------------------------------------
+    # FETCH SINGLE  +  UPDATE  +  DELETE
+    # -------------------------------------------------------
+    path(
+        "collateral/<uuid:company_id>/<uuid:record_id>/",
+        CollateralAssetVerificationDetailView.as_view(),
+        name="collateral-detail"
+    ),
 ]
 
