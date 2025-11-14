@@ -78,7 +78,7 @@ class BondSearchORMListView(SwaggerParamAPIView, generics.ListAPIView):
         )
 
         # ✅ FIX: Add both tenure_days and tenure_years
-        queryset = ISINBasicInfo.objects.annotate(
+        queryset = ISINBasicInfo.objects.select_related("detailed_info").annotate(
             tenure_days=ExpressionWrapper(
                 Extract(F('maturity_date') - Now(), 'epoch') / (24 * 60 * 60),
                 output_field=FloatField()
@@ -150,7 +150,7 @@ class HomePageFeaturedBonds(SwaggerParamAPIView):
         ).order_by("-rating_date")
 
         featured_bonds = (
-            ISINBasicInfo.objects.annotate(
+            ISINBasicInfo.objects.select_related("detailed_info").annotate(
                 latest_rating=Subquery(latest_rating_qs.values("credit_rating")[:1]),
                 latest_agency=Subquery(latest_rating_qs.values("rating_agency")[:1]),
             )
@@ -197,7 +197,7 @@ class BondsListView(generics.ListAPIView):
 
         # Base queryset with default annotations
         queryset = (
-            ISINBasicInfo.objects.annotate(
+            ISINBasicInfo.objects.select_related("detailed_info").annotate(
                 tenure_days=ExpressionWrapper(
                     Extract('maturity_date', 'epoch') - Extract(Now(), 'epoch'),
                     output_field=FloatField()
@@ -275,7 +275,7 @@ class BondDetailView(SwaggerParamAPIView):
     def get(self, request):
         isin_code = request.GET.get("isin")
         bond = get_object_or_404(
-            ISINBasicInfo.objects.prefetch_related(
+            ISINBasicInfo.objects.select_related("detailed_info").prefetch_related(
                 Prefetch(
                     "company_mappings",
                     queryset=ISINCompanyMap.objects.select_related("company").filter(primary_company=True),
@@ -355,7 +355,7 @@ class SimilarBondsView(SwaggerParamAPIView):
             ISINRating.objects.filter(isin=OuterRef('pk')).order_by('-rating_date').values('credit_rating')[:1]
         )
 
-        similar_bonds_qs = ISINBasicInfo.objects.annotate(
+        similar_bonds_qs = ISINBasicInfo.objects.select_related("detailed_info").annotate(
             latest_rating=latest_rating_subquery,
             tenure_days=ExpressionWrapper(
                 Extract(F('maturity_date') - Now(), 'epoch') / (24 * 60 * 60),
