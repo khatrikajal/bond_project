@@ -252,6 +252,16 @@ class BondFilter(django_filters.FilterSet):
         help_text='Returns only BBB- rated bonds and above'
     )
 
+    has_option = django_filters.BooleanFilter(
+        method='filter_has_option',
+        label='Has Call/Put Option'
+    )
+    
+    perpetual = django_filters.BooleanFilter(
+        field_name='detailed_info__perpetual',
+        label='Perpetual Bonds Only'
+    )
+
     class Meta:
         model = ISINBasicInfo
         fields = []
@@ -336,6 +346,26 @@ class BondFilter(django_filters.FilterSet):
             queryset = queryset.annotate(rating_rank=get_rating_annotation())
         
         return queryset.filter(rating_rank__lte=INVESTMENT_GRADE_THRESHOLD)
+    
+    def filter_has_option(self, queryset, name, value):
+        """
+        If value = True  → return bonds with call OR put option
+        If value = False → return bonds with NO call AND NO put
+        """
+
+        if value is True:
+            return queryset.filter(
+                Q(detailed_info__call_option=True) |
+                Q(detailed_info__put_option=True)
+            )
+
+        if value is False:
+            return queryset.filter(
+                Q(detailed_info__call_option=False) &
+                Q(detailed_info__put_option=False)
+            )
+
+        return queryset 
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
