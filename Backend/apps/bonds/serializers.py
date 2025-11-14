@@ -3,10 +3,14 @@ from .models import ISINBasicInfo,KeyFactor,RatioAnalysis,FinancialMetric,Compan
 from dateutil.relativedelta import relativedelta
 from datetime import date
 
+
+
 class ISINBasicInfoSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(source='face_value_rs', max_digits=18, decimal_places=2, read_only=True)
     tenure = serializers.SerializerMethodField()
     ratings = serializers.SerializerMethodField()
+    coupon_type = serializers.SerializerMethodField()
+
 
     class Meta:
         model = ISINBasicInfo
@@ -52,6 +56,11 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
 
         # 3 Fallback: empty list
         return []
+    
+    def get_coupon_type(self, obj):
+        detail = getattr(obj, "detailed_info", None)
+        return detail.coupon_type if detail else None
+
 
 
 class CompanySerializer(serializers.ModelSerializer):

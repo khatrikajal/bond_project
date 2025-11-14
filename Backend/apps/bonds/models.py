@@ -28,6 +28,7 @@ class CreditRating(models.TextChoices):
     B_MINUS = "B-", "B-"
     C = "C", "C"
     D = "D", "Default / D"
+    UNRATED = "UNRATED", "Unrated / No Rating"
 
 class IssuerType(models.TextChoices):
     CENTRAL_GOVERNMENT = "CENTRAL_GOV", "Central Government"
