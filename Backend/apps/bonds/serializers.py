@@ -10,6 +10,7 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
     tenure = serializers.SerializerMethodField()
     ratings = serializers.SerializerMethodField()
     coupon_type = serializers.SerializerMethodField()
+    prepetual = serializers.SerializerMethodField()
 
 
     class Meta:
