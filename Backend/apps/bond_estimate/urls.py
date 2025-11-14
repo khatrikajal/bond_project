@@ -38,7 +38,14 @@ profitability_ratio = ProfitabilityRatiosViewSet.as_view({
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views.borrowing_views import BorrowingDetailsViewSet  # adjust import if needed
+from .views.borrowing_views import BorrowingDetailsViewSet  
+from .views.CreditRatingView import (
+    CreditRatingCreateView,
+    CreditRatingListView,
+    CreditRatingDetailView,
+    CreditRatingBulkDeleteView,
+    CreditRatingAgencyChoicesView,
+)
 
 # Initialize the DRF router
 router = DefaultRouter()
@@ -72,7 +79,17 @@ urlpatterns = [
 
      #---------  RatingDetails ------------
      path("company/<uuid:company_id>/credit-rating/", CreditRatingCreateView.as_view(), name="credit-rating-create"),
+    
 
+    path('choices/', CreditRatingAgencyChoicesView.as_view(), name='credit-rating-choices'),
+    
+    # CRUD operations
+    path('ratings/<uuid:company_id>', CreditRatingListView.as_view(), name='credit-rating-list'),
+    path('ratings/create/<uuid:company_id>', CreditRatingCreateView.as_view(), name='credit-rating-create'),
+    path('ratings/<int:credit_rating_id>/<uuid:company_id>', CreditRatingDetailView.as_view(), name='credit-rating-detail'),
+    
+    # Bulk operations
+    path('ratings/bulk-delete/<uuid:company_id>', CreditRatingBulkDeleteView.as_view(), name='credit-rating-bulk-delete'),
 
 
    path(
@@ -105,5 +122,6 @@ urlpatterns = [
     ),
 
 
+   
 ]
 
