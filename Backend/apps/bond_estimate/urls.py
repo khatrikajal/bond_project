@@ -7,6 +7,8 @@ from apps.bond_estimate.views.FundPositionViews import (
     FundPositionDetailView,
     FundPositionBulkView,
 )
+from apps.bond_estimate.views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
+
 
 capital_details = CapitalDetailsViewSet.as_view({
     'get': 'list',
@@ -20,6 +22,18 @@ capital_detail = CapitalDetailsViewSet.as_view({
     'delete': 'destroy',
 })
 
+
+profitability_ratios = ProfitabilityRatiosViewSet.as_view({
+    'get': 'list',
+    'post': 'create',
+})
+
+profitability_ratio = ProfitabilityRatiosViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy',
+})
 
 
 from django.urls import path, include
@@ -76,6 +90,36 @@ urlpatterns = [
     
     # Bulk operations
     path('ratings/bulk-delete/<uuid:company_id>', CreditRatingBulkDeleteView.as_view(), name='credit-rating-bulk-delete'),
+
+
+   path(
+        'fund-positions/',
+        FundPositionListCreateView.as_view(),
+        name='fund-position-list-create'
+    ),
+    path(
+        'fund-positions/bulk/',
+        FundPositionBulkView.as_view(),
+        name='fund-position-bulk'
+    ),
+    path(
+        'fund-positions/<uuid:pk>/',  
+        FundPositionDetailView.as_view(),
+        name='fund-position-detail'
+    ),
+
+
+    # -------------- ProfitabilityRatios -----------------
+    path(
+        "company/<uuid:company_id>/profitability-ratios/",
+        profitability_ratios,
+        name="profitability-ratios-list",
+    ),
+    path(
+        "company/<uuid:company_id>/profitability-ratios/<int:ratio_id>/",
+        profitability_ratio,
+        name="profitability-ratios-detail",
+    ),
 
 
    
