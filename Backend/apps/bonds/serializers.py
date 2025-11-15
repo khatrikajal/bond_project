@@ -60,6 +60,10 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
     def get_coupon_type(self, obj):
         detail = getattr(obj, "detailed_info", None)
         return detail.coupon_type if detail else None
+    
+    def get_perpetual(self, obj):
+        detail = getattr(obj, "detailed_info", None)
+        return detail.perpetual if detail else None
 
 
 
