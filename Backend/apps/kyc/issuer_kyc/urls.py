@@ -19,7 +19,7 @@ from .views.CompanyDocumentView import (
     CompanyDocumentStatusView,
     CompanySingleDocumentUploadView,
 )
-from .views.DemateAccountView import DematAccountCreateView,DematAccountGetView,DematAccountUpdateView,DematAccountDelateView
+from .views.DemateAccountView import DematAccountCreateView,DematAccountGetView,DematAccountUpdateView,DematAccountDelateView,FetchDematDetailsView
 from rest_framework.routers import DefaultRouter
 from .views.FinancialDocumentView import FinancialDocumentViewSet
 
@@ -71,11 +71,16 @@ urlpatterns = [
     path("bank-details/<uuid:company_id>/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
     path("bank-details/<uuid:company_id>/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
 
-   # Bulk upload all documents at once (main endpoint as per UI)
+    # ---------- Demate Details --------------
     path("company/<uuid:company_id>/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
     path('company/demat/<int:demat_account_id>/get', DematAccountGetView.as_view(), name='demat-account-get'),
     path("company/demat/<int:demat_account_id>/update", DematAccountUpdateView.as_view(), name="update-demat-account"),
     path("company/demat/<int:demat_account_id>/delete", DematAccountDelateView.as_view(), name="delete-demat-account"),
+    path(
+        "company/<uuid:company_id>/fetch-demat-details/",
+        FetchDematDetailsView.as_view(),
+        name="fetch-demat-details",
+    ),
    
   
     # Bulk upload all documents at once 

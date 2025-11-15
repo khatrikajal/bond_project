@@ -6,6 +6,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from ..models.DemateAccountDetailsModel import DematAccount 
 from config.common.response import APIResponse
+from ..models.CompanyInformationModel import CompanyInformation
+from ..services.demate_details.demat_service import DematService
+
+import re
 
 # class DematAccountCreateView(APIView):
 #     authentication_classes = [JWTAuthentication]
@@ -143,6 +147,68 @@ from config.common.response import APIResponse
 
 
 #         },status=status.HTTP_200_OK)
+
+
+
+PAN_REGEX = r"^[A-Z]{5}[0-9]{4}[A-Z]$"
+
+
+class FetchDematDetailsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, company_id):
+        """
+        Fetch demat details using PAN linked to the given company.
+        """
+
+        # 1. Fetch company
+        try:
+            company = CompanyInformation.active.get(
+                company_id=company_id,
+                user=request.user
+            )
+        except CompanyInformation.DoesNotExist:
+            return APIResponse.error(
+                message="Company not found.",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        # 2. Extract PAN
+        pan_number = (company.company_pan_number or "").strip().upper()
+
+        # 3. Validate PAN (Even though it should never be invalid)
+        if not pan_number:
+            return APIResponse.error(
+                message="PAN number is missing for this company.",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        if pan_number in ["NULL", "NONE", "-", "N/A"]:
+            return APIResponse.error(
+                message="Invalid PAN number stored for this company.",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not re.match(PAN_REGEX, pan_number):
+            return APIResponse.error(
+                message="PAN number format is invalid. Expected format: AAAAA9999A",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 4. Call service layer for demat details
+        demat_data = DematService.fetch_demat_details_from_pan(pan_number)
+
+        # 5. Success response
+        return APIResponse.success(
+            message="Demat details fetched successfully.",
+            data={
+                "company_id": company.company_id,
+                "company_name": company.company_name,
+                "pan_used": pan_number,
+                "demat_details": demat_data
+            },
+            status_code=status.HTTP_200_OK
+        )
 
 
 
