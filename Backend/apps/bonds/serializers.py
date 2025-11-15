@@ -10,7 +10,7 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
     tenure = serializers.SerializerMethodField()
     ratings = serializers.SerializerMethodField()
     coupon_type = serializers.SerializerMethodField()
-    prepetual = serializers.SerializerMethodField()
+  
 
 
     class Meta:
@@ -62,9 +62,7 @@ class ISINBasicInfoSerializer(serializers.ModelSerializer):
         detail = getattr(obj, "detailed_info", None)
         return detail.coupon_type if detail else None
     
-    def get_perpetual(self, obj):
-        detail = getattr(obj, "detailed_info", None)
-        return detail.perpetual if detail else None
+
 
 
 
