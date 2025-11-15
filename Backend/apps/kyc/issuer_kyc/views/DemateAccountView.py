@@ -169,7 +169,7 @@ class FetchDematDetailsView(APIView):
             )
         except CompanyInformation.DoesNotExist:
             return APIResponse.error(
-                message="Company not found.",
+                message="Company not found or not owned by the user",
                 status_code=status.HTTP_404_NOT_FOUND
             )
 

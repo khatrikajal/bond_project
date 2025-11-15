@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
 from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.serializers.CapitalDetailsSerializer import CapitalDetailsSerializer
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 import logging
 from config.common.response import APIResponse
 
@@ -20,8 +21,20 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = 'capital_detail_id'
 
+    def _get_user_company(self, company_id):
+        return CompanyInformation.objects.filter(
+            company_id=company_id,
+            user=self.request.user,
+            del_flag=0
+        ).first()
+
+
     def get_queryset(self):
         company_id = self.kwargs["company_id"]
+        # 1️⃣ Restrict access — ensure this company belongs to the logged-in user
+        company = self._get_user_company(company_id)
+        if not company:
+            return CapitalDetails.objects.none()
         return CapitalDetails.objects.filter(company_id=company_id, del_flag=0)
 
     def _mark_step(self, company_id, step_completed, record_ids=None):

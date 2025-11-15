@@ -4,6 +4,7 @@ from django.db import transaction
 from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.models.ProfitabilityRatiosModel  import ProfitabilityRatios
 from apps.bond_estimate.serializers.ProfitabilityRatiosSerializer import ProfitabilityRatiosSerializer
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from config.common.response import APIResponse
 
 
@@ -13,11 +14,22 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     lookup_field = "ratio_id"
     lookup_url_kwarg = "ratio_id"
 
+    def _get_user_company(self, company_id):
+        return CompanyInformation.objects.filter(
+            company_id=company_id,
+            user=self.request.user,
+            del_flag=0
+        ).first()
+
     # ---------------------------------------------------
     # OPTIMIZED QUERYSET  (select_related)
     # ---------------------------------------------------
     def get_queryset(self):
         company_id = self.kwargs["company_id"]
+        # 1️⃣ Restrict access — ensure this company belongs to the logged-in user
+        company = self._get_user_company(company_id)
+        if not company:
+            return ProfitabilityRatios.objects.none()
         return (
             ProfitabilityRatios.objects
             .select_related("company")           

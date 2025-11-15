@@ -27,10 +27,10 @@ class BankDocumentExtractView(APIView):
 
     def post(self, request, company_id):
         try:
-            company = CompanyInformation.objects.get(pk=company_id)
+            company = CompanyInformation.objects.get(pk=company_id,user=request.user)
         except CompanyInformation.DoesNotExist:
             return APIResponse.error(
-                message="Company not found",
+                message="Company not found or not owned by the user",
                 status_code=404
             )
 
