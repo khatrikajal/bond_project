@@ -32,12 +32,7 @@ class ProfitabilityRatiosSerializer(serializers.ModelSerializer):
         if not company:
             raise serializers.ValidationError("Invalid company_id passed in URL.")
 
-        # ---- ENFORCE ONE-TO-ONE ----
-        existing = ProfitabilityRatios.objects.filter(company=company).first()
-        if existing:
-            raise serializers.ValidationError(
-                "Profitability ratios already exist for this company."
-            )
+        
 
         validated_data["company"] = company
         return super().create(validated_data)
