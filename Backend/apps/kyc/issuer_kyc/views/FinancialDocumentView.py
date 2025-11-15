@@ -57,6 +57,14 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         qs = super().get_queryset()
+        # 1️⃣ PROTECT — ensure company belongs to logged-in user
+        company = CompanyInformation.objects.filter(
+            company_id=self.kwargs["company_id"],
+            user=self.request.user
+        ).first()
+
+        if not company:
+            return FinancialDocument.objects.none()
         qs = qs.filter(company_id=self.kwargs["company_id"], del_flag=0)
 
         fs = DocumentFilterSerializer(data=self.request.query_params)
