@@ -179,7 +179,7 @@ class BondsListView(generics.ListAPIView):
     serializer_class = ISINBasicInfoSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_class = BondFilter
-    ordering_fields = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent']
+    ordering_fields = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent','issue_date']
     pagination_class = BondSkipTakePagination
 
     swagger_parameters = [
@@ -256,10 +256,10 @@ class BondsListView(generics.ListAPIView):
                 Q(issuer_name__icontains=query)
             )
         # ✅ Order by priority first, then other fields
-        queryset = queryset.order_by('priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code')
+        queryset = queryset.order_by('priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code','issue_date')
 
         # ✅ Ensure pagination respects ordering
-        self.pagination_class.ordering = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code']
+        self.pagination_class.ordering = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code','issue_date']
 
         return queryset
 
