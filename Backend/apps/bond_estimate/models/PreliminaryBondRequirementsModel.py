@@ -14,6 +14,7 @@ class PreliminaryBondRequirements(BaseModel):
     - All fields required
     - Category & Payment Cycle stored as JSON arrays
     """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     company = models.ForeignKey(
@@ -27,10 +28,7 @@ class PreliminaryBondRequirements(BaseModel):
 
     security_type = models.CharField(
         max_length=20,
-        choices=(
-            ("Secured", "Secured"),
-            ("Unsecured", "Unsecured"),
-        )
+        choices=(("Secured", "Secured"), ("Unsecured", "Unsecured"))
     )
 
     tenure = models.DecimalField(
@@ -43,6 +41,13 @@ class PreliminaryBondRequirements(BaseModel):
         max_digits=5,
         decimal_places=2,
         help_text="Preferred ROI %"
+    )
+
+    # NEW FIELD (Coupon Rate)
+    coupon_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        help_text="Coupon Rate %"
     )
 
     # Multi-select field (required)
@@ -58,6 +63,7 @@ class PreliminaryBondRequirements(BaseModel):
             models.Index(fields=["company", "del_flag"]),
             models.Index(fields=["security_type"]),
             models.Index(fields=["issue_amount"]),
+            models.Index(fields=["coupon_rate"]),     # NEW INDEX
             models.Index(fields=["created_at"]),
         ]
 
