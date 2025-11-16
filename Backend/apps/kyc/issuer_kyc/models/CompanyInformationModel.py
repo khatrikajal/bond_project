@@ -39,11 +39,11 @@ class CompanyInformation(BaseModel):
     corporate_identification_number = models.CharField(max_length=21)
     company_name = models.CharField(max_length=255)
     date_of_incorporation = models.DateField()
-    city_of_incorporation = models.CharField(max_length=100)
+    # city_of_incorporation = models.CharField(max_length=100)
     state_of_incorporation = models.CharField(max_length=100)
-    country_of_incorporation = models.CharField(max_length=100)
+    # country_of_incorporation = models.CharField(max_length=100)
    
-    # place_of_incorporation = models.CharField(max_length=100)
+    place_of_incorporation = models.CharField(max_length=100)
  
 
     entity_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES)
