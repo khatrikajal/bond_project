@@ -8,6 +8,9 @@ from config.common.response import APIResponse
 from apps.kyc.issuer_kyc.models import CompanyOnboardingApplication
 from apps.authentication.issureauth.models import User  # adjust import path if needed
 from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
+from apps.utils.get_company_from_token import get_company_from_token
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -146,7 +149,19 @@ class FinalSubmitAPIView(APIView):
     TOTAL_STEPS = 5
 
     @transaction.atomic
-    def post(self, request, company_id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        
+        company = get_company_from_token(request)
+        company_id = company.company_id
+
+        user = request.user
+
+        application = (
+            CompanyOnboardingApplication.objects
+            .select_related("company_information")
+            .filter(company_information_id=company_id, user=user)
+            .first()
+        )
         user = request.user
 
         application = (
