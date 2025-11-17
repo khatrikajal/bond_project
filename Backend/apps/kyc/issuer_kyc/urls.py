@@ -59,7 +59,7 @@ urlpatterns = [
 
 
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
-    path("company/<uuid:company_id>/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
+    path("company/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
     path("addresses/",ComapnyAllAdressAPIView.as_view(),name="create-company-address"),
     path("pan-extraction/",PanExtractionView.as_view(),name="create-company-address"),
     path("doc-extraction/", ComapnyAllAdressAPIView.as_view(), name="upload_document"),
