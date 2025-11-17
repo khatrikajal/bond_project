@@ -8,7 +8,8 @@ from .views.CompanyInformationCreateView import (
     CompanyInfoGetView,
     CompanyInformationUpdateView,
     CompanyInfoDeleteView,
-    CompanyInfoByCINView
+    CompanyInfoByCINView,
+    SectorChoicesView,
     )
 from .views import BankDetailsView
 from .views.CompanyDocumentView import (
@@ -64,6 +65,7 @@ urlpatterns = [
     path("company-info/<uuid:company_id>/delete/", CompanyInfoDeleteView.as_view(), name="company-info-delete"),
     # Fetch Through CIN
     path('company-info/cin/<str:cin>/', CompanyInfoByCINView.as_view(), name='company-info-by-cin'),
+    path("company-info/sectors/", SectorChoicesView.as_view(), name="sector-choices"),
 
     #--- Bank Details ----
     path("bank-details/<uuid:company_id>/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
