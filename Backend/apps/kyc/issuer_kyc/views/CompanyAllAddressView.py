@@ -9,16 +9,105 @@ from rest_framework.permissions import IsAuthenticated
 from apps.kyc.issuer_kyc.utils.extract_address import extract_address_from_bill 
 import os
 import tempfile
+from apps.mixins.CompanyScopedMixin import CompanyScopedMixin
+from apps.utils.get_company_from_token import get_company_from_token
+
+
+
+# class ComapnyAllAdressAPIView(CompanyScopedMixin,APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         serializer = CompanyAddressSerializer()
+#         try:
+#             address_list = serializer.get_all_active_addresses()
+#             return Response(
+#                 {
+#                     "success": True,
+#                     "total_records": len(address_list),
+#                     "addresses": address_list
+#                 },
+#                 status=status.HTTP_200_OK
+#             )
+#         except serializers.ValidationError as e:
+#             return Response(
+#                 {"success": False, "errors": e.detail},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#         except Exception as e:
+#             return Response(
+#                 {"success": False, "error": f"Failed to fetch active addresses: {str(e)}"},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
+
+
+#     # def get(self, request):
+#     #     return Response({"msg": "ok"})
+
+
+
+#     ##Extract address doc API
+#     """
+#     API that accepts a file (PDF or Image), performs OCR extraction, 
+#     and returns structured address details.
+#     """
+#     def post(self, request):
+#         uploaded_file = request.FILES.get("document")
+
+#         # 1️⃣ Validate file input
+#         if not uploaded_file:
+#             return Response(
+#                 {"success": False, "error": "No document uploaded. Please attach a file using key 'document'."},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+
+#         temp_file_path = None
+
+#         try:
+#             # 2️⃣ Save the uploaded file temporarily
+#             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as temp_file:
+#                 for chunk in uploaded_file.chunks():
+#                     temp_file.write(chunk)
+#                 temp_file_path = temp_file.name
+
+#             # 3️⃣ Call OCR + address extraction utility
+#             extracted_data = extract_address_from_bill(temp_file_path)
+
+#             # 4️⃣ Delete temporary file
+#             os.remove(temp_file_path)
+
+#             # 5️⃣ Return structured OCR response
+#             return Response(
+#                 {
+#                     "success": True,
+#                     "message": "Address extracted successfully.",
+#                     "data": extracted_data
+#                 },
+#                 status=status.HTTP_200_OK
+#             )
+
+#         except Exception as e:
+#             # Cleanup on error
+#             if temp_file_path and os.path.exists(temp_file_path):
+#                 os.remove(temp_file_path)
+#             return Response(
+#                 {"success": False, "error": f"OCR extraction failed: {str(e)}"},
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
 
 
 
 class ComapnyAllAdressAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    # ✅ GET — Fetch ALL active addresses of this company
     def get(self, request):
         serializer = CompanyAddressSerializer()
+
         try:
-            address_list = serializer.get_all_active_addresses()
+            # 🔥 Automatically fetch active addresses for THIS company only
+            address_list = serializer.get_all_active_addresses(company=get_company_from_token(request) )
+
             return Response(
                 {
                     "success": True,
@@ -27,54 +116,53 @@ class ComapnyAllAdressAPIView(APIView):
                 },
                 status=status.HTTP_200_OK
             )
+
         except serializers.ValidationError as e:
             return Response(
                 {"success": False, "errors": e.detail},
                 status=status.HTTP_404_NOT_FOUND
             )
+
         except Exception as e:
             return Response(
-                {"success": False, "error": f"Failed to fetch active addresses: {str(e)}"},
+                {
+                    "success": False,
+                    "error": f"Failed to fetch active addresses: {str(e)}"
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-
-    # def get(self, request):
-    #     return Response({"msg": "ok"})
-
-
-
-    ##Extract address doc API
-    """
-    API that accepts a file (PDF or Image), performs OCR extraction, 
-    and returns structured address details.
-    """
+    # ✅ POST — OCR-based address extraction (unchanged functionality)
     def post(self, request):
         uploaded_file = request.FILES.get("document")
 
-        # 1️⃣ Validate file input
+        # 1️⃣ Validate input
         if not uploaded_file:
             return Response(
-                {"success": False, "error": "No document uploaded. Please attach a file using key 'document'."},
+                {
+                    "success": False,
+                    "error": "No document uploaded. Please attach a file using key 'document'."
+                },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         temp_file_path = None
 
         try:
-            # 2️⃣ Save the uploaded file temporarily
-            with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as temp_file:
+            # 2️⃣ Save uploaded file temporarily
+            _, ext = os.path.splitext(uploaded_file.name)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
                 for chunk in uploaded_file.chunks():
                     temp_file.write(chunk)
                 temp_file_path = temp_file.name
 
-            # 3️⃣ Call OCR + address extraction utility
+            # 3️⃣ Extract address via OCR utility
             extracted_data = extract_address_from_bill(temp_file_path)
 
-            # 4️⃣ Delete temporary file
+            # 4️⃣ Cleanup
             os.remove(temp_file_path)
 
-            # 5️⃣ Return structured OCR response
+            # 5️⃣ Return extracted structured address
             return Response(
                 {
                     "success": True,
@@ -85,9 +173,10 @@ class ComapnyAllAdressAPIView(APIView):
             )
 
         except Exception as e:
-            # Cleanup on error
+            # Cleanup on failure
             if temp_file_path and os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
+
             return Response(
                 {"success": False, "error": f"OCR extraction failed: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
