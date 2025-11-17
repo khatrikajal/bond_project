@@ -34,7 +34,7 @@ CompanySignatoryDelete,
 CompanySignatoryStatusUpdate)
 
 from .views.FinalSubmitAPIView import FinalSubmitAPIView
-
+from .views.TempFileUploadView import TempFileUploadView
 
 financial_documents = FinancialDocumentViewSet.as_view({
     'get': 'list',
@@ -53,6 +53,10 @@ financial_document_detail = FinancialDocumentViewSet.as_view({
 app_name = 'issuer_kyc'
 
 urlpatterns = [
+    
+    path("uploads/temp/", TempFileUploadView.as_view(), name="uploads-temp"),
+
+
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
     path("company/<uuid:company_id>/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
     path("addresses/",ComapnyAllAdressAPIView.as_view(),name="create-company-address"),

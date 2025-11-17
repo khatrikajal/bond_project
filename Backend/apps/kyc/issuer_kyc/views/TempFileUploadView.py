@@ -4,6 +4,8 @@ from config.common.response import APIResponse
 from ..models.TempUploadedFileModel import TempUploadedFile
 from django.utils import timezone
 import uuid
+from datetime import timedelta
+
 
 class TempFileUploadView(APIView):
     permission_classes = [IsAuthenticated]

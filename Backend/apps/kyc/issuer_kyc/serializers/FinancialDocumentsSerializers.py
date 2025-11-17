@@ -30,7 +30,8 @@ class FinancialDocumentUploadSerializer(serializers.Serializer):
     audit_firm_name = serializers.CharField(max_length=255, required=False, allow_blank=True)
 
     auto_verify = serializers.BooleanField(default=True)
-
+   
+    file_url = serializers.URLField(required=False)
 
     # -----------------------------------------------------------
 
@@ -48,9 +49,9 @@ class FinancialDocumentUploadSerializer(serializers.Serializer):
             return self.validate_partial(data)
 
         # If full update or create → file REQUIRED
-        if "file" not in data:
-            raise serializers.ValidationError({"file": "This field is required."})
-
+        if not data.get("file") and not data.get("file_url"):
+            raise serializers.ValidationError("Either file or file_url required")
+ 
         return self._common_validation(data, company)
 
 
