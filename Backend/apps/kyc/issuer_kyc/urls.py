@@ -3,14 +3,13 @@ from .views.CompanyAddressView import ComapnyAdressAPIView
 from .views.CompanyAllAddressView import ComapnyAllAdressAPIView
 
 from .views.CompanyInformationCreateView import (
-    CompanyInformationCreateView,
     PanExtractionView,
-    CompanyInfoGetView,
-    CompanyInformationUpdateView,
-    CompanyInfoDeleteView,
-    CompanyInfoByCINView,
+    CompanyInformationCreateView,
+    CompanyProfileView,
     SectorChoicesView,
-    )
+    CompanyInfoByCINView,
+)
+
 from .views import BankDetailsView
 from .views.CompanyDocumentView import (
     CompanyDocumentBulkUploadView,
@@ -63,12 +62,13 @@ urlpatterns = [
     path("addresses/",ComapnyAllAdressAPIView.as_view(),name="create-company-address"),
     path("pan-extraction/",PanExtractionView.as_view(),name="create-company-address"),
     path("doc-extraction/", ComapnyAllAdressAPIView.as_view(), name="upload_document"),
-    path("pan-extraction/",PanExtractionView.as_view(),name="create-company-address"),
-    path('company-info/<uuid:company_id>/', CompanyInfoGetView.as_view(), name='company-info-get'),
-    path('company-info/<uuid:company_id>/update/', CompanyInformationUpdateView.as_view(), name='company-info-update'),
-    path("company-info/<uuid:company_id>/delete/", CompanyInfoDeleteView.as_view(), name="company-info-delete"),
-    # Fetch Through CIN
-    path('company-info/cin/<str:cin>/', CompanyInfoByCINView.as_view(), name='company-info-by-cin'),
+    path("pan-extraction/", PanExtractionView.as_view(), name="pan-extraction"),
+    path("company-info/", CompanyInformationCreateView.as_view(), name="company-info-create"),
+
+    # GET / PATCH / DELETE using token
+    path("company-info/profile/", CompanyProfileView.as_view(), name="company-info-me"),
+
+    path("company-info/cin/<str:cin>/", CompanyInfoByCINView.as_view(), name="company-info-by-cin"),
     path("company-info/sectors/", SectorChoicesView.as_view(), name="sector-choices"),
 
     #--- Bank Details ----
