@@ -5,13 +5,30 @@ from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 from apps.authentication.issureauth.models import User
 import uuid
 
+
 class ActiveCompanyManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(del_flag=0)
-    
+
+
+# -------------------------------------------
+# NEW: SECTOR DROPDOWN CHOICES
+# -------------------------------------------
+class SectorChoices(models.TextChoices):
+    AGRICULTURE = 'AGRICULTURE', 'Agriculture'
+    MANUFACTURING = 'MANUFACTURING', 'Manufacturing'
+    IT_SOFTWARE = 'IT_SOFTWARE', 'IT & Software'
+    FINANCIAL = 'FINANCIAL', 'Financial Services'
+    HEALTHCARE = 'HEALTHCARE', 'Healthcare'
+    RETAIL = 'RETAIL', 'Retail & E-commerce'
+    REAL_ESTATE = 'REAL_ESTATE', 'Real Estate'
+    LOGISTICS = 'LOGISTICS', 'Logistics & Transportation'
+    ENTERTAINMENT = 'ENTERTAINMENT', 'Media & Entertainment'
+    EDUCATION = 'EDUCATION', 'Education'
+    OTHERS = 'OTHERS', 'Others'
+
 
 class CompanyInformation(BaseModel):
-    
     """
     Stores company legal information (KYC).
     """
@@ -25,30 +42,49 @@ class CompanyInformation(BaseModel):
         ('OPC', 'OPC'),
         ('TRUST_NGO', 'Trust/Society/NGO'),
     ]
+
     company_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
         unique=True,
     )
-    # company_id = models.BigAutoField(primary_key=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
-    # ENCRYPT WHEN READY
+    # -------------------------------
+    # COMPANY BASIC DETAILS
+    # -------------------------------
     corporate_identification_number = models.CharField(max_length=21)
     company_name = models.CharField(max_length=255)
     date_of_incorporation = models.DateField()
-    # city_of_incorporation = models.CharField(max_length=100)
-    state_of_incorporation = models.CharField(max_length=100)
-    # country_of_incorporation = models.CharField(max_length=100)
+
+    # OLD FIELD — keep it for migration safety
    
-    place_of_incorporation = models.CharField(max_length=100)
- 
+
+    # NEW SEPARATED FIELDS
+    city_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
+    state_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
+    country_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
 
     entity_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES)
 
-    # Sensitive fields
+    # NEW — SECTOR DROPDOWN
+    sector = models.CharField(
+        max_length=50,
+        choices=SectorChoices.choices,
+        null=True,
+        blank=True
+    )
+
+    # -------------------------------
+    # PAN & GST DETAILS
+    # -------------------------------
     company_or_individual_pan_card_file = models.FileField(
         upload_to='company_documents/pan_cards/',
         null=True,
@@ -61,7 +97,10 @@ class CompanyInformation(BaseModel):
     gstin = models.CharField(max_length=15)
     msme_udyam_registration_no = models.CharField(max_length=50, null=True, blank=True)
 
-    objects = models.Manager()  # Default
+    # -------------------------------
+    # MANAGERS
+    # -------------------------------
+    objects = models.Manager()
     active = ActiveCompanyManager()
 
     class Meta:
@@ -81,12 +120,8 @@ class CompanyInformation(BaseModel):
                 condition=Q(del_flag=0),
                 name='unique_pan_active_only'
             ),
-            models.UniqueConstraint(
-                fields=['gstin'],
-                condition=Q(del_flag=0),
-                name='unique_gstin_active_only'
-            ),
+            
         ]
 
     def __str__(self):
-         return f"{self.company_name} (CIN: {self.corporate_identification_number})"
+        return f"{self.company_name} (CIN: {self.corporate_identification_number})"

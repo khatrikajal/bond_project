@@ -80,12 +80,7 @@ class CreditRatingDetails(BaseModel):
             models.Index(fields=['valid_till']),
             models.Index(fields=['reting_status']),
         ]
-        constraints = [
-            models.UniqueConstraint(
-                fields=['company', 'agency', 'rating'],
-                name='unique_company_agency_rating'
-            )
-        ]
+        
 
     def __str__(self):
         return f"{self.company.company_name} - {self.agency} ({self.rating})"
