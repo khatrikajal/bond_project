@@ -993,45 +993,24 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             vd.pop("period_month", None)
             vd.pop("period_quarter", None)
 
-            # load from temp URL (file_url is required for create)
             file = self._load_file_from_temp_url(file_url)
             if not file:
                 return APIResponse.error("Invalid or expired temporary file", status_code=400)
 
             file_hash = self._compute_file_hash(file)
 
-            latest = self._get_latest_version(
-                company_id,
-                vd["document_type"],
-                vd["period_start_date"],
-                vd["period_end_date"],
-                vd["document_tag"],
-            )
-
-            if latest and latest.file_hash == file_hash:
-                return APIResponse.error(
-                    message="This exact file is already uploaded",
-                    data={"document_id": latest.document_id, "version": latest.version},
-                    status_code=400
-                )
-
-            version = latest.version + 1 if latest else 1
-
             document = FinancialDocument(
                 company_id=company_id,
                 file_hash=file_hash,
-                version=version,
                 user_id_updated_by=request.user,
-                **vd,
+                **vd  # version already included by serializer
             )
 
             document.file_name = file.name
             document.file_size = file.size
             document.mime_type = getattr(file, "content_type", "application/pdf")
-
             document.file_path.save(file.name, file, save=True)
 
-            # delete temp file AFTER successful promotion
             self._delete_temp_file(file_url)
 
             FinancialDocumentService.update_onboarding_state(company_id)
@@ -1041,10 +1020,9 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
             return APIResponse.success(
                 message="Document uploaded successfully",
-                data={**FinancialDocumentSerializer(document).data},
+                data=FinancialDocumentSerializer(document).data,
                 status_code=201
             )
-
         except ValidationError as e:
             return APIResponse.error(message="Validation failed", data=e.detail, status_code=400)
         except Exception as e:
@@ -1222,7 +1200,6 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
                     document = FinancialDocument(
                         company_id=company_id,
                         file_hash=file_hash,
-                        version=(latest.version + 1 if latest else 1),
                         user_id_updated_by=request.user,
                         **vd
                     )
