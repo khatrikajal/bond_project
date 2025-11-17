@@ -417,14 +417,14 @@ from apps.kyc.issuer_kyc.serializers.CompanyAddressSerializer import CompanyAddr
 from rest_framework.permissions import IsAuthenticated
 from apps.kyc.issuer_kyc.utils.extract_address import extract_address_from_bill
 from apps.mixins.CompanyScopedMixin import CompanyScopedMixin
+from apps.utils.get_company_from_token import get_company_from_token
 
-
-class ComapnyAdressAPIView(CompanyScopedMixin, APIView):
+class ComapnyAdressAPIView( APIView):
     permission_classes = [IsAuthenticated]
 
     # ✅ GET method
     def get(self, request):
-        company = self.company  # <-- from mixin
+        company = get_company_from_token(request)   # <-- from mixin
 
         addresses = CompanyAddress.objects.filter(company=company)
 
@@ -502,7 +502,7 @@ class ComapnyAdressAPIView(CompanyScopedMixin, APIView):
 
     # ✅ POST method
     def post(self, request):
-        company = self.company  # <-- from mixin
+        company = get_company_from_token(request)   # <-- from mixin
 
         data = request.data.copy()
         files = request.FILES
@@ -604,7 +604,7 @@ class ComapnyAdressAPIView(CompanyScopedMixin, APIView):
 
     # ✅ PUT method
     def put(self, request, company_id=None):
-        company = self.company  # <-- from mixin
+        company = get_company_from_token(request)   # <-- from mixin
 
         data = request.data.copy()
         files = request.FILES
@@ -720,7 +720,7 @@ class ComapnyAdressAPIView(CompanyScopedMixin, APIView):
 
     # DELETE
     def delete(self, request, company_id=None):
-        company = self.company  # <-- from mixin
+        company = get_company_from_token(request)   # <-- from mixin
 
         serializer = CompanyAddressSerializer()
 

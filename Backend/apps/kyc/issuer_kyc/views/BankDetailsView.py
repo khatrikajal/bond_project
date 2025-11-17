@@ -15,24 +15,24 @@ from rest_framework import permissions
 import json
 import hashlib
 import logging
-
+from apps.mixins import CompanyScopedMixin
 from config.common.response import APIResponse 
+from apps.utils.get_company_from_token import get_company_from_token
 
 logger = logging.getLogger(__name__)
 
 
 
-class BankDocumentExtractView(APIView):
+class BankDTO:
+    def __init__(self, data: dict):
+        for key, value in data.items():
+            setattr(self, key, value)
+
+class BankDocumentExtractView( APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, company_id):
-        try:
-            company = CompanyInformation.objects.get(pk=company_id,user=request.user)
-        except CompanyInformation.DoesNotExist:
-            return APIResponse.error(
-                message="Company not found or not owned by the user",
-                status_code=404
-            )
+    def post(self, request):
+        company = get_company_from_token(request)   # from mixin
 
         serializer = BankDocumentExtractSerializer(data=request.data)
         if not serializer.is_valid():
@@ -57,6 +57,8 @@ class BankDocumentExtractView(APIView):
 
             with transaction.atomic():
                 update_fields = []
+
+                # delete all existing files (unchanged logic)
                 for field in ["cancelled_cheque", "bank_statement", "passbook"]:
                     existing_file = getattr(bank_details, field)
                     if existing_file and existing_file.name:
@@ -64,11 +66,13 @@ class BankDocumentExtractView(APIView):
                         setattr(bank_details, field, None)
                         update_fields.append(field)
 
+                # save new file
                 setattr(bank_details, file_field_name, uploaded_file)
                 update_fields.append(file_field_name)
                 bank_details.save(update_fields=update_fields)
 
             file_obj = getattr(bank_details, file_field_name)
+
             with file_obj.open("rb") as f:
                 bytes_data = f.read()
 
@@ -91,15 +95,12 @@ class BankDocumentExtractView(APIView):
                 status_code=500
             )
 
-class BankDTO:
-    def __init__(self, data: dict):
-        for key, value in data.items():
-            setattr(self, key, value)
-
-class BankDetailsVerifyView(APIView):
+class BankDetailsVerifyView( APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, company_id):
+    def post(self, request):
+        company = get_company_from_token(request)   # from mixin
+
         serializer = BankDetailsVerifySerializer(data=request.data)
         if not serializer.is_valid():
             return APIResponse.error(
@@ -109,13 +110,14 @@ class BankDetailsVerifyView(APIView):
             )
 
         try:
-            bank_details = BankDetails.objects.get(company_id=company_id)
+            bank_details = BankDetails.objects.get(company=company)
         except BankDetails.DoesNotExist:
             return APIResponse.error(
                 message="Bank details not found for this company",
                 status_code=404
             )
 
+        # existing logic — unchanged
         if bank_details.is_verified and bank_details.verified_data_hash:
             current_hash = self._generate_hash(serializer.validated_data)
             if current_hash == bank_details.verified_data_hash:
@@ -138,6 +140,7 @@ class BankDetailsVerifyView(APIView):
                 status_code=500
             )
 
+        # unchanged DB update logic
         with transaction.atomic():
             bank_details.is_verified = result.get("success", False)
 
@@ -165,14 +168,15 @@ class BankDetailsVerifyView(APIView):
 class BankDetailsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self, company_id):
+    def get_object(self,request):
+        company = get_company_from_token(request)   # from mixin
         try:
-            return BankDetails.objects.get(company_id=company_id, del_flag=0)
+            return BankDetails.objects.get(company=company, del_flag=0)
         except BankDetails.DoesNotExist:
             return None
 
-    def get(self, request, company_id):
-        bank = self.get_object(company_id)
+    def get(self, request):
+        bank = self.get_object()
         if not bank:
             return APIResponse.error(
                 message="Bank details not found for this company",
@@ -184,16 +188,10 @@ class BankDetailsView(APIView):
             data=BankDetailsSerializer(bank).data
         )
 
-    def post(self, request, company_id):
-        try:
-            company = CompanyInformation.objects.get(pk=company_id)
-        except CompanyInformation.DoesNotExist:
-            return APIResponse.error(
-                message="Bank details not found for this company",
-                status_code=404
-            )
+    def post(self, request):
+        company = get_company_from_token(request) 
 
-        existing_bank = self.get_object(company_id)
+        existing_bank = self.get_object()
 
         if existing_bank and not existing_bank.is_verified:
             return APIResponse.error(
@@ -206,7 +204,7 @@ class BankDetailsView(APIView):
             )
 
         data = request.data.copy()
-        data['company_id'] = company_id
+        data['company_id'] = str(company.company_id)
 
         serializer = BankDetailsSerializer(
             instance=existing_bank,
@@ -229,8 +227,9 @@ class BankDetailsView(APIView):
             data=BankDetailsSerializer(bank).data
         )
 
-    def put(self, request, company_id):
-        bank = self.get_object(company_id)
+    def put(self, request):
+        company = get_company_from_token(request) 
+        bank = self.get_object()
         if not bank:
             return APIResponse.error(
                 message="Bank details not found for this company",
@@ -238,7 +237,7 @@ class BankDetailsView(APIView):
             )
 
         data = request.data.copy()
-        data['company_id'] = company_id
+        data['company_id'] = str(company.company_id)
 
         serializer = BankDetailsSerializer(bank, data=data)
         if not serializer.is_valid():
@@ -252,15 +251,14 @@ class BankDetailsView(APIView):
         bank.user_id_updated_by = request.user
         bank.save(update_fields=['user_id_updated_by'])
 
-        data = BankDetailsSerializer(bank).data
-
         return APIResponse.success(
             message="Bank details updated successfully.",
-            data=data
+            data=BankDetailsSerializer(bank).data
         )
 
-    def patch(self, request, company_id):
-        bank = self.get_object(company_id)
+    def patch(self, request):
+        company = get_company_from_token(request) 
+        bank = self.get_object()
         if not bank:
             return APIResponse.error(
                 message="Bank details not found for this company",
@@ -268,7 +266,7 @@ class BankDetailsView(APIView):
             )
 
         data = request.data.copy()
-        data['company_id'] = company_id
+        data['company_id'] = str(company.company_id)
 
         serializer = BankDetailsSerializer(bank, data=data, partial=True)
         if not serializer.is_valid():
@@ -279,26 +277,23 @@ class BankDetailsView(APIView):
             )
 
         bank = serializer.save()
-
         bank.user_id_updated_by = request.user
         bank.save(update_fields=['user_id_updated_by'])
 
-        data = BankDetailsSerializer(bank).data
-
         return APIResponse.success(
             message="Bank details updated successfully.",
-            data=data
+            data=BankDetailsSerializer(bank).data
         )
 
-    def delete(self, request, company_id):
-        bank = self.get_object(company_id)
+    def delete(self, request):
+        company = get_company_from_token(request) 
+        bank = self.get_object()
         if not bank:
             return APIResponse.error(
                 message="Bank details not found for this company",
                 status_code=404
             )
 
-        company = bank.company
         try:
             with transaction.atomic():
                 bank.user_id_updated_by = request.user
@@ -309,7 +304,7 @@ class BankDetailsView(APIView):
                     update_step_4_status(company.application, bank_ids=[])
 
         except Exception as e:
-            logger.exception(f"Delete failed for company {company_id}")
+            logger.exception(f"Delete failed for company {company.company_id}")
             return APIResponse.error(
                 message=f"Delete failed: {str(e)}",
                 status_code=500
@@ -321,6 +316,311 @@ class BankDetailsView(APIView):
                 "detail": f"Bank details {bank.bank_detail_id} soft-deleted successfully"
             }
         )
+
+
+# Lasted code 17-11-2025
+
+# class BankDocumentExtractView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def post(self, request, company_id):
+#         try:
+#             company = CompanyInformation.objects.get(pk=company_id,user=request.user)
+#         except CompanyInformation.DoesNotExist:
+#             return APIResponse.error(
+#                 message="Company not found or not owned by the user",
+#                 status_code=404
+#             )
+
+#         serializer = BankDocumentExtractSerializer(data=request.data)
+#         if not serializer.is_valid():
+#             return APIResponse.error(
+#                 message="Invalid input",
+#                 errors=serializer.errors,
+#                 status_code=400
+#             )
+
+#         doc_type = serializer.validated_data["document_type"]
+#         uploaded_file = serializer.validated_data["file"]
+
+#         field_map = {
+#             "cheque": "cancelled_cheque",
+#             "bank_statement": "bank_statement",
+#             "passbook": "passbook",
+#         }
+#         file_field_name = field_map[doc_type]
+
+#         try:
+#             bank_details, _ = BankDetails.objects.get_or_create(company=company)
+
+#             with transaction.atomic():
+#                 update_fields = []
+#                 for field in ["cancelled_cheque", "bank_statement", "passbook"]:
+#                     existing_file = getattr(bank_details, field)
+#                     if existing_file and existing_file.name:
+#                         existing_file.delete(save=False)
+#                         setattr(bank_details, field, None)
+#                         update_fields.append(field)
+
+#                 setattr(bank_details, file_field_name, uploaded_file)
+#                 update_fields.append(file_field_name)
+#                 bank_details.save(update_fields=update_fields)
+
+#             file_obj = getattr(bank_details, file_field_name)
+#             with file_obj.open("rb") as f:
+#                 bytes_data = f.read()
+
+#             extractor = DocumentExtractorFactory.get_extractor(doc_type)
+#             extracted_data = extractor.extract(bytes_data)
+
+#             return APIResponse.success(
+#                 message="Bank document uploaded and processed successfully.",
+#                 data={
+#                     "file_url": file_obj.url,
+#                     "extracted_data": extracted_data,
+#                     "bank_detail_id": bank_details.bank_detail_id
+#                 }
+#             )
+
+#         except Exception as e:
+#             logger.exception("Document upload or extraction failed")
+#             return APIResponse.error(
+#                 message=f"Upload failed: {str(e)}",
+#                 status_code=500
+#             )
+
+# class BankDTO:
+#     def __init__(self, data: dict):
+#         for key, value in data.items():
+#             setattr(self, key, value)
+
+# class BankDetailsVerifyView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def post(self, request, company_id):
+#         serializer = BankDetailsVerifySerializer(data=request.data)
+#         if not serializer.is_valid():
+#             return APIResponse.error(
+#                 message="Invalid input",
+#                 errors=serializer.errors,
+#                 status_code=400
+#             )
+
+#         try:
+#             bank_details = BankDetails.objects.get(company_id=company_id)
+#         except BankDetails.DoesNotExist:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         if bank_details.is_verified and bank_details.verified_data_hash:
+#             current_hash = self._generate_hash(serializer.validated_data)
+#             if current_hash == bank_details.verified_data_hash:
+#                 return APIResponse.success(
+#                     message="Bank details already verified with same information.",
+#                     data={
+#                         "verified_at": bank_details.verified_at,
+#                         "skipped_reverification": True
+#                     }
+#                 )
+
+#         bank = BankDTO(serializer.validated_data)
+
+#         try:
+#             from apps.kyc.issuer_kyc.services.bank_details.verify_bank_details import verify_bank_details
+#             result = verify_bank_details(bank)
+#         except Exception:
+#             return APIResponse.error(
+#                 message="Verification service failed",
+#                 status_code=500
+#             )
+
+#         with transaction.atomic():
+#             bank_details.is_verified = result.get("success", False)
+
+#             if result.get("success"):
+#                 bank_details.verified_at = timezone.now()
+#                 bank_details.verified_data_hash = self._generate_hash(serializer.validated_data)
+#             else:
+#                 bank_details.verified_at = None
+#                 bank_details.verified_data_hash = None
+
+#             bank_details.save(update_fields=["is_verified", "verified_at", "verified_data_hash"])
+
+#         return APIResponse.success(
+#             message="Bank details verified successfully."
+#         )
+
+#     def _generate_hash(self, data):
+#         hash_data = {
+#             field: str(data.get(field, '')).strip().lower()
+#             for field in BankDetailsConfig.CRITICAL_FIELDS
+#         }
+#         json_str = json.dumps(hash_data, sort_keys=True)
+#         return hashlib.sha256(json_str.encode()).hexdigest()
+
+# class BankDetailsView(APIView):
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def get_object(self, company_id):
+#         try:
+#             return BankDetails.objects.get(company_id=company_id, del_flag=0)
+#         except BankDetails.DoesNotExist:
+#             return None
+
+#     def get(self, request, company_id):
+#         bank = self.get_object(company_id)
+#         if not bank:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         return APIResponse.success(
+#             message="Bank details retrieved successfully.",
+#             data=BankDetailsSerializer(bank).data
+#         )
+
+#     def post(self, request, company_id):
+#         try:
+#             company = CompanyInformation.objects.get(pk=company_id)
+#         except CompanyInformation.DoesNotExist:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         existing_bank = self.get_object(company_id)
+
+#         if existing_bank and not existing_bank.is_verified:
+#             return APIResponse.error(
+#                 message="Bank details must be verified before submission",
+#                 errors={
+#                     "detail": "Please verify bank details using /verify/ endpoint first",
+#                     "error_code": "VERIFICATION_REQUIRED"
+#                 },
+#                 status_code=400
+#             )
+
+#         data = request.data.copy()
+#         data['company_id'] = company_id
+
+#         serializer = BankDetailsSerializer(
+#             instance=existing_bank,
+#             data=data
+#         )
+
+#         if not serializer.is_valid():
+#             return APIResponse.error(
+#                 message="Invalid input",
+#                 errors=serializer.errors,
+#                 status_code=400
+#             )
+
+#         bank = serializer.save()
+#         bank.user_id_updated_by = request.user
+#         bank.save(update_fields=['user_id_updated_by'])
+
+#         return APIResponse.success(
+#             message="Bank details saved successfully.",
+#             data=BankDetailsSerializer(bank).data
+#         )
+
+#     def put(self, request, company_id):
+#         bank = self.get_object(company_id)
+#         if not bank:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         data = request.data.copy()
+#         data['company_id'] = company_id
+
+#         serializer = BankDetailsSerializer(bank, data=data)
+#         if not serializer.is_valid():
+#             return APIResponse.error(
+#                 message="Invalid input",
+#                 errors=serializer.errors,
+#                 status_code=400
+#             )
+
+#         bank = serializer.save()
+#         bank.user_id_updated_by = request.user
+#         bank.save(update_fields=['user_id_updated_by'])
+
+#         data = BankDetailsSerializer(bank).data
+
+#         return APIResponse.success(
+#             message="Bank details updated successfully.",
+#             data=data
+#         )
+
+#     def patch(self, request, company_id):
+#         bank = self.get_object(company_id)
+#         if not bank:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         data = request.data.copy()
+#         data['company_id'] = company_id
+
+#         serializer = BankDetailsSerializer(bank, data=data, partial=True)
+#         if not serializer.is_valid():
+#             return APIResponse.error(
+#                 message="Invalid input",
+#                 errors=serializer.errors,
+#                 status_code=400
+#             )
+
+#         bank = serializer.save()
+
+#         bank.user_id_updated_by = request.user
+#         bank.save(update_fields=['user_id_updated_by'])
+
+#         data = BankDetailsSerializer(bank).data
+
+#         return APIResponse.success(
+#             message="Bank details updated successfully.",
+#             data=data
+#         )
+
+#     def delete(self, request, company_id):
+#         bank = self.get_object(company_id)
+#         if not bank:
+#             return APIResponse.error(
+#                 message="Bank details not found for this company",
+#                 status_code=404
+#             )
+
+#         company = bank.company
+#         try:
+#             with transaction.atomic():
+#                 bank.user_id_updated_by = request.user
+#                 bank.del_flag = 1
+#                 bank.save(update_fields=["del_flag", "user_id_updated_by"])
+
+#                 if hasattr(company, "application") and company.application:
+#                     update_step_4_status(company.application, bank_ids=[])
+
+#         except Exception as e:
+#             logger.exception(f"Delete failed for company {company_id}")
+#             return APIResponse.error(
+#                 message=f"Delete failed: {str(e)}",
+#                 status_code=500
+#             )
+
+#         return APIResponse.success(
+#             message="Bank details deleted successfully.",
+#             data={
+#                 "detail": f"Bank details {bank.bank_detail_id} soft-deleted successfully"
+#             }
+#         )
+# ---------------------------------------------------------------------
+
 
 # class BankDocumentExtractView(APIView):
 #     """
