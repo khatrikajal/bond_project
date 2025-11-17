@@ -55,6 +55,7 @@ from .views.CollateralAssetVerificationViews import (
     CollateralAssetVerificationListCreateView,
     CollateralAssetVerificationDetailView,
 )
+
 from .views.BondPreviewViews import (
     BondPreviewGetView,
     BondPreviewPatchView,
@@ -159,8 +160,7 @@ urlpatterns = [
         profitability_ratio,
         name="profitability-ratios-detail",
     ),
-
-    path(
+     path(
         "preview/<uuid:company_id>/",
         BondPreviewGetView.as_view(),
         name="bond-preview-get",
@@ -170,6 +170,8 @@ urlpatterns = [
         BondPreviewPatchView.as_view(),
         name="bond-preview-patch",
     ),
+
+
    
 ]
 
