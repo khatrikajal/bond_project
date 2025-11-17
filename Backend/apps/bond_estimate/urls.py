@@ -55,6 +55,10 @@ from .views.CollateralAssetVerificationViews import (
     CollateralAssetVerificationListCreateView,
     CollateralAssetVerificationDetailView,
 )
+from .views.BondPreviewViews import (
+    BondPreviewGetView,
+    BondPreviewPatchView,
+)
 
 # Initialize the DRF router
 router = DefaultRouter()
@@ -157,6 +161,15 @@ urlpatterns = [
     ),
 
 
-   
+     path(
+        "preview/<uuid:company_id>/",
+        BondPreviewGetView.as_view(),
+        name="bond-preview-get",
+    ),
+    path(
+        "preview/<uuid:company_id>/update/",
+        BondPreviewPatchView.as_view(),
+        name="bond-preview-patch",
+    ),
 ]
 
