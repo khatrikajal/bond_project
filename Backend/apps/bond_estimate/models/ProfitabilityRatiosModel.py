@@ -11,7 +11,7 @@ class ProfitabilityRatios(BaseModel):
 
     ratio_id = models.BigAutoField(primary_key=True)
 
-    company = models.OneToOneField(
+    company = models.ForeignKey(
         CompanyInformation,
         on_delete=models.CASCADE,
         related_name="profitability_ratios",

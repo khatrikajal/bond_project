@@ -4,20 +4,35 @@ from django.db import transaction
 from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.models.ProfitabilityRatiosModel  import ProfitabilityRatios
 from apps.bond_estimate.serializers.ProfitabilityRatiosSerializer import ProfitabilityRatiosSerializer
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from config.common.response import APIResponse
+from rest_framework.response import Response
+from rest_framework import status
+from apps.bond_estimate.mixins.company_permission_mixin import CompanyPermissionMixin
 
 
-class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
+class ProfitabilityRatiosViewSet(CompanyPermissionMixin,viewsets.ModelViewSet):
     serializer_class = ProfitabilityRatiosSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "ratio_id"
     lookup_url_kwarg = "ratio_id"
+
+    def _get_user_company(self, company_id):
+        return CompanyInformation.objects.filter(
+            company_id=company_id,
+            user=self.request.user,
+            del_flag=0
+        ).first()
 
     # ---------------------------------------------------
     # OPTIMIZED QUERYSET  (select_related)
     # ---------------------------------------------------
     def get_queryset(self):
         company_id = self.kwargs["company_id"]
+        # 1️⃣ Restrict access — ensure this company belongs to the logged-in user
+        company = self._get_user_company(company_id)
+        if not company:
+            return ProfitabilityRatios.objects.none()
         return (
             ProfitabilityRatios.objects
             .select_related("company")           
@@ -79,6 +94,9 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def create(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
 
         queryset = self.get_queryset()   
         existing = queryset.first()
@@ -118,6 +136,10 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def update(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
 
         serializer = self.serializer_class(
@@ -139,6 +161,10 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def partial_update(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
 
         serializer = self.serializer_class(
@@ -160,6 +186,9 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def destroy(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
         instance = self.get_object()
         instance.del_flag = 1
         instance.user_id_updated_by = request.user
@@ -177,6 +206,9 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # LIST
     # ---------------------------------------------------
     def list(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
         queryset = self.get_queryset()  
         serializer = self.serializer_class(queryset, many=True, context={"view": self, "request": request})
 
@@ -190,6 +222,9 @@ class ProfitabilityRatiosViewSet(viewsets.ModelViewSet):
     # RETRIEVE
     # ---------------------------------------------------
     def retrieve(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
         instance = self.get_object() 
         serializer = self.serializer_class(instance, context={"view": self, "request": request})
 

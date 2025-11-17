@@ -4,9 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from apps.bond_estimate.models.CapitalDetailsModel import CapitalDetails
 from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 from apps.bond_estimate.serializers.CapitalDetailsSerializer import CapitalDetailsSerializer
+from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 import logging
 from config.common.response import APIResponse
-
+from apps.bond_estimate.mixins.company_permission_mixin import CompanyPermissionMixin
+from rest_framework.response import Response
+from rest_framework import status
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -15,13 +18,25 @@ logger.setLevel(logging.DEBUG)
 
 
 
-class CapitalDetailsViewSet(viewsets.ModelViewSet):
+class CapitalDetailsViewSet(CompanyPermissionMixin,viewsets.ModelViewSet):
     serializer_class = CapitalDetailsSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'capital_detail_id'
 
+    def _get_user_company(self, company_id):
+        return CompanyInformation.objects.filter(
+            company_id=company_id,
+            user=self.request.user,
+            del_flag=0
+        ).first()
+
+
     def get_queryset(self):
         company_id = self.kwargs["company_id"]
+        # 1️⃣ Restrict access — ensure this company belongs to the logged-in user
+        company = self._get_user_company(company_id)
+        if not company:
+            return CapitalDetails.objects.none()
         return CapitalDetails.objects.filter(company_id=company_id, del_flag=0)
 
     def _mark_step(self, company_id, step_completed, record_ids=None):
@@ -36,6 +51,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def create(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -96,6 +115,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def update(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
 
         serializer = self.serializer_class(
@@ -124,6 +147,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def partial_update(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
 
         serializer = self.serializer_class(
@@ -153,6 +180,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # ---------------------------------------------------
     @transaction.atomic
     def destroy(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
         instance.del_flag = 1
         instance.user_id_updated_by = request.user
@@ -187,6 +218,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # LIST (GET ALL)
     # ---------------------------------------------------
     def list(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
 
@@ -201,6 +236,10 @@ class CapitalDetailsViewSet(viewsets.ModelViewSet):
     # RETRIEVE (GET ONE)
     # ---------------------------------------------------
     def retrieve(self, request, company_id, *args, **kwargs):
+        company_check = self.ensure_user_company(company_id)
+        if isinstance(company_check, Response):
+            return company_check
+
         instance = self.get_object()
         serializer = self.serializer_class(instance)
 
