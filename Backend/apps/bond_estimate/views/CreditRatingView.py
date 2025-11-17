@@ -397,16 +397,20 @@ class CreditRatingDetailView(APIView):
             is_del=0
         )
 
+    # -----------------------
+    # GET BY ID
+    # -----------------------
     def get(self, request, credit_rating_id, company_id):
         rating = self.get_object(company_id, credit_rating_id, request.user)
-
         serializer = CreditRatingListSerializer(rating, context={'request': request})
-
         return APIResponse.success(
             data=serializer.data,
             message="Credit rating fetched successfully"
         )
 
+    # -----------------------
+    # FULL UPDATE (PUT)
+    # -----------------------
     def put(self, request, credit_rating_id, company_id):
         rating = self.get_object(company_id, credit_rating_id, request.user)
 
@@ -415,22 +419,64 @@ class CreditRatingDetailView(APIView):
             context={"request": request, "company_id": company_id, "instance": rating},
         )
         serializer.is_valid(raise_exception=True)
-
         updated_rating = serializer.update(rating, serializer.validated_data)
 
-        response_data = CreditRatingListSerializer(updated_rating, context={'request': request}).data
-
+        response = CreditRatingListSerializer(updated_rating, context={'request': request}).data
         return APIResponse.success(
-            data=response_data,
+            data=response,
             message="Credit rating updated successfully"
         )
 
+    # -----------------------
+    # PARTIAL UPDATE (PATCH)
+    # -----------------------
+    def patch(self, request, credit_rating_id, company_id):
+        rating = self.get_object(company_id, credit_rating_id, request.user)
+
+        update_data = request.data.copy()
+
+        # If only valid_till changed → allow without sending all fields
+        serializer = CreditRatingSerializer(
+            data=update_data,
+            partial=True,     # IMPORTANT
+            context={"request": request, "company_id": company_id, "instance": rating},
+        )
+        serializer.is_valid(raise_exception=True)
+        updated_rating = serializer.update(rating, serializer.validated_data)
+
+        response = CreditRatingListSerializer(updated_rating, context={'request': request}).data
+
+        return APIResponse.success(
+            data=response,
+            message="Credit rating partially updated successfully"
+        )
+
+    # -----------------------
+    # DELETE
+    # -----------------------
     def delete(self, request, credit_rating_id, company_id):
+
         rating = self.get_object(company_id, credit_rating_id, request.user)
 
         rating.is_del = 1
         rating.user_id_updated_by = request.user
         rating.save(update_fields=['is_del', 'user_id_updated_by', 'updated_at'])
+
+        company = rating.company
+
+        remaining = CreditRatingDetails.objects.filter(
+            company=company,
+            is_del=0
+        ).exists()
+
+        if not remaining:
+            app = create_or_get_application(user=request.user, company=company)
+            update_step(
+                application=app,
+                step_id="1.2",
+                record_ids=[],
+                completed=False
+            )
 
         return APIResponse.success(
             message="Credit rating deleted successfully"

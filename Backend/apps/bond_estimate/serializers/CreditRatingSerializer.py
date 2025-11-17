@@ -181,21 +181,19 @@ from rest_framework import serializers
 from ..models.AgencyRatingChoice import RatingAgency, CreditRating
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from ..models.CreditRatingDetailsModel import CreditRatingDetails
-from datetime import datetime, timezone, date
+from datetime import date
 from django.core.files.base import ContentFile
 from django.conf import settings
-import os
-import re
-import uuid
+import os, re, uuid
 from ..services.bond_estimation_service import create_or_get_application, update_step
 
 
 class CreditRatingSerializer(serializers.Serializer):
     credit_rating_id = serializers.IntegerField(read_only=True)
 
-    agency = serializers.ChoiceField(choices=RatingAgency.choices)
-    rating = serializers.ChoiceField(choices=CreditRating.choices)
-    valid_till = serializers.DateField()
+    agency = serializers.ChoiceField(choices=RatingAgency.choices, required=False)
+    rating = serializers.ChoiceField(choices=CreditRating.choices, required=False)
+    valid_till = serializers.DateField(required=False)
 
     additional_rating = serializers.CharField(max_length=255, required=False, allow_blank=True)
     upload_letter = serializers.FileField(required=False, allow_null=True)
@@ -222,7 +220,7 @@ class CreditRatingSerializer(serializers.Serializer):
         return os.path.join(clean_name, "credit_rating_certificate", filename)
 
     # -------------------------------------------------------
-    # VALIDATION
+    # VALIDATION (PATCH SAFE)
     # -------------------------------------------------------
     def validate(self, data):
         company_id = self.context.get("company_id")
@@ -234,22 +232,30 @@ class CreditRatingSerializer(serializers.Serializer):
         except CompanyInformation.DoesNotExist:
             raise serializers.ValidationError({"company_id": "Invalid company or not owned by user."})
 
-        query = CreditRatingDetails.objects.filter(
-            company=company,
-            agency=data["agency"],
-            rating=data["rating"],
-            is_del=0
-        )
+        # Get agency & rating safely
+        agency = data.get("agency", instance.agency if instance else None)
+        rating = data.get("rating", instance.rating if instance else None)
 
-        if instance:
-            query = query.exclude(credit_rating_id=instance.credit_rating_id)
+        # Duplicate check only if both available
+        if agency and rating:
+            query = CreditRatingDetails.objects.filter(
+                company=company,
+                agency=agency,
+                rating=rating,
+                is_del=0
+            )
 
-        if query.exists():
-            raise serializers.ValidationError({
-                "rating": f"A {data['rating']} rating from {data['agency']} already exists for this company."
-            })
+            if instance:
+                query = query.exclude(credit_rating_id=instance.credit_rating_id)
 
-        if data["valid_till"] <= date.today():
+            if query.exists():
+                raise serializers.ValidationError({
+                    "rating": f"A {rating} rating from {agency} already exists for this company."
+                })
+
+        # Valid till check only if provided
+        valid_till = data.get("valid_till")
+        if valid_till and valid_till <= date.today():
             raise serializers.ValidationError({
                 "valid_till": "Valid till date must be a future date."
             })
@@ -293,7 +299,7 @@ class CreditRatingSerializer(serializers.Serializer):
         return rating_entry
 
     # -------------------------------------------------------
-    # UPDATE
+    # UPDATE (PATCH + PUT support)
     # -------------------------------------------------------
     def update(self, instance, validated_data):
         user = self.context["request"].user
@@ -325,7 +331,7 @@ class CreditRatingListSerializer(serializers.ModelSerializer):
     rating_display = serializers.CharField(source='get_rating_display', read_only=True)
     upload_letter_url = serializers.SerializerMethodField()
 
-    status = serializers.SerializerMethodField()  # dynamic field
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = CreditRatingDetails
@@ -337,19 +343,16 @@ class CreditRatingListSerializer(serializers.ModelSerializer):
             'additional_rating',
             'reting_status',
             'upload_letter_url',
-            'status',  # returned but not stored
+            'status',
             'created_at',
             'updated_at',
         ]
 
     def get_upload_letter_url(self, obj):
-        if obj.upload_letter:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.upload_letter.url)
+        request = self.context.get('request')
+        if obj.upload_letter and request:
+            return request.build_absolute_uri(obj.upload_letter.url)
         return None
 
     def get_status(self, obj):
-        """Return 'valid' or 'expired' based on valid_till."""
-        today = date.today()
-        return "valid" if obj.valid_till >= today else "expired"
+        return "valid" if obj.valid_till >= date.today() else "expired"
