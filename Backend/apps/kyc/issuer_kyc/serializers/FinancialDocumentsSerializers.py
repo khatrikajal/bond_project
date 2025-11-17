@@ -362,13 +362,10 @@ class FinancialDocumentUploadSerializer(serializers.Serializer):
     file_url = serializers.CharField(required=False, allow_blank=True)  # accept raw string URL (relative ok)
 
     def validate(self, data):
-        company_id = self.context.get("company_id")
-        if not company_id:
-            raise serializers.ValidationError("company_id missing from context")
-
-        company = CompanyInformation.objects.filter(pk=company_id, del_flag=0).first()
+        company = self.context.get("company")
+        
         if not company:
-            raise serializers.ValidationError("Invalid company ID")
+            raise serializers.ValidationError("Company is missing in serializer context")
 
         # If partial update → redirect to partial validator
         if self.partial:
@@ -382,10 +379,10 @@ class FinancialDocumentUploadSerializer(serializers.Serializer):
         return self._common_validation(data, company)
 
     def validate_partial(self, data):
-        company_id = self.context.get("company_id")
-        company = CompanyInformation.objects.filter(pk=company_id, del_flag=0).first()
+        
+        company = self.context.get("company")
         if not company:
-            raise serializers.ValidationError("Invalid company ID")
+            raise serializers.ValidationError("Company is missing in serializer context")
         return self._common_validation(data, company, is_partial=True)
 
     def _common_validation(self, data, company, is_partial=False):
@@ -425,7 +422,7 @@ class FinancialDocumentUploadSerializer(serializers.Serializer):
         # version logic (for create/update full)
         if not is_partial:
             latest = FinancialDocument.objects.filter(
-                company_id=company.company_id,
+                company=company,
                 document_type=doc_type,
                 period_start_date=data["period_start_date"],
                 period_end_date=data["period_end_date"],

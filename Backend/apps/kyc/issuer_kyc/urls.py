@@ -135,49 +135,49 @@ urlpatterns = [
     # ----------------FinancialDocuments-------------
     path("financial-documents/upload/", TempFileUploadView.as_view(), name="financial-documents-upload"),
     path(
-        "company/<uuid:company_id>//",
+        "company/financial-documents/",
         financial_documents,
         name="financial-documents"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/<int:document_id>/",
+        "company/financial-documents/<int:document_id>/",
         financial_document_detail,
         name="financial-document-detail"
     ),
 
     #bulk actions
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_upload/",
+        "company/financial-documents/bulk_upload/",
         FinancialDocumentViewSet.as_view({'post': 'bulk_upload'}),
         name="financial-documents-bulk-upload"
     ),
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_update/",
+        "company/financial-documents/bulk_update/",
         FinancialDocumentViewSet.as_view({'patch': 'bulk_update'}),
         name="financial-documents-bulk-update"
     ),
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_delete/",
+        "company/financial-documents/bulk_delete/",
         FinancialDocumentViewSet.as_view({'delete': 'bulk_delete'}),
         name="financial-documents-bulk-delete"
     ),
 
     # extra actions
     path(
-        "company/<uuid:company_id>/financial-documents/<int:pk>/verify/",
+        "company/financial-documents/<int:pk>/verify/",
         FinancialDocumentViewSet.as_view({'post': 'verify'}),
         name="financial-document-verify"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/<int:pk>/download/",
+        "company/financial-documents/<int:pk>/download/",
         FinancialDocumentViewSet.as_view({'get': 'download'}),
         name="financial-document-download"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/missing/",
+        "company/financial-documents/missing/",
         FinancialDocumentViewSet.as_view({'get': 'missing_documents'}),
         name="financial-documents-missing"
     ),
@@ -193,7 +193,7 @@ urlpatterns = [
 
     #------- Final Submit -------------
    
-    path("company/<uuid:company_id>/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
+    path("company/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
 
 
 
