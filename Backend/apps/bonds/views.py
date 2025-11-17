@@ -262,6 +262,29 @@ class BondsListView(generics.ListAPIView):
         self.pagination_class.ordering = ['priority', 'tenure_days', 'tenure_years', 'ytm_percent', 'isin_code','issue_date']
 
         return queryset
+    
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        ordering = self.request.query_params.get('ordering')
+
+        # No ordering? Let default order_by from get_queryset run
+        if not ordering:
+            return queryset
+
+        # Handle custom sorting for issue_date
+        if ordering == "issue_date":
+            return queryset.order_by(
+                F("issue_date").asc(nulls_last=True)
+            )
+
+        if ordering == "-issue_date":
+            return queryset.order_by(
+                F("issue_date").desc(nulls_last=True)
+            )
+
+        # For all other fields, DRF OrderingFilter already handled it
+        return queryset
 
 
 class BondDetailView(SwaggerParamAPIView):
