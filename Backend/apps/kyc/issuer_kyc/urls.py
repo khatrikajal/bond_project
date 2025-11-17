@@ -54,7 +54,7 @@ app_name = 'issuer_kyc'
 
 urlpatterns = [
     
-    path("uploads/temp/", TempFileUploadView.as_view(), name="uploads-temp"),
+    
 
 
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
@@ -131,9 +131,9 @@ urlpatterns = [
 
 
     # ----------------FinancialDocuments-------------
-
+    path("financial-documents/upload/", TempFileUploadView.as_view(), name="financial-documents-upload"),
     path(
-        "company/<uuid:company_id>/financial-documents/",
+        "company/<uuid:company_id>//",
         financial_documents,
         name="financial-documents"
     ),
