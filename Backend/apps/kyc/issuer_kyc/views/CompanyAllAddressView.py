@@ -10,7 +10,7 @@ from apps.kyc.issuer_kyc.utils.extract_address import extract_address_from_bill
 import os
 import tempfile
 from apps.mixins.CompanyScopedMixin import CompanyScopedMixin
-
+from apps.utils.get_company_from_token import get_company_from_token
 
 
 
@@ -97,7 +97,7 @@ from apps.mixins.CompanyScopedMixin import CompanyScopedMixin
 
 
 
-class ComapnyAllAdressAPIView(CompanyScopedMixin, APIView):
+class ComapnyAllAdressAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     # ✅ GET — Fetch ALL active addresses of this company
@@ -106,7 +106,7 @@ class ComapnyAllAdressAPIView(CompanyScopedMixin, APIView):
 
         try:
             # 🔥 Automatically fetch active addresses for THIS company only
-            address_list = serializer.get_all_active_addresses(company=self.company)
+            address_list = serializer.get_all_active_addresses(company=get_company_from_token(request) )
 
             return Response(
                 {

@@ -17,6 +17,7 @@ import hashlib
 import logging
 from apps.mixins import CompanyScopedMixin
 from config.common.response import APIResponse 
+from apps.utils.get_company_from_token import get_company_from_token
 
 logger = logging.getLogger(__name__)
 
@@ -27,11 +28,11 @@ class BankDTO:
         for key, value in data.items():
             setattr(self, key, value)
 
-class BankDocumentExtractView(CompanyScopedMixin, APIView):
+class BankDocumentExtractView( APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        company = self.company  # from mixin
+        company = get_company_from_token(request)   # from mixin
 
         serializer = BankDocumentExtractSerializer(data=request.data)
         if not serializer.is_valid():
@@ -94,11 +95,11 @@ class BankDocumentExtractView(CompanyScopedMixin, APIView):
                 status_code=500
             )
 
-class BankDetailsVerifyView(CompanyScopedMixin, APIView):
+class BankDetailsVerifyView( APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        company = self.company  # from mixin
+        company = get_company_from_token(request)   # from mixin
 
         serializer = BankDetailsVerifySerializer(data=request.data)
         if not serializer.is_valid():
@@ -164,11 +165,11 @@ class BankDetailsVerifyView(CompanyScopedMixin, APIView):
         json_str = json.dumps(hash_data, sort_keys=True)
         return hashlib.sha256(json_str.encode()).hexdigest()
 
-class BankDetailsView(CompanyScopedMixin, APIView):
+class BankDetailsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        company = self.company  # from mixin
+    def get_object(self,request):
+        company = get_company_from_token(request)   # from mixin
         try:
             return BankDetails.objects.get(company=company, del_flag=0)
         except BankDetails.DoesNotExist:
@@ -188,7 +189,7 @@ class BankDetailsView(CompanyScopedMixin, APIView):
         )
 
     def post(self, request):
-        company = self.company
+        company = get_company_from_token(request) 
 
         existing_bank = self.get_object()
 
@@ -227,7 +228,7 @@ class BankDetailsView(CompanyScopedMixin, APIView):
         )
 
     def put(self, request):
-        company = self.company
+        company = get_company_from_token(request) 
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
@@ -256,7 +257,7 @@ class BankDetailsView(CompanyScopedMixin, APIView):
         )
 
     def patch(self, request):
-        company = self.company
+        company = get_company_from_token(request) 
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
@@ -285,7 +286,7 @@ class BankDetailsView(CompanyScopedMixin, APIView):
         )
 
     def delete(self, request):
-        company = self.company
+        company = get_company_from_token(request) 
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
