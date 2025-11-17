@@ -164,7 +164,9 @@ class BankDetailsVerifyView( APIView):
         }
         json_str = json.dumps(hash_data, sort_keys=True)
         return hashlib.sha256(json_str.encode()).hexdigest()
+    
 
+    
 class BankDetailsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -189,7 +191,7 @@ class BankDetailsView(APIView):
         )
 
     def post(self, request):
-        company = get_company_from_token(request) 
+        company = get_company_from_token(request)
 
         existing_bank = self.get_object()
 
@@ -203,12 +205,10 @@ class BankDetailsView(APIView):
                 status_code=400
             )
 
-        data = request.data.copy()
-        data['company_id'] = str(company.company_id)
-
         serializer = BankDetailsSerializer(
             instance=existing_bank,
-            data=data
+            data=request.data,
+            context={"company": company}          # ✅ ONLY CHANGE
         )
 
         if not serializer.is_valid():
@@ -228,7 +228,7 @@ class BankDetailsView(APIView):
         )
 
     def put(self, request):
-        company = get_company_from_token(request) 
+        company = get_company_from_token(request)
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
@@ -236,10 +236,12 @@ class BankDetailsView(APIView):
                 status_code=404
             )
 
-        data = request.data.copy()
-        data['company_id'] = str(company.company_id)
-
-        serializer = BankDetailsSerializer(bank, data=data)
+        serializer = BankDetailsSerializer(
+            bank,
+            data=request.data,
+            context={"company": company}          # ✅ ONLY CHANGE
+        )
+        
         if not serializer.is_valid():
             return APIResponse.error(
                 message="Invalid input",
@@ -257,7 +259,7 @@ class BankDetailsView(APIView):
         )
 
     def patch(self, request):
-        company = get_company_from_token(request) 
+        company = get_company_from_token(request)
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
@@ -265,10 +267,13 @@ class BankDetailsView(APIView):
                 status_code=404
             )
 
-        data = request.data.copy()
-        data['company_id'] = str(company.company_id)
+        serializer = BankDetailsSerializer(
+            bank,
+            data=request.data,
+            partial=True,
+            context={"company": company}          # ✅ ONLY CHANGE
+        )
 
-        serializer = BankDetailsSerializer(bank, data=data, partial=True)
         if not serializer.is_valid():
             return APIResponse.error(
                 message="Invalid input",
@@ -286,7 +291,7 @@ class BankDetailsView(APIView):
         )
 
     def delete(self, request):
-        company = get_company_from_token(request) 
+        company = get_company_from_token(request)
         bank = self.get_object()
         if not bank:
             return APIResponse.error(
@@ -316,6 +321,7 @@ class BankDetailsView(APIView):
                 "detail": f"Bank details {bank.bank_detail_id} soft-deleted successfully"
             }
         )
+
 
 
 # Lasted code 17-11-2025
