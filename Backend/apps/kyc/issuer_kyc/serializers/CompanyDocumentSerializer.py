@@ -1,27 +1,17 @@
 from rest_framework import serializers
 from django.db import transaction
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from ..models.CompanyDocumentModel import CompanyDocument
-from ..models.CompanyInformationModel import CompanyInformation
 import logging
+
+from ..models.CompanyDocumentModel import CompanyDocument
 
 logger = logging.getLogger(__name__)
 
 
-from rest_framework import serializers
-from django.db import transaction
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from ..models.CompanyDocumentModel import CompanyDocument
-from ..models.CompanyInformationModel import CompanyInformation
-import logging
-
-logger = logging.getLogger(__name__)
-
+# =====================================================================
+# 🔵 BULK UPLOAD SERIALIZER (token-based)
+# =====================================================================
 
 class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
-    """
-    Serializer for bulk document upload.
-    """
 
     certificate_of_incorporation = serializers.FileField(required=False)
 
@@ -42,238 +32,208 @@ class CompanyDocumentBulkUploadSerializer(serializers.Serializer):
     import_export_certificate = serializers.FileField(required=False)
 
     def validate(self, data):
-        """Validate files, types, and ensure no duplicate uploads."""
-        logger.debug(f"Validating bulk document upload: {list(data.keys())}")
+        company = self.context["company"]
+        company_id = str(company.company_id)
         errors = {}
-        company_id = self.context["company_id"]
 
-        #Correct document name constant
+        # ------------ Certificate Validation ------------
         certificate_name = "CERTIFICATE_OF_INCORPORATION"
-
-        #  Certificate existence check
         cert_exists = CompanyDocument.objects.filter(
             company_id=company_id,
             document_name=certificate_name,
             del_flag=0
         ).exists()
 
-        # Certificate must exist first time
         if not cert_exists and not data.get("certificate_of_incorporation"):
-            errors["certificate_of_incorporation"] = (
-                "Certificate of Incorporation is mandatory for first upload."
-            )
+            errors["certificate_of_incorporation"] = "Certificate of Incorporation is required on first upload."
 
-        #  Prevent re-upload if already exists
         if cert_exists and data.get("certificate_of_incorporation"):
-            errors["certificate_of_incorporation"] = (
-                "Certificate of Incorporation already exists. Delete it before uploading again."
-            )
+            errors["certificate_of_incorporation"] = "Certificate already exists. Delete before re-upload."
 
-        #  Duplicate prevention for other docs
+        # ------------ Other document duplicate rules ------------
         upload_map = {
             "moa_aoa_file": data.get("moa_aoa_type"),
             "msme_udyam_file": data.get("msme_udyam_type"),
             "import_export_certificate": "IEC",
         }
 
-        for field_name, document_name in upload_map.items():
+        for field_name, name in upload_map.items():
             file = data.get(field_name)
-            if not file or not document_name:
+            if not file or not name:
                 continue
 
             exists = CompanyDocument.objects.filter(
                 company_id=company_id,
-                document_name=document_name,
+                document_name=name,
                 del_flag=0
             ).exists()
 
             if exists:
-                errors[field_name] = (
-                    f"{document_name} already exists. Delete it before uploading again."
-                )
+                errors[field_name] = f"{name} already exists. Delete before uploading again."
 
-        # Validate file pairing
-        if data.get('moa_aoa_type') and not data.get('moa_aoa_file'):
-            errors['moa_aoa_file'] = "File required for selected MOA/AOA"
-        if data.get('moa_aoa_file') and not data.get('moa_aoa_type'):
-            errors['moa_aoa_type'] = "Please select MOA or AOA"
+        # Pairing rules
+        if data.get("moa_aoa_type") and not data.get("moa_aoa_file"):
+            errors["moa_aoa_file"] = "File required for selected MOA/AOA."
 
-        if data.get('msme_udyam_type') and not data.get('msme_udyam_file'):
-            errors['msme_udyam_file'] = "File required for selected MSME/Udyam"
-        if data.get('msme_udyam_file') and not data.get('msme_udyam_type'):
-            errors['msme_udyam_type'] = "Please select MSME or Udyam"
+        if data.get("moa_aoa_file") and not data.get("moa_aoa_type"):
+            errors["moa_aoa_type"] = "Select MOA or AOA."
 
-        # File validation
-        allowed_extensions = ['pdf', 'jpeg', 'jpg', 'png']
-        max_size = 5 * 1024 * 1024  # 5MB
+        if data.get("msme_udyam_type") and not data.get("msme_udyam_file"):
+            errors["msme_udyam_file"] = "File required for selected MSME/UDYAM."
 
-        for field_name, file in {
-            'certificate_of_incorporation': data.get('certificate_of_incorporation'),
-            'moa_aoa_file': data.get('moa_aoa_file'),
-            'msme_udyam_file': data.get('msme_udyam_file'),
-            'import_export_certificate': data.get('import_export_certificate'),
+        if data.get("msme_udyam_file") and not data.get("msme_udyam_type"):
+            errors["msme_udyam_type"] = "Select MSME or UDYAM."
+
+        # ------------ File validation ------------
+        allowed_ext = ["pdf", "jpeg", "jpg", "png"]
+        max_size = 5 * 1024 * 1024
+
+        for field, file in {
+            "certificate_of_incorporation": data.get("certificate_of_incorporation"),
+            "moa_aoa_file": data.get("moa_aoa_file"),
+            "msme_udyam_file": data.get("msme_udyam_file"),
+            "import_export_certificate": data.get("import_export_certificate"),
         }.items():
+
             if not file:
                 continue
 
             if file.size > max_size:
-                errors[field_name] = "File size must be less than 5MB"
+                errors[field] = "File must be under 5MB."
 
-            ext = file.name.split('.')[-1].lower()
-            if ext not in allowed_extensions:
-                errors[field_name] = "Allowed file types: pdf, jpeg, jpg, png"
+            ext = file.name.split(".")[-1].lower()
+            if ext not in allowed_ext:
+                errors[field] = "Allowed types: pdf, jpeg, jpg, png."
 
         if errors:
-            logger.error(f"Bulk upload validation failed: {errors}")
             raise serializers.ValidationError(errors)
 
         return data
 
+    # SAVE ------------------------------------------------------
     def create(self, validated_data):
-        """Create all documents."""
-        company_id = self.context['company_id']
-        request = self.context.get('request')
+        company = self.context["company"]
+        company_id = str(company.company_id)
+
+        request = self.context.get("request")
         user = request.user if request and request.user.is_authenticated else None
 
-        created_documents = []
-        certificate_name = "CERTIFICATE_OF_INCORPORATION"
+        created_docs = []
 
         with transaction.atomic():
-            #  Certificate
-            cert_file = validated_data.get('certificate_of_incorporation')
+
+            # Certificate
+            cert_file = validated_data.get("certificate_of_incorporation")
             if cert_file:
-                doc = self._create_document(company_id, certificate_name, cert_file, user)
-                created_documents.append(doc)
+                created_docs.append(
+                    self._create_doc(company_id, "CERTIFICATE_OF_INCORPORATION", cert_file, user)
+                )
 
-            #  MOA/AOA
-            moa_type = validated_data.get('moa_aoa_type')
-            moa_file = validated_data.get('moa_aoa_file')
+            # MOA/AOA
+            moa_type = validated_data.get("moa_aoa_type")
+            moa_file = validated_data.get("moa_aoa_file")
             if moa_type and moa_file:
-                doc = self._create_document(company_id, moa_type, moa_file, user)
-                created_documents.append(doc)
+                created_docs.append(
+                    self._create_doc(company_id, moa_type, moa_file, user)
+                )
 
-            #  MSME/Udyam
-            msme_type = validated_data.get('msme_udyam_type')
-            msme_file = validated_data.get('msme_udyam_file')
+            # MSME / UDYAM
+            msme_type = validated_data.get("msme_udyam_type")
+            msme_file = validated_data.get("msme_udyam_file")
             if msme_type and msme_file:
-                doc = self._create_document(company_id, msme_type, msme_file, user)
-                created_documents.append(doc)
+                created_docs.append(
+                    self._create_doc(company_id, msme_type, msme_file, user)
+                )
 
-            #  IEC
-            iec_file = validated_data.get('import_export_certificate')
+            # IEC
+            iec_file = validated_data.get("import_export_certificate")
             if iec_file:
-                doc = self._create_document(company_id, 'IEC', iec_file, user)
-                created_documents.append(doc)
+                created_docs.append(
+                    self._create_doc(company_id, "IEC", iec_file, user)
+                )
 
-        return created_documents
+        return created_docs
 
-    def _create_document(self, company_id, document_name, file, user):
-        """Helper: Create single document row."""
-        document_type = CompanyDocument.detect_file_type(file.name)
+    def _create_doc(self, company_id, doc_name, file, user):
+        doc_type = CompanyDocument.detect_file_type(file.name)
+
         return CompanyDocument.objects.create(
             company_id=company_id,
-            document_name=document_name,
-            document_type=document_type,
+            document_name=doc_name,
+            document_type=doc_type,
             document_file=file,
             file_size=file.size,
             user_id_updated_by=user
         )
 
 
+# =====================================================================
+# 🔵 LIST SERIALIZER
+# =====================================================================
+
 class CompanyDocumentListSerializer(serializers.ModelSerializer):
-    """Serializer for listing documents without file data"""
-    document_name_display = serializers.CharField(
-        source='get_document_name_display',
-        read_only=True
-    )
+    document_name_display = serializers.CharField(source="get_document_name_display", read_only=True)
     file_size_mb = serializers.SerializerMethodField()
     file_path = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    uploaded_by = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyDocument
         fields = [
-            'document_id', 'document_name', 'document_name_display',
-            'document_type', 'file_size', 'file_size_mb', 'file_path',
-            'uploaded_at', 'is_mandatory', 'is_verified',
-            'status', 'uploaded_by'
+            "document_id",
+            "document_name",
+            "document_name_display",
+            "document_type",
+            "file_size",
+            "file_size_mb",
+            "file_path",
+            "uploaded_at",
+            "is_mandatory",
+            "is_verified",
+            "status",
         ]
 
     def get_file_size_mb(self, obj):
         return round(obj.file_size / (1024 * 1024), 2)
-    
+
     def get_file_path(self, obj):
-        """Return the file storage path"""
         return obj.document_file.name if obj.document_file else None
 
     def get_status(self, obj):
         return "Verified" if obj.is_verified else "Uploaded"
 
-    def get_uploaded_by(self, obj):
-        if obj.user_id_updated_by:
-            return {
-                'user_id': str(obj.user_id_updated_by.user_id),
-                'uploaded_at': obj.uploaded_at.isoformat()
-            }
-        return None
 
-
-
-
-
+# =====================================================================
+# 🔵 DETAIL SERIALIZER
+# =====================================================================
 
 class CompanyDocumentDetailSerializer(serializers.ModelSerializer):
-    """Serializer for retrieving document (no file URL exposed)"""
-    document_name_display = serializers.CharField(
-        source='get_document_name_display',
-        read_only=True
-    )
-    file_url = serializers.SerializerMethodField()
+    document_name_display = serializers.CharField(source="get_document_name_display", read_only=True)
     file_path = serializers.SerializerMethodField()
-    uploaded_by = serializers.SerializerMethodField()
 
     class Meta:
         model = CompanyDocument
         fields = [
-            'document_id', 'document_name', 'document_name_display',
-            'document_type', 'file_size', 'uploaded_at',
-            'is_mandatory', 'is_verified', 'file_url', 'file_path', 'uploaded_by'
+            "document_id",
+            "document_name",
+            "document_name_display",
+            "document_type",
+            "file_size",
+            "uploaded_at",
+            "is_mandatory",
+            "is_verified",
+            "file_path",
         ]
 
-    def get_file_url(self, obj):
-        """Intentionally hidden for security reasons"""
-        return None  # always hide file URL
-        
-    #  def get_file_url(self, obj):
-    #     """Return the file URL if available"""
-    #     try:
-    #         if obj.document_file:
-    #             request = self.context.get('request')
-    #             if request:
-    #                 return request.build_absolute_uri(obj.document_file.url)
-    #             return obj.document_file.url
-    #     except Exception as e:
-    #         logger.error(
-    #             f"Error generating file URL for document_id={obj.document_id}: {str(e)}",
-    #             exc_info=True
-    #         )
-    #     return None 
-
     def get_file_path(self, obj):
-        """Return the internal file path"""
         return obj.document_file.name if obj.document_file else None
 
-    def get_uploaded_by(self, obj):
-        if obj.user_id_updated_by:
-            return {
-                'user_id': str(obj.user_id_updated_by.user_id),
-                'uploaded_at': obj.uploaded_at.isoformat()
-            }
-        return None
+
+# =====================================================================
+# 🔵 STATUS SERIALIZER
+# =====================================================================
 
 class CompanyDocumentStatusSerializer(serializers.Serializer):
-    """Serializer for checking document upload status"""
     total_documents = serializers.IntegerField()
     mandatory_documents = serializers.IntegerField()
     optional_documents = serializers.IntegerField()
@@ -285,145 +245,77 @@ class CompanyDocumentStatusSerializer(serializers.Serializer):
     document_groups = serializers.DictField()
 
 
+# =====================================================================
+# 🔵 SINGLE DOCUMENT UPLOAD SERIALIZER
+# =====================================================================
+
 class CompanySingleDocumentUploadSerializer(serializers.Serializer):
-    """
-    Serializer for single document upload/update.
-    (Used during onboarding BEFORE login)
-    """
     document_name = serializers.ChoiceField(
         choices=CompanyDocument.DOCUMENT_NAMES,
         required=True
     )
     file = serializers.FileField(required=True)
 
-    #  Validate file: size + extension
-    def validate_file(self, value):
-        max_size = 5 * 1024 * 1024
-        if value.size > max_size:
-            raise serializers.ValidationError("File size cannot exceed 5MB")
+    def validate_file(self, file):
+        if file.size > 5 * 1024 * 1024:
+            raise serializers.ValidationError("File cannot exceed 5MB.")
 
-        allowed_extensions = ['pdf', 'jpeg', 'jpg', 'png']
-        ext = value.name.split('.')[-1].lower()
+        ext = file.name.split(".")[-1].lower()
+        if ext not in ["pdf", "jpeg", "jpg", "png"]:
+            raise serializers.ValidationError("Allowed: PDF, JPEG, JPG, PNG.")
 
-        if ext not in allowed_extensions:
-            raise serializers.ValidationError(
-                "File type not allowed. Use PDF/JPG/JPEG/PNG."
-            )
+        return file
 
-        return value
-
-    #  Validate MOA/AOA & MSME/Udyam exclusivity
     def validate(self, data):
-        company_id = self.context['company_id']
-        document_name = data['document_name']
+        company = self.context["company"]
+        company_id = str(company.company_id)
+        name = data["document_name"]
 
-        #  MOA/AOA validation
-        if document_name in CompanyDocument.MOA_AOA_GROUP:
-            other = CompanyDocument.MOA_AOA_GROUP.copy()
-            other.remove(document_name)
-
-            exists = CompanyDocument.objects.filter(
-                company_id=company_id,
-                document_name__in=other,
-                del_flag=0
-            ).exists()
-
-            if exists:
-                raise serializers.ValidationError({
-                    "document_name": f"Another MOA/AOA already exists. Delete it first."
-                })
-
-        #  MSME/Udyam validation
-        if document_name in CompanyDocument.MSME_UDYAM_GROUP:
-            other = CompanyDocument.MSME_UDYAM_GROUP.copy()
-            other.remove(document_name)
-
-            exists = CompanyDocument.objects.filter(
-                company_id=company_id,
-                document_name__in=other,
-                del_flag=0
-            ).exists()
-
-            if exists:
-                raise serializers.ValidationError({
-                    "document_name": f"Another MSME/Udyam document already exists. Delete it first."
-                })
+        # Prevent duplicates
+        if CompanyDocument.objects.filter(
+            company_id=company_id, document_name=name, del_flag=0
+        ).exists():
+            raise serializers.ValidationError({
+                "document_name": f"{name} already exists. Delete first."
+            })
 
         return data
 
-    #  CREATE document (safe for AnonymousUser)
-    def create(self, validated_data):
-        file = validated_data["file"]
-        document_name = validated_data["document_name"]
-        company_id = self.context['company_id']
+    def create(self, validated):
+        company = self.context["company"]
         request = self.context.get("request")
+        user = request.user if request and request.user.is_authenticated else None
 
-        #  SAFE USER HANDLING (never crash)
-        user = getattr(request, "user", None)
-        safe_user = user if getattr(user, "is_authenticated", False) else None
+        doc_type = CompanyDocument.detect_file_type(validated["file"].name)
 
-        try:
-            with transaction.atomic():
+        return CompanyDocument.objects.create(
+            company=company,
+            document_name=validated["document_name"],
+            document_type=doc_type,
+            document_file=validated["file"],
+            file_size=validated["file"].size,
+            user_id_updated_by=user
+        )
 
-                doc_type = CompanyDocument.detect_file_type(file.name)
-
-                document = CompanyDocument.objects.create(
-                    company_id=company_id,
-                    document_name=document_name,
-                    document_type=doc_type,
-                    document_file=file,
-                    file_size=file.size,
-                    user_id_updated_by=safe_user   # ✅ SAFE
-                )
-
-                return document
-
-        except Exception as e:
-            logger.error(f"[SINGLE_UPLOAD] Error creating document: {e}", exc_info=True)
-            raise
-
-    # ✅ UPDATE existing document
-    def update(self, instance, validated_data):
-        file = validated_data.get("file")
+    def update(self, instance, validated):
+        file = validated.get("file")
         request = self.context.get("request")
+        user = request.user if request and request.user.is_authenticated else None
 
-        user = getattr(request, "user", None)
-        safe_user = user if getattr(user, "is_authenticated", False) else None
+        if file:
+            instance.document_file = file
+            instance.file_size = file.size
+            instance.document_type = CompanyDocument.detect_file_type(file.name)
 
-        try:
-            with transaction.atomic():
+        instance.user_id_updated_by = user
+        instance.save()
+        return instance
 
-                if file:
-                    if instance.document_file:
-                        instance.document_file.delete(save=False)
-
-                    instance.document_file = file
-                    instance.file_size = file.size
-                    instance.document_type = CompanyDocument.detect_file_type(file.name)
-
-                instance.user_id_updated_by = safe_user
-                instance.save()
-
-                return instance
-
-        except Exception as e:
-            logger.error(f"[SINGLE_UPDATE] Error updating document: {e}", exc_info=True)
-            raise
-
-    # ✅ SOFT DELETE
     def soft_delete(self, instance):
         request = self.context.get("request")
+        user = request.user if request and request.user.is_authenticated else None
 
-        user = getattr(request, "user", None)
-        safe_user = user if getattr(user, "is_authenticated", False) else None
-
-        try:
-            with transaction.atomic():
-                instance.del_flag = 1
-                instance.user_id_updated_by = safe_user
-                instance.save()
-
-                return True
-        except Exception as e:
-            logger.error(f"[SINGLE_DELETE] Error soft deleting: {e}", exc_info=True)
-            raise
+        instance.del_flag = 1
+        instance.user_id_updated_by = user
+        instance.save()
+        return True
