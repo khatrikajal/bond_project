@@ -70,10 +70,10 @@ urlpatterns = [
     path('company-info/cin/<str:cin>/', CompanyInfoByCINView.as_view(), name='company-info-by-cin'),
 
     #--- Bank Details ----
-    path("bank-details/<uuid:company_id>/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
-    path("bank-details/<uuid:company_id>/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-get"),
-    path("bank-details/<uuid:company_id>/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
-    path("bank-details/<uuid:company_id>/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
+    path("bank-details/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
+    path("bank-details/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-get"),
+    path("bank-details/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
+    path("bank-details/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
 
     # ---------- Demate Details --------------
     path("company/<uuid:company_id>/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
