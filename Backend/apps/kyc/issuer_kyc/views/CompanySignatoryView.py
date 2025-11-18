@@ -6,7 +6,7 @@ from ..serializers.CompanySignatorySerializer import CompanySignatoryCreateSeria
 from config.common.response import APIResponse
 from rest_framework.permissions import IsAuthenticated
 from apps.utils.get_company_from_token import get_company_from_token
-
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -345,7 +345,7 @@ from apps.utils.get_company_from_token import get_company_from_token
 #                 }
 #             )
 
-#         paginator = CompanySignatoryPagination()
+        # paginator = CompanySignatoryPagination()
 #         paginated_signatories = paginator.paginate_queryset(signatories, request)
 #         serializer = CompanySignatoryListSerializer(paginated_signatories, many=True)
 
@@ -566,7 +566,7 @@ class CompanySignatoryListView(APIView):
                 }
             )
 
-        paginator = CompanySignatoryPagination()
+        paginator = PageNumberPagination()
         paginated_signatories = paginator.paginate_queryset(signatories, request)
         serializer = CompanySignatoryListSerializer(paginated_signatories, many=True)
 
@@ -611,4 +611,96 @@ class CompanySignatoryDetailView(APIView):
                 "signatory_id": str(signatory.signatory_id),
                 "data": serializer.data,
             }
+        )
+
+
+class CompanySignatoryUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, signatory_id):
+
+        company = get_company_from_token(request)
+
+        try:
+            signatory = CompanySignatory.objects.select_related("company").get(
+                signatory_id=signatory_id,
+                company=company
+            )
+        except CompanySignatory.DoesNotExist:
+            return APIResponse.error(
+                message="Signatory not found or not accessible.",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = CompanySignatoryUpdateSerializer(
+            instance=signatory,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            data = serializer.save()
+            return APIResponse.success(
+                message=data["message"],
+                data={
+                    "signatory_id": data["signatory_id"],
+                    "name_of_signatory": data["name_of_signatory"],
+                    "designation": data["designation"],
+                    "din": data["din"],
+                    "pan_number": data["pan_number"],
+                    "aadhaar_number": data["aadhaar_number"],
+                    "email_address": data["email_address"],
+                    "status": data["status"],
+                    "verified": data["verified"],
+                }
+            )
+
+        return APIResponse.error(
+            message="Validation failed",
+            errors=serializer.errors,
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class CompanySignatoryStatusUpdate(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, signatory_id):
+
+        company = get_company_from_token(request)
+
+        try:
+            signatory = CompanySignatory.objects.select_related("company").get(
+                signatory_id=signatory_id,
+                company=company
+            )
+        except CompanySignatory.DoesNotExist:
+            return APIResponse.error(
+                message="Signatory not found or not accessible.",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = CompanySignatoryStatusUpdateSerializer(
+            instance=signatory,
+            data=request.data,
+            partial=True,
+            context={"request": request}
+        )
+
+        if serializer.is_valid():
+            data = serializer.save()
+
+            return APIResponse.success(
+                message=f"Signatory status updated to '{data.status}'.",
+                data={
+                    "signatory_id": str(data.signatory_id),
+                    "status": data.status,
+                }
+            )
+
+        return APIResponse.error(
+            message="Validation failed",
+            errors=serializer.errors,
+            status_code=400
         )
