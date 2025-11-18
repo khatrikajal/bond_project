@@ -704,3 +704,31 @@ class CompanySignatoryStatusUpdate(APIView):
             errors=serializer.errors,
             status_code=400
         )
+
+
+class CompanySignatoryDelete(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, signatory_id):
+
+        company = get_company_from_token(request)
+
+        try:
+            signatory_account = CompanySignatory.objects.get(
+                signatory_id=signatory_id,
+                company=company,
+                del_flag=0
+            )
+        except CompanySignatory.DoesNotExist:
+            return APIResponse.error(
+                message="Signatory not found or not accessible.",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        signatory_account.del_flag = 1
+        signatory_account.user_id_updated_by = request.user
+        signatory_account.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
+
+        return APIResponse.success(
+            message="Signatory account details deleted successfully."
+        )
