@@ -1705,6 +1705,132 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
             data=results
         )
+    
+
+     # ---------------- BULK UPDATE ---------------------
+    @action(detail=False, methods=["patch"])
+    
+    
+    @transaction.atomic
+    def bulk_update(self, request):
+        company = get_company_from_token(request)
+        company_id = company.company_id
+
+        bulk = BulkUpdateSerializer(data=request.data)
+        bulk.is_valid(raise_exception=True)
+        updates = bulk.validated_data["updates"]
+
+        results = {"success": [], "failed": []}
+
+        for idx, item in enumerate(updates):
+            try:
+                doc_id = item.get("document_id")
+                metadata = item.get("metadata", {})
+
+                document = FinancialDocument.objects.filter(
+                    document_id=doc_id,
+                    company_id=company_id,
+                    del_flag=0
+                ).first()
+
+                if not document:
+                    results["failed"].append({"index": idx, "error": "Document not found"})
+                    continue
+
+                payload = dict(metadata)
+                file_url = payload.get("file_url")
+
+                serializer = FinancialDocumentUploadSerializer(
+                    data=payload,
+                    partial=True,
+                    context={"company": company}
+                )
+                if not serializer.is_valid():
+                    results["failed"].append({"index": idx, "errors": serializer.errors})
+                    continue
+
+                vd = serializer.validated_data
+                vd.pop("period_month", None)
+                vd.pop("period_quarter", None)
+                vd.pop("auto_verify", None)
+
+                if file_url:
+                    file = self._load_file_from_temp_url(file_url)
+                    if not file:
+                        results["failed"].append({"index": idx, "error": "Invalid or expired temporary file"})
+                        continue
+
+                    new_hash = self._compute_file_hash(file)
+                    if new_hash != document.file_hash:
+                        document.file_hash = new_hash
+                        document.file_name = file.name
+                        document.file_size = file.size
+                        document.mime_type = getattr(file, "content_type", "application/pdf")
+                        document.file_path.save(file.name, file, save=True)
+
+                        self._delete_temp_file(file_url)
+
+                        document.is_verified = False
+                        document.verified_at = None
+
+                for k, v in vd.items():
+                    setattr(document, k, v)
+
+                document.save()
+
+                results["success"].append({"index": idx, "document_id": doc_id})
+
+            except Exception as e:
+                logger.error(f"Bulk update failed at index {idx}: {e}")
+                results["failed"].append({"index": idx, "error": str(e)})
+
+        return APIResponse.success(
+            message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
+            data=results
+        )
+
+    # ---------------- BULK DELETE ---------------------
+    @action(detail=False, methods=["delete"])
+    @transaction.atomic
+    def bulk_delete(self, request):
+        company = get_company_from_token(request)
+        company_id = company.company_id
+
+        serializer = BulkDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        ids = serializer.validated_data["document_ids"]
+
+        results = {"success": [], "failed": []}
+
+        for doc_id in ids:
+            try:
+                document = FinancialDocument.objects.filter(
+                    document_id=doc_id,
+                    company_id=company_id,
+                    del_flag=0
+                ).first()
+
+                if not document:
+                    results["failed"].append({"document_id": doc_id, "error": "Not found"})
+                    continue
+
+                document.del_flag = 1
+                document.user_id_updated_by = request.user
+                document.save()
+
+                results["success"].append({"document_id": doc_id})
+
+            except Exception as e:
+                results["failed"].append({"document_id": doc_id, "error": str(e)})
+
+        FinancialDocumentService.update_onboarding_state(company_id)
+
+        return APIResponse.success(
+            message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
+            data=results
+        )
+
 
     def _load_file_from_temp_url(self, file_url):
         """
