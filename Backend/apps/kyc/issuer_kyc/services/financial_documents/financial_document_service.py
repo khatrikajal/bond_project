@@ -26,6 +26,25 @@ class FinancialDocumentService:
             f"FY{year-1}-{year}",
             f"FY{year}-{year+1}",
         ]
+    
+
+    @staticmethod
+    def get_last_three_fys():
+        """
+        Returns past 2 FY + current FY (3 years total)
+        Example in year 2025:
+            FY2023-2024  (Audited)
+            FY2024-2025  (Audited)
+            FY2025-2026  (Provisional)
+        """
+        year = date.today().year
+
+        return [
+            f"FY{year-2}-{year-1}",  # Past Audited
+            f"FY{year-1}-{year}",    # Past Audited
+            f"FY{year}-{year+1}",    # Current Provisional
+        ]
+
 
     # ---------------------------------------------------------
     # ✅ Check if all required documents exist (count-only)
@@ -33,7 +52,7 @@ class FinancialDocumentService:
     @classmethod
     def check_count_only(cls, company_id):
 
-        fys = cls.get_last_four_fys()
+        fys = cls.get_last_three_fys()
         doc_types = list(DocumentType.values)
 
         for fy in fys:
@@ -70,7 +89,7 @@ class FinancialDocumentService:
     @classmethod
     def check_verified(cls, company_id):
 
-        fys = cls.get_last_four_fys()
+        fys = cls.get_last_three_fys()
         doc_types = list(DocumentType.values)
 
         for fy in fys:
@@ -120,7 +139,7 @@ class FinancialDocumentService:
             ...
         }
         """
-        fys = cls.get_last_four_fys()
+        fys = cls.get_last_three_fys()
         doc_types = list(DocumentType.values)
 
         grouped = {}
