@@ -78,12 +78,12 @@ urlpatterns = [
     path("bank-details/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
 
     # ---------- Demate Details --------------
-    path("company/<uuid:company_id>/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
+    path("company/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
     path('company/demat/<int:demat_account_id>/get', DematAccountGetView.as_view(), name='demat-account-get'),
     path("company/demat/<int:demat_account_id>/update", DematAccountUpdateView.as_view(), name="update-demat-account"),
     path("company/demat/<int:demat_account_id>/delete", DematAccountDelateView.as_view(), name="delete-demat-account"),
     path(
-        "company/<uuid:company_id>/fetch-demat-details/",
+        "company/fetch-demat-details/",
         FetchDematDetailsView.as_view(),
         name="fetch-demat-details",
     ),
@@ -228,12 +228,12 @@ urlpatterns = [
         name="financial-documents-missing"
     ),
      #--- Signatory Details ----
-     path("company/<uuid:company_id>/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
-     path("company/<uuid:company_id>/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
-     path("company/<int:signatory_id>/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
-     path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
-     path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
-     path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+     path("company/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
+     path("company/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
+     path("company/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
+     path('company/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
+     path('company/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
+     path('company/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
 
 
 
