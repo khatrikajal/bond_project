@@ -256,6 +256,9 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
     )
     file = serializers.FileField(required=True)
 
+    # -------------------------------
+    # FILE VALIDATION
+    # -------------------------------
     def validate_file(self, file):
         if file.size > 5 * 1024 * 1024:
             raise serializers.ValidationError("File cannot exceed 5MB.")
@@ -266,21 +269,39 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
 
         return file
 
+    # -------------------------------
+    # DUPLICATE CHECK FIXED HERE
+    # -------------------------------
     def validate(self, data):
+        """
+        Prevent duplicate documents for the same company,
+        but ALLOW updating the same document (PUT).
+        """
         company = self.context["company"]
         company_id = str(company.company_id)
         name = data["document_name"]
 
-        # Prevent duplicates
-        if CompanyDocument.objects.filter(
-            company_id=company_id, document_name=name, del_flag=0
-        ).exists():
+        # Base duplicate check
+        qs = CompanyDocument.objects.filter(
+            company_id=company_id,
+            document_name=name,
+            del_flag=0
+        )
+
+        # FIX: If updating, exclude current instance
+        if getattr(self, "instance", None):
+            qs = qs.exclude(document_id=self.instance.document_id)
+
+        if qs.exists():
             raise serializers.ValidationError({
                 "document_name": f"{name} already exists. Delete first."
             })
 
         return data
 
+    # -------------------------------
+    # CREATE DOCUMENT
+    # -------------------------------
     def create(self, validated):
         company = self.context["company"]
         request = self.context.get("request")
@@ -297,6 +318,9 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
             user_id_updated_by=user
         )
 
+    # -------------------------------
+    # UPDATE (PUT)
+    # -------------------------------
     def update(self, instance, validated):
         file = validated.get("file")
         request = self.context.get("request")
@@ -311,6 +335,9 @@ class CompanySingleDocumentUploadSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+    # -------------------------------
+    # SOFT DELETE
+    # -------------------------------
     def soft_delete(self, instance):
         request = self.context.get("request")
         user = request.user if request and request.user.is_authenticated else None

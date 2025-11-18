@@ -1,3 +1,4 @@
+import os
 from apps.kyc.issuer_kyc.models.FinancialDocumentModel import (
     DocumentType, DocumentTag, PeriodType, VerificationSource
 )
@@ -123,7 +124,7 @@ logger = logging.getLogger(__name__)
 
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -202,7 +203,7 @@ logger = logging.getLogger(__name__)
 
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data, partial=True,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -280,7 +281,7 @@ logger = logging.getLogger(__name__)
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data,
 #                 partial=True,                       # partial update
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -372,7 +373,7 @@ logger = logging.getLogger(__name__)
 
 #             bulk = BulkUploadSerializer(
 #                 data=request.data,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             bulk.is_valid(raise_exception=True)
 
@@ -393,7 +394,7 @@ logger = logging.getLogger(__name__)
 
 #                     serializer = FinancialDocumentUploadSerializer(
 #                         data=payload,
-#                         context={"company_id": company_id}
+#                         context={"company": company}
 #                     )
 
 #                     if not serializer.is_valid():
@@ -523,7 +524,7 @@ logger = logging.getLogger(__name__)
 #                     serializer = FinancialDocumentUploadSerializer(
 #                         data=payload,
 #                         partial=True,
-#                         context={"company_id": company_id}
+#                         context={"company": company}
 #                     )
 
 #                     if not serializer.is_valid():
@@ -982,7 +983,7 @@ logger = logging.getLogger(__name__)
 #         try:
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -1034,7 +1035,7 @@ logger = logging.getLogger(__name__)
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data,
 #                 partial=True,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -1091,7 +1092,7 @@ logger = logging.getLogger(__name__)
 #             serializer = FinancialDocumentUploadSerializer(
 #                 data=request.data,
 #                 partial=True,
-#                 context={"company_id": company_id}
+#                 context={"company": company}
 #             )
 #             serializer.is_valid(raise_exception=True)
 #             vd = serializer.validated_data
@@ -1157,7 +1158,7 @@ logger = logging.getLogger(__name__)
 #     @transaction.atomic
 #     def bulk_upload(self, request, company_id):
 #         try:
-#             bulk = BulkUploadSerializer(data=request.data, context={"company_id": company_id})
+#             bulk = BulkUploadSerializer(data=request.data, context={"company": company})
 #             bulk.is_valid(raise_exception=True)
 #             documents = bulk.validated_data["documents"]
 
@@ -1167,7 +1168,7 @@ logger = logging.getLogger(__name__)
 #                 try:
 #                     # Build payload for single-document serializer
 #                     payload = dict(doc_meta)  # shallow copy
-#                     serializer = FinancialDocumentUploadSerializer(data=payload, context={"company_id": company_id})
+#                     serializer = FinancialDocumentUploadSerializer(data=payload, context={"company": company})
 #                     serializer.is_valid(raise_exception=True)
 #                     vd = serializer.validated_data
 
@@ -1265,7 +1266,7 @@ logger = logging.getLogger(__name__)
 #                     payload = dict(metadata)  # copy
 #                     file_url = payload.get("file_url")
 
-#                     serializer = FinancialDocumentUploadSerializer(data=payload, partial=True, context={"company_id": company_id})
+#                     serializer = FinancialDocumentUploadSerializer(data=payload, partial=True, context={"company": company})
 #                     if not serializer.is_valid():
 #                         results["failed"].append({"index": idx, "errors": serializer.errors})
 #                         continue
@@ -1460,7 +1461,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
 
         serializer = FinancialDocumentUploadSerializer(
             data=request.data,
-            context={"company_id": company_id}
+            context={"company": company}
         )
         serializer.is_valid(raise_exception=True)
         vd = serializer.validated_data
@@ -1511,7 +1512,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
         serializer = FinancialDocumentUploadSerializer(
             data=request.data,
             partial=True,
-            context={"company_id": company_id}
+            context={"company": company}
         )
         serializer.is_valid(raise_exception=True)
         vd = serializer.validated_data
@@ -1563,7 +1564,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
         serializer = FinancialDocumentUploadSerializer(
             data=request.data,
             partial=True,
-            context={"company_id": company_id}
+            context={"company": company}
         )
         serializer.is_valid(raise_exception=True)
         vd = serializer.validated_data
@@ -1631,7 +1632,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
         company = get_company_from_token(request)
         company_id = company.company_id
 
-        bulk = BulkUploadSerializer(data=request.data, context={"company_id": company_id})
+        bulk = BulkUploadSerializer(data=request.data, context={"company": company})
         bulk.is_valid(raise_exception=True)
         documents = bulk.validated_data["documents"]
 
@@ -1644,7 +1645,7 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
         for idx, doc_meta in enumerate(documents):
             try:
                 payload = dict(doc_meta)
-                serializer = FinancialDocumentUploadSerializer(data=payload, context={"company_id": company_id})
+                serializer = FinancialDocumentUploadSerializer(data=payload, context={"company": company})
                 serializer.is_valid(raise_exception=True)
                 vd = serializer.validated_data
 
@@ -1704,3 +1705,109 @@ class FinancialDocumentViewSet(viewsets.ModelViewSet):
             message=f"{len(results['success'])} succeeded, {len(results['failed'])} failed",
             data=results
         )
+
+    def _load_file_from_temp_url(self, file_url):
+        """
+        Convert a temp MEDIA_URL path (e.g., /media/temp_uploads/xxx.pdf)
+        into a Django File object ready to save into model FileField.
+        """
+        relative_path = file_url
+        if relative_path.startswith(settings.MEDIA_URL):
+            relative_path = relative_path.replace(settings.MEDIA_URL, "", 1)
+        # ensure no leading slash
+        relative_path = relative_path.lstrip("/")
+
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        if not os.path.exists(full_path):
+            return None
+        return File(open(full_path, "rb"), name=os.path.basename(full_path))
+
+    
+    def _compute_file_hash(self, file_obj):
+        sha = hashlib.sha256()
+        # file_obj may be an InMemoryUploadedFile or django File - ensure reading from start
+        file_obj.seek(0)
+        for chunk in file_obj.chunks():
+            sha.update(chunk)
+        file_obj.seek(0)
+        return sha.hexdigest()
+
+    def _delete_temp_file(self, file_url):
+        relative_path = file_url
+        if relative_path.startswith(settings.MEDIA_URL):
+            relative_path = relative_path.replace(settings.MEDIA_URL, "", 1)
+        relative_path = relative_path.lstrip("/")
+        full_path = os.path.join(settings.MEDIA_ROOT, relative_path)
+        if os.path.exists(full_path):
+            try:
+                os.remove(full_path)
+            except Exception as e:
+                logger.warning(f"Failed to delete temp file {full_path}: {e}")
+
+   
+    def _get_latest_version(self, company_id, document_type, start_date, end_date, tag):
+        return (
+            FinancialDocument.objects
+            .filter(
+                company_id=company_id,
+                document_type=document_type,
+                period_start_date=start_date,
+                period_end_date=end_date,
+                document_tag=tag,
+                del_flag=0
+            )
+            .order_by("-version")
+            .first()
+        )
+
+    def _trigger_verification(self, document):
+        # keep original implementation (celery etc.) — this is placeholder
+        logger.info(f"Verification queued for document {document.document_id}")
+
+    def _generate_download_url(self, file_path):
+        """Generate presigned URL for S3 download"""
+        
+        # If using S3, generate presigned URL
+        # return s3_client.generate_presigned_url(...)
+        
+        # For local storage, return direct URL
+        return default_storage.url(file_path)
+    
+    def _calculate_missing_documents(self, company_id, financial_year):
+        """Calculate missing documents for a company"""
+        
+        missing = {
+            'GSTR_3B': [],
+            'GSTR_9': [],
+            'ITR': [],
+            'FINANCIAL_STATEMENT': []
+        }
+        
+        # Check monthly GSTR-3B
+        existing_months = FinancialDocument.objects.filter(
+            company_id=company_id,
+            financial_year=financial_year,
+            document_type='GSTR_3B',
+            period_type='MONTHLY',
+            del_flag=0
+        ).values_list('period_month', flat=True)
+        
+        all_months = set(range(1, 13))
+        missing_months = all_months - set(existing_months)
+        missing['GSTR_3B'] = sorted(list(missing_months))
+        
+        # Check yearly documents
+        for doc_type in ['GSTR_9', 'ITR', 'FINANCIAL_STATEMENT']:
+            exists = FinancialDocument.objects.filter(
+                company_id=company_id,
+                financial_year=financial_year,
+                document_type=doc_type,
+                period_type='YEARLY',
+                del_flag=0
+            ).exists()
+            
+            if not exists:
+                missing[doc_type] = ['Required']
+        
+        return missing
+

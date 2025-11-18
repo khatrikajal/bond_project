@@ -298,7 +298,8 @@ class CompanyInformationCreateView(APIView):
 class CompanyProfileView(APIView):
     """
     GET → Fetch company using token
-    PATCH → Update company using token
+    PUT → Full update company using token
+    PATCH → Partial update company using token
     DELETE → Soft delete company using token
     """
     authentication_classes = [JWTAuthentication]
@@ -318,6 +319,43 @@ class CompanyProfileView(APIView):
             status_code=200
         )
 
+    # -------------------- PUT (FULL UPDATE) --------------------
+    def put(self, request):
+        try:
+            company = get_company_from_token(request)
+        except Exception as e:
+            return APIResponse.error(message=str(e), status_code=401)
+
+        # FULL UPDATE → partial=False
+        serializer = CompanyInfoUpdateSerializer(
+            instance=company,
+            data=request.data,
+            partial=False,
+            context={"request": request}
+        )
+
+        if not serializer.is_valid():
+            return APIResponse.error(
+                message="Validation error",
+                errors=serializer.errors
+            )
+
+        company = serializer.save()
+
+        response_data = {
+            "company_id": company.company_id,
+            "company_name": company.company_name,
+            "company_pan_number": company.company_pan_number,
+            "pan_holder_name": company.pan_holder_name,
+            "date_of_birth": company.date_of_birth,
+        }
+
+        return APIResponse.success(
+            data=response_data,
+            message="Company information fully updated successfully",
+            status_code=200
+        )
+
     # -------------------- PATCH --------------------
     def patch(self, request):
         try:
@@ -325,6 +363,7 @@ class CompanyProfileView(APIView):
         except Exception as e:
             return APIResponse.error(message=str(e), status_code=401)
 
+        # PARTIAL UPDATE → partial=True
         serializer = CompanyInfoUpdateSerializer(
             instance=company,
             data=request.data,
@@ -369,7 +408,6 @@ class CompanyProfileView(APIView):
             message="Company deleted successfully",
             status_code=200
         )
-
 
 # ======================================================================
 # 4️⃣ CIN LOOKUP API

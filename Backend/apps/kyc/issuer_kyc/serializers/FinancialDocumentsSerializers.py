@@ -490,7 +490,7 @@ class FinancialDocumentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinancialDocument
         fields = [
-            'company',
+           
             'document_type',
             'document_tag',
             'financial_year',

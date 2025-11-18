@@ -825,9 +825,11 @@ class CompanyDocumentDetailView(APIView, DocumentQueryOptimizationMixin, SoftDel
         except Exception:
             return APIResponse.error(message="Document not found", status_code=404)
 
+        # ensure a file is sent
         if not request.FILES.get("file"):
             return APIResponse.error(message="File is required")
 
+        # Use serializer with instance so validate() can allow updating the same document
         serializer = CompanySingleDocumentUploadSerializer(
             instance=document,
             data={
@@ -840,6 +842,7 @@ class CompanyDocumentDetailView(APIView, DocumentQueryOptimizationMixin, SoftDel
         if not serializer.is_valid():
             return APIResponse.error(message="Validation failed", errors=serializer.errors)
 
+        # serializer.save() will call update() on the instance
         updated_doc = serializer.save()
 
         return APIResponse.success(
@@ -876,8 +879,6 @@ class CompanyDocumentDetailView(APIView, DocumentQueryOptimizationMixin, SoftDel
             message="Document deleted successfully",
             data={"id": str(document.document_id)}
         )
-
-
 # ======================================================================
 # 🔵 STATUS VIEW – TOKEN BASED
 # ======================================================================
