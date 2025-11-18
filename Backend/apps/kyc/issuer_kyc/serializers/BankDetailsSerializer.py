@@ -108,8 +108,8 @@ class BankDetailsSerializer(serializers.ModelSerializer):
             instance.save()
             
             # Update onboarding step 4
-            if company_id:
-                company = CompanyInformation.objects.get(pk=company_id)
+            if company:
+               
                 self._update_onboarding_step(company, instance)
             
             return instance

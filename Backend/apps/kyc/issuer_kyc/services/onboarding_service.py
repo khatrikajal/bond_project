@@ -12,8 +12,8 @@ from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument
 from apps.kyc.issuer_kyc.models.CompanyDocumentModel import CompanyDocument
 from apps.kyc.issuer_kyc.models.DemateAccountDetailsModel import DematAccount
 from apps.kyc.issuer_kyc.models.CompanySignatoryModel import CompanySignatory
-
-from datetime import timezone
+from django.utils import timezone
+# from datetime import timezone
 import logging
 
 logger = logging.getLogger(__name__)

@@ -189,10 +189,10 @@ urlpatterns = [
      #--- Signatory Details ----
      path("company/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
      path("company/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
-     path("company/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
-     path('company/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
-     path('company/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
-     path('company/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+     path("company/signatories/get/<int:signatory_id>", CompanySignatoryDetailView.as_view(), name="signatory-get"),
+     path('company/signatories/update/<int:signatory_id>', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
+     path('company/signatories/delete/<int:signatory_id>', CompanySignatoryDelete.as_view(), name='signatory-delete'),
+     path('company/signatories/status/<int:signatory_id>', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
 
 
 

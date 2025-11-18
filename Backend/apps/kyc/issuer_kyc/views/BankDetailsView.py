@@ -170,8 +170,8 @@ class BankDetailsVerifyView( APIView):
 class BankDetailsView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self,request):
-        company = get_company_from_token(request)   # from mixin
+    def get_object(self):
+        company = get_company_from_token(self.request)   # from mixin
         try:
             return BankDetails.objects.get(company=company, del_flag=0)
         except BankDetails.DoesNotExist:

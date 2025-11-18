@@ -160,7 +160,7 @@ class FetchDematDetailsView(APIView):
         """
         Fetch demat details using PAN linked to the given company.
         """
-        company = get_company_from_token(request, view=self)
+        company = get_company_from_token(request)
         company_id = company.company_id
 
         # 1. Fetch company
@@ -219,7 +219,7 @@ class DematAccountCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        company = get_company_from_token(request, view=self)
+        company = get_company_from_token(request)
         company_id = company.company_id
         serializer = DemateAccountSerializer(
             data=request.data,

@@ -6,7 +6,7 @@ from ..serializers.CompanySignatorySerializer import CompanySignatoryCreateSeria
 from config.common.response import APIResponse
 from rest_framework.permissions import IsAuthenticated
 from apps.utils.get_company_from_token import get_company_from_token
-from rest_framework.pagination import PageNumberPagination
+
 
 
 
@@ -37,10 +37,6 @@ from rest_framework.pagination import PageNumberPagination
 #             }
 #         },status=status.HTTP_200_OK)
     
-# class CompanySignatoryPagination(PageNumberPagination):
-#     page_size = 10
-#     page_size_query_param = 'page_size'
-#     max_page_size = 100
 
 
 # class CompanySignatoryListView(APIView):
@@ -505,6 +501,10 @@ from rest_framework.pagination import PageNumberPagination
 #         )
      
 #----------------------------------------------------
+class CompanySignatoryPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 
 from apps.utils.get_company_from_token import get_company_from_token
@@ -566,7 +566,8 @@ class CompanySignatoryListView(APIView):
                 }
             )
 
-        paginator = PageNumberPagination()
+
+        paginator = CompanySignatoryPagination()
         paginated_signatories = paginator.paginate_queryset(signatories, request)
         serializer = CompanySignatoryListSerializer(paginated_signatories, many=True)
 
