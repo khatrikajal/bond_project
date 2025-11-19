@@ -2,7 +2,7 @@
 
 import uuid
 from django.db import models
-from apps.authentication.issureauth.models import User
+from apps.authentication.models import User
 from django.utils import timezone
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 

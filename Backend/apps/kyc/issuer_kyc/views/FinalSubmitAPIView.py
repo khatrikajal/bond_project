@@ -6,7 +6,9 @@ import logging
 
 from config.common.response import APIResponse
 from apps.kyc.issuer_kyc.models import CompanyOnboardingApplication
-from apps.authentication.issureauth.models import User  # adjust import path if needed
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
 from apps.utils.get_company_from_token import get_company_from_token
 

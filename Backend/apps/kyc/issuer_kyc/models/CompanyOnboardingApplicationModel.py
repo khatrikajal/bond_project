@@ -1,7 +1,9 @@
 from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from django.db import models
 from django.utils import timezone
-from apps.authentication.issureauth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 import logging
 from django.utils import timezone
 

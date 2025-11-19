@@ -1,7 +1,9 @@
 from django.db import models
 from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.authentication.issureauth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ActiveSignatoryManager(models.Manager):
     def get_queryset(self):
