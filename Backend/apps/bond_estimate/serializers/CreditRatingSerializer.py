@@ -188,6 +188,17 @@ import os, re, uuid
 from ..services.bond_estimation_service import create_or_get_application, update_step
 
 
+# -------------------------------------------------------
+# Helper function for building dynamic file path
+# -------------------------------------------------------
+def build_file_path(company_name, filename):
+    clean_name = re.sub(r'[^A-Za-z0-9_-]+', '_', company_name)
+    return os.path.join(clean_name, "credit_rating_certificate", filename)
+
+
+# -------------------------------------------------------
+# POST + PATCH SERIALIZER
+# -------------------------------------------------------
 class CreditRatingSerializer(serializers.Serializer):
     credit_rating_id = serializers.IntegerField(read_only=True)
 
@@ -197,15 +208,14 @@ class CreditRatingSerializer(serializers.Serializer):
 
     additional_rating = serializers.CharField(max_length=255, required=False, allow_blank=True)
     upload_letter = serializers.FileField(required=False, allow_null=True)
-
     reting_status = serializers.BooleanField(default=False)
 
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
 
-    # -------------------------------------------------------
-    # Build dynamic file path
-    # -------------------------------------------------------
+    # -----------------------------
+    # File path generator
+    # -----------------------------
     def build_file_path(self, company_name, filename):
         clean_name = re.sub(r'[^A-Za-z0-9_-]+', '_', company_name)
 
@@ -214,14 +224,13 @@ class CreditRatingSerializer(serializers.Serializer):
             clean_name,
             "credit_rating_certificate"
         )
-
         os.makedirs(base_path, exist_ok=True)
 
         return os.path.join(clean_name, "credit_rating_certificate", filename)
 
-    # -------------------------------------------------------
-    # VALIDATION (PATCH SAFE)
-    # -------------------------------------------------------
+    # -----------------------------
+    # Validation (PATCH Compatible)
+    # -----------------------------
     def validate(self, data):
         company_id = self.context.get("company_id")
         user = self.context["request"].user
@@ -232,11 +241,10 @@ class CreditRatingSerializer(serializers.Serializer):
         except CompanyInformation.DoesNotExist:
             raise serializers.ValidationError({"company_id": "Invalid company or not owned by user."})
 
-        # Get agency & rating safely
+        # Extract values safely
         agency = data.get("agency", instance.agency if instance else None)
         rating = data.get("rating", instance.rating if instance else None)
 
-        # Duplicate check only if both available
         if agency and rating:
             query = CreditRatingDetails.objects.filter(
                 company=company,
@@ -253,22 +261,18 @@ class CreditRatingSerializer(serializers.Serializer):
                     "rating": f"A {rating} rating from {agency} already exists for this company."
                 })
 
-        # Valid till check only if provided
         valid_till = data.get("valid_till")
         if valid_till and valid_till <= date.today():
-            raise serializers.ValidationError({
-                "valid_till": "Valid till date must be a future date."
-            })
+            raise serializers.ValidationError({"valid_till": "Valid till date must be a future date."})
 
         return data
 
-    # -------------------------------------------------------
+    # -----------------------------
     # CREATE
-    # -------------------------------------------------------
+    # -----------------------------
     def create(self, validated_data):
         user = self.context["request"].user
         company_id = self.context["company_id"]
-
         company = CompanyInformation.objects.get(company_id=company_id, user=user)
 
         upload_letter = validated_data.pop("upload_letter", None)
@@ -276,42 +280,34 @@ class CreditRatingSerializer(serializers.Serializer):
 
         if upload_letter:
             filename = f"credit_rating_{uuid.uuid4().hex}.pdf"
-            dynamic_path = self.build_file_path(company.company_name, filename)
-
+            path = self.build_file_path(company.company_name, filename)
             file_obj = ContentFile(upload_letter.read())
-            file_obj.name = dynamic_path
+            file_obj.name = path
 
         rating_entry = CreditRatingDetails.objects.create(
             company=company,
             upload_letter=file_obj,
             user_id_updated_by=user,
-            **validated_data,
+            **validated_data
         )
 
         app = create_or_get_application(user=user, company=company)
-        update_step(
-            application=app,
-            step_id="1.2",
-            record_ids=[str(rating_entry.credit_rating_id)],
-            completed=True
-        )
+        update_step(app, "1.2", [str(rating_entry.credit_rating_id)], True)
 
         return rating_entry
 
-    # -------------------------------------------------------
-    # UPDATE (PATCH + PUT support)
-    # -------------------------------------------------------
+    # -----------------------------
+    # UPDATE (PATCH uses this)
+    # -----------------------------
     def update(self, instance, validated_data):
         user = self.context["request"].user
-
         upload_letter = validated_data.pop("upload_letter", None)
 
         if upload_letter:
             filename = f"credit_rating_{uuid.uuid4().hex}.pdf"
-            dynamic_path = self.build_file_path(instance.company.company_name, filename)
-
+            path = self.build_file_path(instance.company.company_name, filename)
             file_obj = ContentFile(upload_letter.read())
-            file_obj.name = dynamic_path
+            file_obj.name = path
             instance.upload_letter = file_obj
 
         for attr, value in validated_data.items():
@@ -319,40 +315,98 @@ class CreditRatingSerializer(serializers.Serializer):
 
         instance.user_id_updated_by = user
         instance.save()
+        return instance
+# -------------------------------------------------------
+# PUT SERIALIZER (Full update only)
+# -------------------------------------------------------
+class CreditRatingPutSerializer(serializers.Serializer):
+    agency = serializers.ChoiceField(choices=RatingAgency.choices, required=True)
+    rating = serializers.ChoiceField(choices=CreditRating.choices, required=True)
+    valid_till = serializers.DateField(required=True)
+
+    additional_rating = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    upload_letter = serializers.FileField(required=False, allow_null=True)
+    reting_status = serializers.BooleanField(required=True)
+
+    def validate(self, data):
+        company_id = self.context.get("company_id")
+        user = self.context["request"].user
+        instance = self.context.get("instance")
+
+        company = CompanyInformation.objects.get(company_id=company_id, user=user)
+
+        agency = data["agency"]
+        rating = data["rating"]
+
+        # ---------------------------------------
+        # FIXED: Do NOT treat same record as duplicate
+        # ---------------------------------------
+        exists = CreditRatingDetails.objects.filter(
+            company=company,
+            agency=agency,
+            rating=rating,
+            is_del=0
+        ).exclude(credit_rating_id=instance.credit_rating_id).exists()
+
+        if exists:
+            raise serializers.ValidationError({
+                "rating": f"{rating} from {agency} already exists"
+            })
+
+        # ---------------------------------------
+        # DATE VALIDATION
+        # ---------------------------------------
+        if data["valid_till"] <= date.today():
+            raise serializers.ValidationError({
+                "valid_till": "Valid till date must be a future date"
+            })
+
+        return data
+
+    def update(self, instance, validated_data):
+        upload_letter = validated_data.pop("upload_letter", None)
+
+        if upload_letter:
+            filename = f"credit_rating_{uuid.uuid4().hex}.pdf"
+            path = f"{instance.company.company_name}/credit_rating_certificate/{filename}"
+            instance.upload_letter = ContentFile(upload_letter.read(), name=path)
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.user_id_updated_by = self.context["request"].user
+        instance.save()
 
         return instance
 
 
-# ==================================================
-# LIST SERIALIZER WITH STATUS (valid/expired)
-# ==================================================
+# -------------------------------------------------------
+# LIST SERIALIZER WITH STATUS
+# -------------------------------------------------------
 class CreditRatingListSerializer(serializers.ModelSerializer):
-    agency_display = serializers.CharField(source='get_agency_display', read_only=True)
-    rating_display = serializers.CharField(source='get_rating_display', read_only=True)
+    agency_display = serializers.CharField(source="get_agency_display", read_only=True)
+    rating_display = serializers.CharField(source="get_rating_display", read_only=True)
     upload_letter_url = serializers.SerializerMethodField()
-
     status = serializers.SerializerMethodField()
 
     class Meta:
         model = CreditRatingDetails
         fields = [
-            'credit_rating_id',
-            'agency', 'agency_display',
-            'rating', 'rating_display',
-            'valid_till',
-            'additional_rating',
-            'reting_status',
-            'upload_letter_url',
-            'status',
-            'created_at',
-            'updated_at',
+            "credit_rating_id",
+            "agency", "agency_display",
+            "rating", "rating_display",
+            "valid_till",
+            "additional_rating",
+            "reting_status",
+            "upload_letter_url",
+            "status",
+            "created_at",
+            "updated_at",
         ]
 
     def get_upload_letter_url(self, obj):
-        request = self.context.get('request')
-        if obj.upload_letter and request:
-            return request.build_absolute_uri(obj.upload_letter.url)
-        return None
+        request = self.context.get("request")
+        return request.build_absolute_uri(obj.upload_letter.url) if obj.upload_letter and request else None
 
     def get_status(self, obj):
         return "valid" if obj.valid_till >= date.today() else "expired"

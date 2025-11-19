@@ -3,9 +3,12 @@ from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.authentication.issureauth.models import User
 
+
 class ActiveSignatoryManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(del_flag=0)
+
+
 class CompanySignatory(BaseModel):
     """
     Stores signatory details (Director / Signatory / Manager) for each company.
@@ -13,15 +16,15 @@ class CompanySignatory(BaseModel):
     """
 
     DESIGNATION_CHOICES = [
-        ('Director', 'Director'),
-        ('Signatory', 'Signatory'),
-        ('Manager', 'Manager'),
+        ('DIRECTOR', 'Director'),
+        ('SIGNATORY', 'Signatory'),
+        ('MANAGER', 'Manager'),
     ]
 
     STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Active', 'Active'),
-        ('Inactive','Inactive')
+        ('PENDING', 'Pending'),
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive')
     ]
 
     signatory_id = models.BigAutoField(primary_key=True)
@@ -38,6 +41,18 @@ class CompanySignatory(BaseModel):
     pan_number = models.CharField(max_length=10)
     aadhaar_number = models.CharField(max_length=12)
     email_address = models.EmailField(max_length=255)
+
+    # Newly added – MUST be unique & not null
+    mobile_number = models.CharField(
+        max_length=15,
+        unique=True,
+        null=False,
+        blank=False,
+        help_text="Unique mobile number of the signatory"
+    )
+
+   
+
 
     dsc_upload = models.FileField(
         upload_to='signatory_documents/dsc/',
@@ -57,11 +72,10 @@ class CompanySignatory(BaseModel):
         blank=False
     )
 
-    # ✅ New fields
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
-        default='PENDING',
+        default='Pending',
         help_text="Current status of the signatory (Active/Pending)."
     )
 
@@ -89,11 +103,16 @@ class CompanySignatory(BaseModel):
             models.Index(fields=["pan_number"]),
             models.Index(fields=["aadhaar_number"]),
             models.Index(fields=["status"]),
+            models.Index(fields=["mobile_number"]),  # ✅ New index
         ]
         constraints = [
             models.UniqueConstraint(
                 fields=["company", "din"],
                 name="unique_din_per_company"
+            ),
+            models.UniqueConstraint(
+                fields=["mobile_number"],
+                name="unique_mobile_number_signatory"  # ✅ New unique constraint
             )
         ]
 
