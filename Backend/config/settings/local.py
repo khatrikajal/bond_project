@@ -279,6 +279,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny', 
     ),
+    "DEFAULT_THROTTLE_CLASSES": [
+        "apps.authentication.throttling.OtpThrottle",
+     
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "otp": "5/minute",
+        
+    },
     # Custom exception handler
     "EXCEPTION_HANDLER": "config.common.exceptions.custom_exception_handler",
 }

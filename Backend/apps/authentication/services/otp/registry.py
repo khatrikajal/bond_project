@@ -1,5 +1,4 @@
 from .strategies.dummy import DummyOtpStrategy
-from .strategies.mobile.sms import SmsOtpStrategy
 from .strategies.email.gmail import GmailOtpStrategy
 
 

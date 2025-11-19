@@ -1,9 +1,8 @@
-from ..base import BaseOtpStrategy
+# apps/authentication/services/otp/strategies/email/gmail.py
+from ...strategies.base import BaseOtpStrategy
 
-class DummyOtpStrategy(BaseOtpStrategy):
+class GmailOtpStrategy(BaseOtpStrategy):
 
-    def get_otp_override(self):
-        return "1111"  # ONLY for dev mode
-
-    def send_otp(self, recipient, otp):
-        print(f"[DUMMY OTP] Sending OTP {otp} to {recipient}")
+    def send_otp(self, email, otp):
+        # integrate with email provider or SMTP here
+        print(f"[GMAIL OTP] sending {otp} to {email}")

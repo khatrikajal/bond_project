@@ -22,10 +22,11 @@ class Otp(models.Model):
         return timezone.now() > self.expires_at
 
     @staticmethod
-    def create_otp(recipient, code, otp_type):
+    def create_otp(recipient, code, otp_type, ttl_minutes=5):
         return Otp.objects.create(
             recipient=recipient,
             otp_code=code,
             otp_type=otp_type,
-            expires_at=timezone.now() + timedelta(minutes=5)
+            expires_at=timezone.now() + timedelta(minutes=ttl_minutes)
         )
+
