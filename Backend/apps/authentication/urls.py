@@ -10,7 +10,7 @@ from django.urls import path,include
 
 # )
 
-
+from .views.CompanyRegistrationView import RegisterCompanyView
 
 
 app_name = 'authentication'
@@ -22,5 +22,7 @@ urlpatterns = [
     # path("otp/resend/", ResendOTPAPIView.as_view(), name="resend-otp"),
     # path("otp/status/", OTPStatusAPIView.as_view(), name="otp-status"),
     path('v1/',include('apps.authentication.issureauth.urls',namespace='issureauth')),
+    path('register-company/', RegisterCompanyView.as_view(), name='register-company'),
+   
    
 ]

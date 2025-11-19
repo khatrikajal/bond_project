@@ -1,5 +1,8 @@
 from django.urls import path
+
 from .views import SendMobileOtpView,VerifyMobileOtpView,SendEmailOtpView,VerifyEmailOtpView,LoginRequestView,VerifyLoginOtpView,GetUserFromTokenView
+
+
 app_name = 'authentication.issureauth'
 urlpatterns = [
     path('send-mobile-otp/', SendMobileOtpView.as_view(), name='send-mobile-otp'),
@@ -11,5 +14,6 @@ urlpatterns = [
     
 
     path("me/", GetUserFromTokenView.as_view(), name="me"),
+   
     
 ]

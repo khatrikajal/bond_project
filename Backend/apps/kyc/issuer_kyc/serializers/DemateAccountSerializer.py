@@ -1,6 +1,6 @@
 from ..models.DemateAccountDetailsModel import DematAccount
 from rest_framework import serializers
-from ..models.CompanyInformationModel import CompanyInformation,CompanyOnboardingApplication
+from ..models.CompanyInformationModel import CompanyInformation
 
 from ..services.onboarding_service import update_step_4_status
 

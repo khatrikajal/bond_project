@@ -1,9 +1,9 @@
 from .BaseModel import BaseModel
 from django.db import models
 from django.db.models import Q
-from .CompanyOnboardingApplicationModel import CompanyOnboardingApplication
 from apps.authentication.issureauth.models import User
 import uuid
+# from .managers.ActiveCompanyManager import ActiveCompanyManager # type: ignore
 
 
 class ActiveCompanyManager(models.Manager):
@@ -11,18 +11,14 @@ class ActiveCompanyManager(models.Manager):
         return super().get_queryset().filter(del_flag=0)
 
 
-# -------------------------------------------
-# NEW: SECTOR DROPDOWN CHOICES
-# -------------------------------------------
 class SectorChoices(models.TextChoices):
     BANKING = 'BANKING', 'banking'
     INFRASTRUCTURE = 'INFRASTRUCTURE', 'Infrastructure'
-    POWER = 'POWER', 'Power '
+    POWER = 'POWER', 'Power'
     REAL_ESTATE = 'REAL ESTATE', 'Real Estate'
     MANUFACTURING = 'MANUFACTURING', 'Manufacturing'
     IT = 'IT', 'IT & Software'
     PUBLIC_SECTOR_UNDERTAKING = 'PUBLIC SECTOR UNDERTAKING', 'Public Sector Undertaking'
-    
     OTHERS = 'OTHERS', 'Others'
 
 
@@ -31,15 +27,30 @@ class CompanyInformation(BaseModel):
     Stores company legal information (KYC).
     """
 
-    COMPANY_TYPE_CHOICES = [
-        ('PUBLIC_LTD', 'Public Ltd Company'),
-        ('PRIVATE_LTD', 'Private Limited'),
-        ('LLP', 'LLP'),
-        ('PARTNERSHIP', 'Partnership Firm'),
-        ('SOLE_PROP', 'Sole Proprietorship'),
-        ('OPC', 'OPC'),
-        ('TRUST_NGO', 'Trust/Society/NGO'),
+    # ------------ NEW FIELDS FOR FLOWCHART LOGIC ------------
+    HUMAN_INTERVENTION_CHOICES = [
+        (True, "Requires Human Review"),
+        (False, "Auto Verified"),
     ]
+
+    VERIFICATION_STATUS_CHOICES = [
+        ("PENDING", "Pending - Human intervention required"),
+        ("SUCCESS", "Successfully Verified"),
+        ("FAILED", "Failed Verification"),
+    ]
+
+    human_intervention = models.BooleanField(
+        default=False,
+        help_text="Flag to indicate manual review requirement."
+    )
+
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VERIFICATION_STATUS_CHOICES,
+        default="PENDING",
+        help_text="Current verification state of the company KYC."
+    )
+    # ---------------------------------------------------------
 
     company_id = models.UUIDField(
         primary_key=True,
@@ -55,24 +66,27 @@ class CompanyInformation(BaseModel):
         blank=True
     )
 
-    # -------------------------------
-    # COMPANY BASIC DETAILS
-    # -------------------------------
     corporate_identification_number = models.CharField(max_length=21)
     company_name = models.CharField(max_length=255)
     date_of_incorporation = models.DateField()
 
-    # OLD FIELD — keep it for migration safety
-   
-
-    # NEW SEPARATED FIELDS
     city_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
     state_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
     country_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
 
+    COMPANY_TYPE_CHOICES = [
+        ('PUBLIC_LTD', 'Public Ltd Company'),
+        ('PRIVATE_LTD', 'Private Limited'),
+        ('LLP', 'LLP'),
+        ('PARTNERSHIP', 'Partnership Firm'),
+        ('SOLE_PROP', 'Sole Proprietorship'),
+        ('OPC', 'OPC'),
+        ('TRUST_NGO', 'Trust/Society/NGO'),
+    ]
+
     entity_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES)
 
-    # NEW — SECTOR DROPDOWN
+
     sector = models.CharField(
         max_length=50,
         choices=SectorChoices.choices,
@@ -80,14 +94,12 @@ class CompanyInformation(BaseModel):
         blank=True
     )
 
-    # -------------------------------
-    # PAN & GST DETAILS
-    # -------------------------------
     company_or_individual_pan_card_file = models.FileField(
         upload_to='company_documents/pan_cards/',
         null=True,
         blank=True
     )
+
     company_pan_number = models.CharField(max_length=10)
     pan_holder_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
@@ -95,9 +107,6 @@ class CompanyInformation(BaseModel):
     gstin = models.CharField(max_length=15)
     msme_udyam_registration_no = models.CharField(max_length=50, null=True, blank=True)
 
-    # -------------------------------
-    # MANAGERS
-    # -------------------------------
     objects = models.Manager()
     active = ActiveCompanyManager()
 
@@ -118,7 +127,6 @@ class CompanyInformation(BaseModel):
                 condition=Q(del_flag=0),
                 name='unique_pan_active_only'
             ),
-            
         ]
 
     def __str__(self):

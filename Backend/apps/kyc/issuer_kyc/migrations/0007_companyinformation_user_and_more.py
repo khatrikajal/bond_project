@@ -56,33 +56,7 @@ class Migration(migrations.Migration):
                 fields=("mobile_number",), name="unique_mobile_number_signatory"
             ),
         ),
-        migrations.AddField(
-            model_name="companyinformation",
-            name="user",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                to=settings.AUTH_USER_MODEL,
-            ),
-        ),
-        migrations.AddField(
-            model_name="companyinformation",
-            name="user_id_updated_by",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="updated_%(class)s_records",
-                to=settings.AUTH_USER_MODEL,
-            ),
-        ),
-       migrations.AddIndex(
-            model_name="companyinformation",
-            index=models.Index(
-                fields=["user", "del_flag"], name="company_kyc_user_id_341cde_idx"
-            ),
-        ),
+        
     ]
 
     
