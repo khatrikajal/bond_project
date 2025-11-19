@@ -868,6 +868,9 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+OTP_MOBILE_STRATEGY = "dummy"  
+OTP_EMAIL_STRATEGY = "dummy"
+
 # -------------------------
 # Django REST Framework
 # -------------------------
@@ -890,6 +893,7 @@ REST_FRAMEWORK = {
         "anon": "5/second",
         "registration_otp": "5/hour",
         "open_apis": "60/minute",
+        "otp": "5/minute"
     },
     # Permissions: all APIs require authentication by default
     "DEFAULT_PERMISSION_CLASSES": (
