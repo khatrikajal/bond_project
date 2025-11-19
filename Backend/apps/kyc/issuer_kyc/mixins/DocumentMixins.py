@@ -99,7 +99,7 @@ class ApplicationStepUpdateMixin:
 
     def update_document_step(self, company, record_ids=None):
         """
-        Update step 4 (documents) based on current document status.
+        Update step 3 (documents) based on current document status.
         This is the method that views should call.
         """
         if not hasattr(company, 'application') or not company.application:
@@ -119,7 +119,7 @@ class ApplicationStepUpdateMixin:
             record_ids = [str(doc_id) for doc_id in document_ids]
         
         application.update_state(
-            step_number=4,
+            step_number=3,
             completed=all_mandatory_uploaded,
             record_ids=record_ids
         )

@@ -90,6 +90,14 @@ class CompanyAddress(BaseModel):
             models.Index(fields=["company", "del_flag"]),
             models.Index(fields=["city", "state_ut"]),
         ]
+        constraints = [
+            models.UniqueConstraint(
+            fields=["company", "address_type"],
+            condition=models.Q(del_flag=0),
+            name="uniq_company_address_type_active"
+           )
+        ]
+        
 
     def __str__(self):
         return f"{self.company.company_name} - {self.get_address_type_display()}"

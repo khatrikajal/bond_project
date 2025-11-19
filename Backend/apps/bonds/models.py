@@ -8,6 +8,9 @@ class RatingAgency(models.TextChoices):
     IND_RA = "IND-RA", "India Ratings & Research"
     BWR = "BWR", "Brickwork Ratings"
     ACUITE = "ACUITE", "Acuité Ratings"
+    INFOMERICS = "INFOMERICS","Infomerics"
+
+    
 
 class CreditRating(models.TextChoices):
     AAA = "AAA", "AAA"

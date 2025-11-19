@@ -552,7 +552,8 @@ class CompanySignatoryListView(APIView):
         company = get_company_from_token(request)
 
         signatories = CompanySignatory.objects.filter(
-            company=company
+            company=company,
+            del_flag=0
         ).order_by("-created_at")
 
         if not signatories.exists():
@@ -595,7 +596,8 @@ class CompanySignatoryDetailView(APIView):
         try:
             signatory = CompanySignatory.objects.select_related("company").get(
                 signatory_id=signatory_id,
-                company=company
+                company=company,
+                del_flag=0
             )
         except CompanySignatory.DoesNotExist:
             return APIResponse.error(
