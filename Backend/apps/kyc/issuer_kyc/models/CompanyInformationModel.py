@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models import Q
 from apps.authentication.issureauth.models import User
 import uuid
-# from .managers.ActiveCompanyManager import ActiveCompanyManager # type: ignore
 
 
 class ActiveCompanyManager(models.Manager):
@@ -24,34 +23,26 @@ class SectorChoices(models.TextChoices):
 
 class CompanyInformation(BaseModel):
     """
-    Stores company legal information (KYC).
+    Company KYC Table
+    ALL fields REQUIRED (no null/no blank)
     """
 
-    # ------------ NEW FIELDS FOR FLOWCHART LOGIC ------------
-    HUMAN_INTERVENTION_CHOICES = [
-        (True, "Requires Human Review"),
-        (False, "Auto Verified"),
-    ]
-
-    VERIFICATION_STATUS_CHOICES = [
-        ("PENDING", "Pending - Human intervention required"),
-        ("SUCCESS", "Successfully Verified"),
-        ("FAILED", "Failed Verification"),
-    ]
-
+    # Flowchart logic fields
     human_intervention = models.BooleanField(
-        default=False,
-        help_text="Flag to indicate manual review requirement."
+        help_text="Manual review required?"
     )
 
     verification_status = models.CharField(
         max_length=20,
-        choices=VERIFICATION_STATUS_CHOICES,
+        choices=[
+            ("PENDING", "Pending Verification"),
+            ("SUCCESS", "Verified Successfully"),
+            ("FAILED", "Failed Verification"),
+        ],
         default="PENDING",
-        help_text="Current verification state of the company KYC."
     )
-    # ---------------------------------------------------------
 
+    # Primary Key
     company_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -59,20 +50,21 @@ class CompanyInformation(BaseModel):
         unique=True,
     )
 
+    # user REQUIRED now
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        on_delete=models.CASCADE
     )
 
+    # REQUIRED FIELDS
     corporate_identification_number = models.CharField(max_length=21)
     company_name = models.CharField(max_length=255)
+    gstin = models.CharField(max_length=15)
     date_of_incorporation = models.DateField()
 
-    city_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
-    state_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
-    country_of_incorporation = models.CharField(max_length=100, null=True, blank=True)
+    city_of_incorporation = models.CharField(max_length=100)
+    state_of_incorporation = models.CharField(max_length=100)
+    country_of_incorporation = models.CharField(max_length=100)
 
     COMPANY_TYPE_CHOICES = [
         ('PUBLIC_LTD', 'Public Ltd Company'),
@@ -86,26 +78,20 @@ class CompanyInformation(BaseModel):
 
     entity_type = models.CharField(max_length=50, choices=COMPANY_TYPE_CHOICES)
 
-
     sector = models.CharField(
         max_length=50,
         choices=SectorChoices.choices,
-        null=True,
-        blank=True
     )
 
     company_or_individual_pan_card_file = models.FileField(
         upload_to='company_documents/pan_cards/',
-        null=True,
-        blank=True
     )
 
     company_pan_number = models.CharField(max_length=10)
     pan_holder_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
 
-    gstin = models.CharField(max_length=15)
-    msme_udyam_registration_no = models.CharField(max_length=50, null=True, blank=True)
+    msme_udyam_registration_no = models.CharField(max_length=50)
 
     objects = models.Manager()
     active = ActiveCompanyManager()
