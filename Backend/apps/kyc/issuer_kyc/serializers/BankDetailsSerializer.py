@@ -54,8 +54,8 @@ class BankDetailsSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Handle POST - Create new bank details"""
-        company_id = validated_data.pop('company_id')
-        company = CompanyInformation.objects.get(pk=company_id)
+        company = self.context.get("company")
+
         
         with transaction.atomic():
             # Get or create
@@ -82,7 +82,8 @@ class BankDetailsSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Handle PUT/PATCH - Update existing bank details"""
-        company_id = validated_data.pop('company_id', None)
+        company = self.context["company"]
+
         
         with transaction.atomic():
             # ✅ CHECK: If verified, check for critical field changes
@@ -107,8 +108,8 @@ class BankDetailsSerializer(serializers.ModelSerializer):
             instance.save()
             
             # Update onboarding step 4
-            if company_id:
-                company = CompanyInformation.objects.get(pk=company_id)
+            if company:
+               
                 self._update_onboarding_step(company, instance)
             
             return instance

@@ -8,7 +8,7 @@ from ..models.DemateAccountDetailsModel import DematAccount
 from config.common.response import APIResponse
 from ..models.CompanyInformationModel import CompanyInformation
 from ..services.demate_details.demat_service import DematService
-
+from apps.utils.get_company_from_token import get_company_from_token
 import re
 
 # class DematAccountCreateView(APIView):
@@ -156,10 +156,12 @@ PAN_REGEX = r"^[A-Z]{5}[0-9]{4}[A-Z]$"
 class FetchDematDetailsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, company_id):
+    def get(self, request):
         """
         Fetch demat details using PAN linked to the given company.
         """
+        company = get_company_from_token(request)
+        company_id = company.company_id
 
         # 1. Fetch company
         try:
@@ -216,7 +218,9 @@ class DematAccountCreateView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, company_id):
+    def post(self, request):
+        company = get_company_from_token(request)
+        company_id = company.company_id
         serializer = DemateAccountSerializer(
             data=request.data,
             context={

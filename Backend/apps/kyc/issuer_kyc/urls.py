@@ -3,14 +3,13 @@ from .views.CompanyAddressView import ComapnyAdressAPIView
 from .views.CompanyAllAddressView import ComapnyAllAdressAPIView
 
 from .views.CompanyInformationCreateView import (
-    CompanyInformationCreateView,
     PanExtractionView,
-    CompanyInfoGetView,
-    CompanyInformationUpdateView,
-    CompanyInfoDeleteView,
-    CompanyInfoByCINView,
+    CompanyInformationCreateView,
+    CompanyProfileView,
     SectorChoicesView,
-    )
+    CompanyInfoByCINView,
+)
+
 from .views import BankDetailsView
 from .views.CompanyDocumentView import (
     CompanyDocumentBulkUploadView,
@@ -35,7 +34,7 @@ CompanySignatoryDelete,
 CompanySignatoryStatusUpdate)
 
 from .views.FinalSubmitAPIView import FinalSubmitAPIView
-
+from .views.TempFileUploadView import TempFileUploadView
 
 financial_documents = FinancialDocumentViewSet.as_view({
     'get': 'list',
@@ -54,142 +53,152 @@ financial_document_detail = FinancialDocumentViewSet.as_view({
 app_name = 'issuer_kyc'
 
 urlpatterns = [
+    
+    
+
+
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
-    path("company/<uuid:company_id>/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
+    path("company/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),
     path("addresses/",ComapnyAllAdressAPIView.as_view(),name="create-company-address"),
     path("pan-extraction/",PanExtractionView.as_view(),name="create-company-address"),
     path("doc-extraction/", ComapnyAllAdressAPIView.as_view(), name="upload_document"),
-    path("pan-extraction/",PanExtractionView.as_view(),name="create-company-address"),
-    path('company-info/<uuid:company_id>/', CompanyInfoGetView.as_view(), name='company-info-get'),
-    path('company-info/<uuid:company_id>/update/', CompanyInformationUpdateView.as_view(), name='company-info-update'),
-    path("company-info/<uuid:company_id>/delete/", CompanyInfoDeleteView.as_view(), name="company-info-delete"),
-    # Fetch Through CIN
-    path('company-info/cin/<str:cin>/', CompanyInfoByCINView.as_view(), name='company-info-by-cin'),
+    path("pan-extraction/", PanExtractionView.as_view(), name="pan-extraction"),
+    path("company-info/", CompanyInformationCreateView.as_view(), name="company-info-create"),
+
+    # GET / PATCH / DELETE using token
+    path("company-info/profile/", CompanyProfileView.as_view(), name="company-info-me"),
+
+    path("company-info/cin/<str:cin>/", CompanyInfoByCINView.as_view(), name="company-info-by-cin"),
     path("company-info/sectors/", SectorChoicesView.as_view(), name="sector-choices"),
 
     #--- Bank Details ----
-    path("bank-details/<uuid:company_id>/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
-    path("bank-details/<uuid:company_id>/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-get"),
-    path("bank-details/<uuid:company_id>/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
-    path("bank-details/<uuid:company_id>/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
+    path("bank-details/verify/", BankDetailsView.BankDetailsVerifyView.as_view(), name="bank-details-verify"),
+    path("bank-details/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-get"),
+    path("bank-details/extract/", BankDetailsView.BankDocumentExtractView.as_view(), name="bank-details-extract"),
+    path("bank-details/submit/", BankDetailsView.BankDetailsView.as_view(), name="bank-details-submit"),
 
     # ---------- Demate Details --------------
-    path("company/<uuid:company_id>/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
+    path("company/demat/", DematAccountCreateView.as_view(), name="demat-account-create"),
     path('company/demat/<int:demat_account_id>/get', DematAccountGetView.as_view(), name='demat-account-get'),
     path("company/demat/<int:demat_account_id>/update", DematAccountUpdateView.as_view(), name="update-demat-account"),
     path("company/demat/<int:demat_account_id>/delete", DematAccountDelateView.as_view(), name="delete-demat-account"),
     path(
-        "company/<uuid:company_id>/fetch-demat-details/",
+        "company/fetch-demat-details/",
         FetchDematDetailsView.as_view(),
         name="fetch-demat-details",
     ),
    
   
-    # Bulk upload all documents at once 
+    
+
+        # Bulk upload all documents for company from TOKEN
     path(
-        'companies/<uuid:company_id>/documents/bulkupload/',
+        'companies/documents/bulkupload/',
         CompanyDocumentBulkUploadView.as_view(),
         name='document-bulk-upload'
     ),
-    
-    # Get document upload status 
+
+    # Get document upload status (company from TOKEN)
     path(
-        'companies/<uuid:company_id>/documents/status/',
+        'companies/documents/status/',
         CompanyDocumentStatusView.as_view(),
         name='document-status'
     ),
-    
-    # Upload single document
+
+    # Upload single document (company from TOKEN)
     path(
-        'companies/<uuid:company_id>/documents/upload/',
+        'companies/documents/upload/',
         CompanySingleDocumentUploadView.as_view(),
         name='document-single-upload'
     ),
-    
-    # Admin verification endpoint 
+
+    # Admin: Verify or Reject a document (document_id required)
     path(
-        'companies/<uuid:company_id>/documents/<uuid:document_id>/verify/',
+        'companies/documents/<uuid:document_id>/verify/',
         CompanyDocumentVerificationView.as_view(),
         name='document-verify'
     ),
-    
-    # Get, update, delete specific document
+
+    # Get, Update, Delete a specific document (company from TOKEN)
     path(
-        'companies/<uuid:company_id>/documents/<uuid:document_id>/',
+        'companies/documents/<uuid:document_id>/',
         CompanyDocumentDetailView.as_view(),
         name='document-detail'
     ),
-    
-    # List all documents for company 
+
+    # List all documents (company from TOKEN)
     path(
-        'companies/<uuid:company_id>/documents/',
+        'companies/documents/',
         CompanyDocumentListView.as_view(),
         name='document-list'
     ),
 
 
-    # ----------------FinancialDocuments-------------
 
+
+
+    # ----------------FinancialDocuments-------------
+    path("financial-documents/upload/", TempFileUploadView.as_view(), name="financial-documents-upload"),
     path(
-        "company/<uuid:company_id>/financial-documents/",
+        "company/financial-documents/",
         financial_documents,
         name="financial-documents"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/<int:document_id>/",
+        "company/financial-documents/<int:document_id>/",
         financial_document_detail,
         name="financial-document-detail"
     ),
 
     #bulk actions
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_upload/",
+        "company/financial-documents/bulk_upload/",
         FinancialDocumentViewSet.as_view({'post': 'bulk_upload'}),
         name="financial-documents-bulk-upload"
     ),
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_update/",
+        "company/financial-documents/bulk_update/",
         FinancialDocumentViewSet.as_view({'patch': 'bulk_update'}),
         name="financial-documents-bulk-update"
     ),
     path(
-        "company/<uuid:company_id>/financial-documents/bulk_delete/",
+        "company/financial-documents/bulk_delete/",
         FinancialDocumentViewSet.as_view({'delete': 'bulk_delete'}),
         name="financial-documents-bulk-delete"
     ),
 
     # extra actions
     path(
-        "company/<uuid:company_id>/financial-documents/<int:pk>/verify/",
+        "company/financial-documents/<int:pk>/verify/",
         FinancialDocumentViewSet.as_view({'post': 'verify'}),
         name="financial-document-verify"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/<int:pk>/download/",
+        "company/financial-documents/<int:pk>/download/",
         FinancialDocumentViewSet.as_view({'get': 'download'}),
         name="financial-document-download"
     ),
 
     path(
-        "company/<uuid:company_id>/financial-documents/missing/",
+        "company/financial-documents/missing/",
         FinancialDocumentViewSet.as_view({'get': 'missing_documents'}),
         name="financial-documents-missing"
     ),
      #--- Signatory Details ----
-     path("company/<uuid:company_id>/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
-     path("company/<uuid:company_id>/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
-     path("company/<int:signatory_id>/signatories/get", CompanySignatoryDetailView.as_view(), name="signatory-get"),
-     path('company/<int:signatory_id>/signatories/update', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
-     path('company/<int:signatory_id>/signatories/delete', CompanySignatoryDelete.as_view(), name='signatory-delete'),
-     path('company/<int:signatory_id>/signatories/status', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
+     path("company/signatories/", CompanySignatoryCreateView.as_view(), name="signatory-account-create"),
+     path("company/signatories/list", CompanySignatoryListView.as_view(), name="signatory-list"),
+     path("company/signatories/get/<int:signatory_id>", CompanySignatoryDetailView.as_view(), name="signatory-get"),
+     path('company/signatories/update/<int:signatory_id>', CompanySignatoryUpdateView.as_view(), name='signatory-update'),
+     path('company/signatories/delete/<int:signatory_id>', CompanySignatoryDelete.as_view(), name='signatory-delete'),
+     path('company/signatories/status/<int:signatory_id>', CompanySignatoryStatusUpdate.as_view(), name='signatory-delete'),
 
 
 
     #------- Final Submit -------------
    
-    path("company/<uuid:company_id>/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
+    path("company/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
 
 
 

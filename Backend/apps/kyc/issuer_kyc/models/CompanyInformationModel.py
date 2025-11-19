@@ -15,16 +15,14 @@ class ActiveCompanyManager(models.Manager):
 # NEW: SECTOR DROPDOWN CHOICES
 # -------------------------------------------
 class SectorChoices(models.TextChoices):
-    AGRICULTURE = 'AGRICULTURE', 'Agriculture'
+    BANKING = 'BANKING', 'banking'
+    INFRASTRUCTURE = 'INFRASTRUCTURE', 'Infrastructure'
+    POWER = 'POWER', 'Power '
+    REAL_ESTATE = 'REAL ESTATE', 'Real Estate'
     MANUFACTURING = 'MANUFACTURING', 'Manufacturing'
-    IT_SOFTWARE = 'IT_SOFTWARE', 'IT & Software'
-    FINANCIAL = 'FINANCIAL', 'Financial Services'
-    HEALTHCARE = 'HEALTHCARE', 'Healthcare'
-    RETAIL = 'RETAIL', 'Retail & E-commerce'
-    REAL_ESTATE = 'REAL_ESTATE', 'Real Estate'
-    LOGISTICS = 'LOGISTICS', 'Logistics & Transportation'
-    ENTERTAINMENT = 'ENTERTAINMENT', 'Media & Entertainment'
-    EDUCATION = 'EDUCATION', 'Education'
+    IT = 'IT', 'IT & Software'
+    PUBLIC_SECTOR_UNDERTAKING = 'PUBLIC SECTOR UNDERTAKING', 'Public Sector Undertaking'
+    
     OTHERS = 'OTHERS', 'Others'
 
 

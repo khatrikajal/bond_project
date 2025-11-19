@@ -15,6 +15,17 @@ class CompanySignatory(BaseModel):
     A single company can have multiple signatories.
     """
 
+    # DESIGNATION_CHOICES = [
+    #     ('Director', 'Director'),
+    #     ('Signatory', 'Signatory'),
+    #     ('Manager', 'Manager'),
+    # ]
+
+    # STATUS_CHOICES = [
+    #     ('Pending', 'Pending'),
+    #     ('Active', 'Active'),
+    #     ('Inactive','Inactive')
+    # ]
     DESIGNATION_CHOICES = [
         ('DIRECTOR', 'Director'),
         ('SIGNATORY', 'Signatory'),
@@ -26,6 +37,7 @@ class CompanySignatory(BaseModel):
         ('ACTIVE', 'Active'),
         ('INACTIVE', 'Inactive')
     ]
+
 
     signatory_id = models.BigAutoField(primary_key=True)
 
