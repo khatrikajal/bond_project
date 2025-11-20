@@ -1,7 +1,9 @@
 from apps.bond_estimate.models.BaseModel import BaseModel
 
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.authentication.issureauth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from django.db import models
 from ..models.AgencyRatingChoice import RatingAgency,CreditRating
 

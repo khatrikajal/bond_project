@@ -9,13 +9,14 @@ from ..serializers.OtpSerilizer import (
     VerifyEmailOtpSerializer,
 )
 
-from ..services.response import APIResponse
+from config.common.response import APIResponse
 from ..throttling import OtpThrottle
 
 
 
 class SendMobileOtpView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OtpThrottle]
 
     def post(self, request):
         serializer = SendMobileOtpSerializer(data=request.data)
@@ -27,6 +28,7 @@ class SendMobileOtpView(APIView):
 
 class VerifyMobileOtpView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OtpThrottle]
 
     def post(self, request):
         serializer = VerifyMobileOtpSerializer(
@@ -36,22 +38,24 @@ class VerifyMobileOtpView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
 
-        return APIResponse.success("Mobile verified", data=data)
+        return APIResponse.success(message="Mobile verified", data=data)
 
 
 class SendEmailOtpView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OtpThrottle]
 
     def post(self, request):
         serializer = SendEmailOtpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
 
-        return APIResponse.success("OTP sent", data=data)
+        return APIResponse.success(message="OTP sent", data=data)
 
 
 class VerifyEmailOtpView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [OtpThrottle]
 
     def post(self, request):
         serializer = VerifyEmailOtpSerializer(
@@ -61,4 +65,4 @@ class VerifyEmailOtpView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
 
-        return APIResponse.success("Email verified", data=data)
+        return APIResponse.success(message="Email verified", data=data)

@@ -223,49 +223,6 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("City and State/UT are required when address type is BOTH.")
         return attrs
 
-    # # -----------------------------
-    # # CREATE WITH TRANSACTION
-    # # -----------------------------
-    # def create(self, validated_data):
-    #     company = validated_data.get("company")
-    #     with transaction.atomic():
-    #         address = super().create(validated_data)
-    #         try:
-    #             if hasattr(company, "application") and company.application:
-    #                 application = company.application
-    #                 if hasattr(application, "update_state"):
-    #                     application.update_state(
-    #                         step_number=2,
-    #                         completed=True,
-    #                         record_ids=[address.address_id]
-    #                     )
-    #         except Exception as e:
-    #             raise serializers.ValidationError(f"Failed to update application state: {str(e)}")
-    #     return address
-
-    # # -----------------------------
-    # # UPDATE WITH TRANSACTION
-    # # -----------------------------
-    # def update(self, instance, validated_data):
-    #     with transaction.atomic():
-    #         updated_instance = super().update(instance, validated_data)
-    #         company = updated_instance.company
-    #         try:
-    #             if hasattr(company, "application") and company.application:
-    #                 application = company.application
-    #                 if hasattr(application, "update_state"):
-    #                     application.update_state(
-    #                         step_number=2,
-    #                         completed=True,
-    #                         record_ids=[updated_instance.address_id]
-    #                     )
-    #         except Exception as e:
-    #             raise serializers.ValidationError(f"Failed to update application state: {str(e)}")
-    #         return updated_instance
-
-    # -----------------------------
-    # CREATE WITH TRANSACTION + USER TRACKING
-    # -----------------------------
     def create(self, validated_data):
         request = self.context.get("request")
         user = getattr(request, "user", None)
@@ -351,14 +308,20 @@ class CompanyAddressSerializer(serializers.ModelSerializer):
     # -----------------------------
     # GET ALL ACTIVE ADDRESSES (moved transaction logic here)
     # -----------------------------
-    def get_all_active_addresses(self):
+    def get_all_active_addresses(self,company=None):
         """
         Fetch all active (del_flag=0) addresses grouped by company.
         Each company has 'registered' and 'correspondence' sections.
         If address_type=2 (BOTH), the same data fills both sections.
         """
         with transaction.atomic():
-            companies = CompanyInformation.objects.all()
+
+            if company:
+                companies = CompanyInformation.objects.filter(company_id=company.company_id)
+            else:
+                companies = CompanyInformation.objects.all()
+
+            # companies = CompanyInformation.objects.all()
             if not companies.exists():
                 raise serializers.ValidationError("No companies found.")
 

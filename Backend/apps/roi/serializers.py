@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import FundPosition, CreditRating, BorrowingDetail, CapitalDetail, ProfitabilityRatio
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.authentication.issureauth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class CompanyMiniSerializer(serializers.ModelSerializer):

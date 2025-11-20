@@ -509,6 +509,7 @@ ROOT_URLCONF = 'config.urls'
 # Application definition
 
 DJANGO_APPS = [
+    "apps.authentication",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -534,7 +535,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.authentication",
+    
     "apps.bonds",
     "apps.compliance", 
     "apps.dashboard",
@@ -893,7 +894,7 @@ REST_FRAMEWORK = {
         "anon": "5/second",
         "registration_otp": "5/hour",
         "open_apis": "60/minute",
-        "otp": "5/minute"
+        
     },
     # Permissions: all APIs require authentication by default
     "DEFAULT_PERMISSION_CLASSES": (
