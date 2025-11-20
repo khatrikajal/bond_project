@@ -49,7 +49,7 @@ class RegisterCompanyView(APIView):
             return APIResponse.success(
                 message=message,
                 data={
-                    "user_id": user.user_id,
+                    "user_id": user.id,
                     "company_id": str(company.company_id),
                     "verification_status": verification_status,
                 }

@@ -18,7 +18,7 @@ class GetUserFromTokenView(APIView):
         user = request.user  # obtained via JWT authentication
 
         data = {
-            "user_id": user.user_id,
+            "user_id": user.id,
             "email": user.email,
             "mobile_number": user.mobile_number,
             "kyc_status": user.kyc_status,

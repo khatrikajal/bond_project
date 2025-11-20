@@ -1,155 +1,303 @@
-[2025-11-07 11:48:56,381] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+nohup: ignoring input
+[2025-11-20 07:33:52,985] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 492, in check
+    all_issues = checks.run_checks(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 89, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 44, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 63, in _load_all_namespaces
+    url_patterns = getattr(resolver, "url_patterns", [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 718, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 711, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/config/urls.py", line 42, in <module>
+    path("api/", include("apps.urls")),
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/urls.py", line 9, in <module>
+    path('auth/', include('apps.authentication.urls')),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/urls.py", line 15, in <module>
+    from .views.LoginView import (
+  File "/root/bond_project/Backend/apps/authentication/views/LoginView.py", line 7, in <module>
+    from apps.authentication.serializers.LoginSerializer import (
+  File "/root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py", line 81
+    "role
+    ^
+SyntaxError: unterminated string literal (detected at line 81)
+[2025-11-20 07:35:39,760] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py changed, reloading.
+Performing system checks...
+
+[2025-11-20 07:35:40,719] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
 System check identified some issues:
 
 WARNINGS:
 ?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
-?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
-?: (urls.W005) URL namespace 'authentication' isn't unique. You may not be able to reverse all URLs in this namespace
 
-System check identified 3 issues (0 silenced).
-[2025-11-07 11:49:00,366] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1856 - [BULK_UPLOAD] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-07 11:49:00,618] DEBUG apps.kyc.issuer_kyc.serializers.CompanyDocumentSerializer:48 - Validating bulk document upload: ['certificate_of_incorporation', 'moa_aoa_type', 'moa_aoa_file', 'msme_udyam_type', 'msme_udyam_file', 'import_export_certificate']
-[2025-11-07 11:49:00,630] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/bulkupload/ HTTP/1.1" 400 318
-[2025-11-07 11:49:15,746] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1930 - [LIST_DOCS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-07 11:49:15,747] DEBUG apps.kyc.issuer_kyc.utils.DocumentUtils:24 - [STATUS] Checking document status for company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-07 11:49:15,748] DEBUG apps.kyc.issuer_kyc.models.CompanyDocumentModel:366 - Fetching optional documents: ['MOA', 'AOA', 'MSME', 'UDYAM', 'IEC']
-[2025-11-07 11:49:15,749] INFO apps.kyc.issuer_kyc.utils.DocumentUtils:124 - [STATUS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff | mandatory=1/1 | step_completed=True
-[2025-11-07 11:49:15,755] INFO django.server:213 - "GET /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/ HTTP/1.1" 200 1475
-[2025-11-07 12:39:10,628] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-07 12:39:10,628] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-07 12:41:42,194] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-07 12:41:42,204] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-07 13:26:10,069] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
-[2025-11-07 13:26:10,069] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 13:26:10,540] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
-[2025-11-07 13:26:10,540] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
-[2025-11-07 13:39:53,174] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
-[2025-11-07 13:39:59,979] INFO django.server:81 - - Broken pipe from ('205.210.31.132', 62596)
-[2025-11-07 13:53:25,311] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
-[2025-11-07 13:53:25,311] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
-[2025-11-07 16:06:07,064] WARNING django.server:213 - "GET / HTTP/1.1" 404 3427
-[2025-11-07 16:47:31,449] WARNING django.server:213 - "GET / HTTP/1.1" 404 3433
-[2025-11-07 20:41:13,239] INFO django.server:213 - code 400, message Bad request version ('À\x13À')
-[2025-11-07 20:41:13,242] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 20:41:13,864] INFO django.server:213 - code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x00ß\x01\x00\x00Û\x03\x03\x12ü0:K#¨¤\x11.ö@í')
-[2025-11-07 20:41:13,864] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 20:41:14,679] INFO django.server:213 - code 400, message Bad request syntax ("\x16\x03\x01\x00Ó\x01\x00\x00Ï\x03\x03|¯|½²îyØMÈôÌÑ\x90`²\x145\x9ax2Ù\x98\x90l\x8b©Ydu\x82&\x00\x008À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ")
-[2025-11-07 20:41:14,679] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 22:25:53,168] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
-[2025-11-07 22:25:53,173] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 22:25:53,204] INFO django.server:213 - code 400, message Bad HTTP/0.9 request type ("\x16\x03\x01\x00{\x01\x00\x00w\x03\x03ñíïà2!ÉF\x0f^ù8'EÓWÀo\x8dÇÔ[¥[4e\x9bü(¶®ò\x00\x00\x1aÀ/À+À\x11À\x07À\x13À")
-[2025-11-07 22:25:53,204] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-07 22:25:53,249] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
-[2025-11-07 22:25:53,297] WARNING django.server:213 - "GET /login HTTP/1.1" 404 3463
-[2025-11-07 23:41:55,255] WARNING django.server:213 - "GET / HTTP/1.1" 404 3437
-[2025-11-08 01:30:35,783] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
-[2025-11-08 02:22:31,807] WARNING django.server:213 - "GET / HTTP/1.1" 404 3429
-[2025-11-08 04:05:30,282] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1856 - [BULK_UPLOAD] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-08 04:05:30,507] DEBUG apps.kyc.issuer_kyc.serializers.CompanyDocumentSerializer:48 - Validating bulk document upload: ['moa_aoa_type', 'msme_udyam_type']
-[2025-11-08 04:05:30,538] ERROR apps.kyc.issuer_kyc.serializers.CompanyDocumentSerializer:132 - Bulk upload validation failed: {'moa_aoa_file': 'File required for selected MOA/AOA', 'msme_udyam_file': 'File required for selected MSME/Udyam'}
-[2025-11-08 04:05:30,541] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/bulkupload/ HTTP/1.1" 400 172
-[2025-11-08 04:06:46,385] INFO apps.kyc.issuer_kyc.views.CompanyDocumentView:1930 - [LIST_DOCS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-08 04:06:46,401] DEBUG apps.kyc.issuer_kyc.utils.DocumentUtils:24 - [STATUS] Checking document status for company_id=eb6e858e-349b-46ac-918e-608f85c149ff
-[2025-11-08 04:06:46,401] DEBUG apps.kyc.issuer_kyc.models.CompanyDocumentModel:366 - Fetching optional documents: ['MOA', 'AOA', 'MSME', 'UDYAM', 'IEC']
-[2025-11-08 04:06:46,405] INFO apps.kyc.issuer_kyc.utils.DocumentUtils:124 - [STATUS] company_id=eb6e858e-349b-46ac-918e-608f85c149ff | mandatory=1/1 | step_completed=True
-[2025-11-08 04:06:46,422] INFO django.server:213 - "GET /api/kyc/issuer_kyc/companies/eb6e858e-349b-46ac-918e-608f85c149ff/documents/ HTTP/1.1" 200 1475
-[2025-11-08 04:25:58,995] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
-[2025-11-08 04:25:58,996] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-08 05:38:13,560] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/kyc/issuer_kyc/views/CompanyDocumentView.py changed, reloading.
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:35:42,407] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9976543210 using DummyOtpStrategy
+[2025-11-20 07:35:42,409] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:36:22,992] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/CompanyRegistrationSerializer.py changed, reloading.
 Performing system checks...
 
-November 07, 2025 - 11:48:56
+November 20, 2025 - 07:35:41
 Django version 5.2.6, using settings 'config.settings.local'
 Starting development server at http://0.0.0.0:8000/
 Quit the server with CONTROL-C.
 
 WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
 For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-[2025-11-08 05:38:15,382] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+[DUMMY OTP] Sending OTP 1111 to 9976543210
+[2025-11-20 07:36:24,364] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
 System check identified some issues:
 
 WARNINGS:
 ?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
-?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
-?: (urls.W005) URL namespace 'authentication' isn't unique. You may not be able to reverse all URLs in this namespace
 
-System check identified 3 issues (0 silenced).
-[2025-11-08 06:49:02,041] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 06:49:02,043] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 06:56:38,589] WARNING django.server:213 - "GET http://ip-api.com/json/ HTTP/1.1" 404 1864
-[2025-11-08 06:56:46,440] INFO django.server:81 - - Broken pipe from ('45.135.193.162', 56194)
-[2025-11-08 07:05:41,890] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 07:05:41,892] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 07:05:45,696] INFO django.server:213 - "GET /api/bonds/bonds?page_size=15 HTTP/1.1" 301 0
-[2025-11-08 07:05:45,789] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 07:06:16,613] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 07:06:17,960] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 07:06:17,963] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 07:15:11,560] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 07:15:11,561] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 07:15:19,609] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 07:15:19,611] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 07:25:28,259] INFO django.server:213 - code 400, message Bad request syntax ('\x04\x01\x00PÐ_p\x01\x00')
-[2025-11-08 07:25:28,260] WARNING django.server:213 - " PÐ_p " 400 -
-[2025-11-08 07:25:28,260] INFO django.server:81 - - Broken pipe from ('45.135.193.162', 56210)
-[2025-11-08 07:25:31,586] INFO django.server:213 - code 400, message Bad request syntax ('\x05\x01\x00')
-[2025-11-08 07:25:31,586] WARNING django.server:213 - " " 400 -
-[2025-11-08 07:25:31,586] INFO django.server:81 - - Broken pipe from ('45.135.193.162', 34140)
-[2025-11-08 07:42:58,263] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 08:00:55,262] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 08:11:22,082] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 08:23:47,254] INFO django.server:213 - code 400, message Bad request syntax ('\x16\x03\x01\x00î\x01\x00\x00ê\x03\x03´U\x83G\x8a\x95\x14\\Ä°<')
-[2025-11-08 08:23:47,255] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-08 08:23:47,695] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
-[2025-11-08 08:23:48,336] INFO django.server:213 - code 505, message Invalid HTTP version (2.0)
-[2025-11-08 08:23:48,336] ERROR django.server:213 - "PRI * HTTP/2.0" 505 -
-[2025-11-08 08:23:51,809] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
-[2025-11-08 08:23:51,809] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
-[2025-11-08 08:23:52,231] WARNING django.server:213 - "GET /login HTTP/1.1" 404 3463
-[2025-11-08 08:30:35,898] INFO django.server:213 - "GET /api/bonds/bonds/?page_size=15 HTTP/1.1" 200 11641
-[2025-11-08 08:39:46,701] WARNING django.server:213 - "GET / HTTP/1.1" 404 3430
-[2025-11-08 08:45:48,990] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 08:45:48,997] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 08:51:19,863] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 08:51:19,900] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 08:51:26,272] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 08:51:26,280] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 08:51:32,865] INFO django.server:213 - "GET /api/bonds/bonds/featured HTTP/1.1" 301 0
-[2025-11-08 08:51:32,866] INFO django.server:213 - "GET /api/bonds/stats HTTP/1.1" 301 0
-[2025-11-08 08:51:32,934] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 08:51:32,945] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 08:51:55,033] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4110
-[2025-11-08 08:51:55,046] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 87
-[2025-11-08 08:51:58,242] INFO django.server:213 - "GET /api/bonds/bonds/search?isin=cccccccccccccc HTTP/1.1" 301 0
-[2025-11-08 08:51:58,285] INFO django.server:213 - "GET /api/bonds/bonds/search/?isin=cccccccccccccc HTTP/1.1" 200 42
-[2025-11-08 09:00:17,587] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/kyc/issuer_kyc/models/__init__.py changed, reloading.
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:36:37,438] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/CompanyRegistrationSerializer.py changed, reloading.
 Performing system checks...
 
-November 08, 2025 - 05:38:15
+November 20, 2025 - 07:36:24
 Django version 5.2.6, using settings 'config.settings.local'
 Starting development server at http://0.0.0.0:8000/
 Quit the server with CONTROL-C.
 
 WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
 For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
-[2025-11-08 09:00:19,421] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+[2025-11-20 07:36:38,427] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
 System check identified some issues:
 
 WARNINGS:
 ?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
-?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
-?: (urls.W005) URL namespace 'authentication' isn't unique. You may not be able to reverse all URLs in this namespace
 
-System check identified 3 issues (0 silenced).
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:36:58,255] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9876543210 using DummyOtpStrategy
+[2025-11-20 07:36:58,256] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:37:09,889] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9876543210 using DummyOtpStrategy
+[2025-11-20 07:37:09,890] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:37:28,101] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 07:37:38,811] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:37:38,812] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:37:47,567] ERROR config.common.exceptions:100 - Unhandled exception in VerifyEmailOtpView: name 'VerificationSession' is not defined
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 66, in post
+    data = serializer.save()
+           ^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/serializers/OtpSerilizer.py", line 78, in save
+    VerificationSession.set_email_verified(request, email)
+    ^^^^^^^^^^^^^^^^^^^
+NameError: name 'VerificationSession' is not defined. Did you mean: 'VerificationStore'?
+[2025-11-20 07:37:47,571] ERROR django.request:146 - [2025-11-20 07:37:47] 223.233.81.240 POST /api/auth/verify-email-otp/ - 500 in 0.01s - PostmanRuntime/7.49.1
+[2025-11-20 07:37:47,572] ERROR django.request:253 - Internal Server Error: /api/auth/verify-email-otp/
+[2025-11-20 07:37:47,573] ERROR django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 500 147
+[2025-11-20 07:37:58,990] WARNING django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 400 105
+[2025-11-20 07:38:07,073] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:38:07,074] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:38:13,538] ERROR config.common.exceptions:100 - Unhandled exception in VerifyEmailOtpView: name 'VerificationSession' is not defined
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 66, in post
+    data = serializer.save()
+           ^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/serializers/OtpSerilizer.py", line 78, in save
+    VerificationSession.set_email_verified(request, email)
+    ^^^^^^^^^^^^^^^^^^^
+NameError: name 'VerificationSession' is not defined. Did you mean: 'VerificationStore'?
+[2025-11-20 07:38:13,541] ERROR django.request:146 - [2025-11-20 07:38:13] 223.233.81.240 POST /api/auth/verify-email-otp/ - 500 in 0.01s - PostmanRuntime/7.49.1
+[2025-11-20 07:38:13,541] ERROR django.request:253 - Internal Server Error: /api/auth/verify-email-otp/
+[2025-11-20 07:38:13,542] ERROR django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 500 147
+[2025-11-20 07:38:59,050] WARNING django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 400 105
+[2025-11-20 07:39:01,862] WARNING django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 400 105
+[2025-11-20 07:39:10,213] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:39:10,214] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:39:15,279] ERROR config.common.exceptions:100 - Unhandled exception in VerifyEmailOtpView: name 'VerificationSession' is not defined
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 66, in post
+    data = serializer.save()
+           ^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/serializers/OtpSerilizer.py", line 78, in save
+    VerificationSession.set_email_verified(request, email)
+    ^^^^^^^^^^^^^^^^^^^
+NameError: name 'VerificationSession' is not defined. Did you mean: 'VerificationStore'?
+[2025-11-20 07:39:15,281] ERROR django.request:146 - [2025-11-20 07:39:15] 223.233.81.240 POST /api/auth/verify-email-otp/ - 500 in 0.01s - PostmanRuntime/7.49.1
+[2025-11-20 07:39:15,281] ERROR django.request:253 - Internal Server Error: /api/auth/verify-email-otp/
+[2025-11-20 07:39:15,281] ERROR django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 500 147
+[2025-11-20 07:39:49,402] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 07:40:02,355] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:40:02,384] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:40:19,638] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9876543210 using DummyOtpStrategy
+[2025-11-20 07:40:19,638] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:40:28,133] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 212
+[2025-11-20 07:41:45,282] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/OtpSerilizer.py changed, reloading.
 Performing system checks...
 
-
-You have 1 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): issuer_kyc.
-Run 'python manage.py migrate' to apply them.
-November 08, 2025 - 09:00:19
+November 20, 2025 - 07:36:38
 Django version 5.2.6, using settings 'config.settings.local'
 Starting development server at http://0.0.0.0:8000/
 Quit the server with CONTROL-C.
 
 WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
 For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[DUMMY OTP] Sending OTP 1111 to 9876543210
+[DUMMY OTP] Sending OTP 1111 to 9876543210
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[DUMMY OTP] Sending OTP 1111 to 9876543210
+[2025-11-20 07:41:46,233] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:42:27,462] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 115
+[2025-11-20 07:42:33,377] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 221
+[2025-11-20 07:42:43,326] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9876543210 using DummyOtpStrategy
+[2025-11-20 07:42:43,327] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:42:45,720] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 07:42:48,580] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:42:48,581] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:42:51,139] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 115
+[2025-11-20 07:42:56,209] ERROR apps.authentication.services.EmailService:208 - Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials d2e1a72fcca58-7c3f155f6e7sm1706602b3a.63 - gsmtp')
+[2025-11-20 07:42:56,213] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 136
+[2025-11-20 07:44:30,648] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/views/CompanyRegistrationView.py changed, reloading.
+Performing system checks...
+
+November 20, 2025 - 07:41:46
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[DUMMY OTP] Sending OTP 1111 to 9876543210
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[2025-11-20 07:44:31,624] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:44:43,138] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 221
+[2025-11-20 07:45:00,182] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/views/UserViews.py changed, reloading.
+Performing system checks...
+
+November 20, 2025 - 07:44:32
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-20 07:45:01,510] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:45:04,941] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 9876543210 using DummyOtpStrategy
+[2025-11-20 07:45:04,942] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:45:07,457] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 07:45:10,104] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to test@example.com using DummyOtpStrategy
+[2025-11-20 07:45:10,105] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 108
+[2025-11-20 07:45:12,468] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 115
+[2025-11-20 07:45:16,247] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 201
+[2025-11-20 07:50:57,263] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/CompanyRegistrationSerializer.py changed, reloading.
+Performing system checks...
+
+November 20, 2025 - 07:45:02
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[DUMMY OTP] Sending OTP 1111 to 9876543210
+[DUMMY OTP] Sending OTP 1111 to test@example.com
+[2025-11-20 07:50:58,196] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-20 07:51:07,945] INFO apps.authentication.services.otp.otp_service:32 - [OTP-MOBILE] sent to 7040556809 using DummyOtpStrategy
+[2025-11-20 07:51:07,946] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 110
+[2025-11-20 07:51:18,887] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 07:51:28,340] INFO apps.authentication.services.otp.otp_service:44 - [OTP-EMAIL] sent to kajal@example.com using DummyOtpStrategy
+[2025-11-20 07:51:28,340] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 109
+[2025-11-20 07:51:31,368] WARNING django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 400 105
+[2025-11-20 07:51:39,014] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 116
+[2025-11-20 07:52:04,597] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 141
+[2025-11-20 07:52:14,634] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 400 128
+[2025-11-20 07:52:33,616] ERROR apps.authentication.services.EmailService:208 - Email send failed: (535, b'5.7.8 Username and Password not accepted. For more information, go to\n5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-34727a36bbfsm1549516a91.0 - gsmtp')
+[2025-11-20 07:52:33,618] INFO django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 200 183

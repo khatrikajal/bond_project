@@ -12,6 +12,14 @@ from .views.OtpViews import (
 from .views.UserViews import(
     GetUserFromTokenView
 )
+from .views.LoginView import (
+    LoginRequestOtpView,
+    LoginVerifyOtpView,
+)
+from .views.ForgotPasswordView import (
+    ForgotPasswordRequestOtpView,
+    ForgotPasswordResetView  
+)
 
 
 app_name = 'authentication'
@@ -26,6 +34,11 @@ urlpatterns = [
     path("verify-email-otp/", VerifyEmailOtpView.as_view(), name="verify_email_otp"),
 
     path("me/", GetUserFromTokenView.as_view(), name="me"),
-    # path('v1/',include('apps.authentication.issureauth.urls',namespace='issureauth')),
+
+    path("login/request-otp/", LoginRequestOtpView.as_view()),
+    path("login/verify-otp/", LoginVerifyOtpView.as_view()),
+
+    path("forgot-password/request-otp/", ForgotPasswordRequestOtpView.as_view()),
+    path("forgot-password/reset/", ForgotPasswordResetView.as_view()),
    
 ]

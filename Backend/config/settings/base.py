@@ -646,26 +646,28 @@ if os.getenv("USE_SQLITE", "False").lower() == "true":
     }
 
 # Cache Configuration
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/1"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        "KEY_PREFIX": "bond_platform",
-        "TIMEOUT": 300,
-    },
-    "otp": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/2"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        "KEY_PREFIX": "otp",
-        "TIMEOUT": 600,
-    }
-}
+
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/1"),
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#         "KEY_PREFIX": "bond_platform",
+#         "TIMEOUT": 300,
+#     },
+#     "otp": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/2"),
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#         "KEY_PREFIX": "otp",
+#         "TIMEOUT": 600,
+#     }
+# }
 
 # Password Hashers
 PASSWORD_HASHERS = [
@@ -871,6 +873,10 @@ CELERY_BEAT_SCHEDULE = {
 
 OTP_MOBILE_STRATEGY = "dummy"  
 OTP_EMAIL_STRATEGY = "dummy"
+OTP_VERIFICATION_BACKEND = "cache"
+# for using redis as cache 
+# OTP_VERIFICATION_BACKEND = "redis"
+
 
 # -------------------------
 # Django REST Framework

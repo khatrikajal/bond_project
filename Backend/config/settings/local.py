@@ -297,24 +297,13 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     },
     "otp": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "otp-snowflake",
-    },
+        "BACKEND": "django_redis.cache.RedisCache",  
+        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/2"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "KEY_PREFIX": "otp",
+        "TIMEOUT": 600,
+    }
 }
-# Development-specific settings
-# REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
-#     "rest_framework.renderers.JSONRenderer",
-#     "rest_framework.renderers.BrowsableAPIRenderer",
-# ]
-
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-#         "LOCATION": "unique-snowflake",
-#     },
-#     "otp": {
-#         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-#         "LOCATION": "otp-snowflake",
-#     },
-# }
 

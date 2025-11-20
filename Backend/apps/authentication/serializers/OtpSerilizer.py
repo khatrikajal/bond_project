@@ -1,8 +1,7 @@
 import logging
 from rest_framework import serializers
 from apps.authentication.services.otp.otp_service import OtpService
-from apps.authentication.services.session_manager import VerificationSession
-
+from apps.authentication.services.verification_store import VerificationStore
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -21,33 +20,29 @@ class SendMobileOtpSerializer(serializers.Serializer):
         OtpService.send_mobile_otp(validated_data["mobile_number"])
         return {"message": "OTP sent", "mobile_number": validated_data["mobile_number"]}
 
+
+
 class VerifyMobileOtpSerializer(serializers.Serializer):
     mobile_number = serializers.CharField()
     otp = serializers.CharField()
 
     def validate(self, attrs):
         ok, message = OtpService.verify_otp(
-            attrs["mobile_number"],
-            attrs["otp"],
-            "MOBILE"
+            recipient=attrs["mobile_number"],
+            otp=attrs["otp"],
+            otp_type="MOBILE"
         )
-
         if not ok:
             raise serializers.ValidationError(message)
-
         return attrs
 
     def save(self):
         request = self.context["request"]
         mobile = self.validated_data["mobile_number"]
 
-        VerificationSession.set_mobile_verified(request, mobile)
+        VerificationStore.set_mobile_verified(request, mobile)
 
-        return {
-            "mobile_verified": True,
-            "mobile_number": mobile
-        }
-
+        return {"mobile_verified": True}
 
 
 
@@ -80,7 +75,7 @@ class VerifyEmailOtpSerializer(serializers.Serializer):
         request = self.context["request"]
         email = self.validated_data["email"]
 
-        VerificationSession.set_email_verified(request, email)
+        VerificationStore.set_email_verified(request, email)
 
         return {
             "email_verified": True,
