@@ -340,7 +340,7 @@ class DematAccountDelateView(APIView):
             )
 
         demat_account.del_flag = 1
-        demat_account.user_id_updated_by = request.user.user_id
+        demat_account.user_id_updated_by = request.user.user.id
         demat_account.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
 
         return APIResponse.success(

@@ -855,27 +855,21 @@ CELERY_TASK_SEND_SENT_EVENT = True
 # Celery Beat Schedule
 CELERY_BEAT_SCHEDULE = {
     # OTP cleanup tasks
-    "cleanup-expired-otp-requests": {
-        "task": "apps.authentication.tasks.cleanup_expired_otp_requests",
-        "schedule": crontab(minute="*/15"),  # Run every 15 minutes
-    },
-    "cleanup-old-otp-records": {
-        "task": "apps.authentication.tasks.cleanup_old_otp_records",
-        "schedule": crontab(hour=2, minute=30),  # Run daily at 2:30 AM
-        "kwargs": {"days_old": 30},
-    },
-    "generate-otp-analytics-report": {
-        "task": "apps.authentication.tasks.generate_otp_analytics_report",
-        "schedule": crontab(hour=8, minute=0),  # Run daily at 8:00 AM
-        "kwargs": {"days": 7},
-    },
+    "cleanup-expired-otps-every-hour": {
+        "task": "apps.authentication.tasks.cleanup_expired_otps",
+        "schedule": 3600,  # every 1 hour
+    }
 }
 
+# ------------------   OTP Settings     -----------------------
 OTP_MOBILE_STRATEGY = "dummy"  
 OTP_EMAIL_STRATEGY = "dummy"
 OTP_VERIFICATION_BACKEND = "cache"
 # for using redis as cache 
 # OTP_VERIFICATION_BACKEND = "redis"
+USE_CELERY_FOR_OTP = False   # Set False to disable Celery and use direct sending
+  
+# -------------------------------------------------------------
 
 
 # -------------------------
@@ -935,7 +929,7 @@ SIMPLE_JWT = {
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
     "USER_ID_FIELD": "id",
-    "USER_ID_CLAIM": "user_id",
+    "USER_ID_CLAIM": "id",
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
     "AUTH_COOKIE": "access_token",
     "AUTH_COOKIE_REFRESH": "refresh_token", 

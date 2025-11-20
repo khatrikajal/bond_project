@@ -659,6 +659,7 @@ logger = logging.getLogger(__name__)
 # ======================================================================
 
 class CompanyDocumentBulkUploadView(APIView):
+    authentication_classes = []
     permission_classes = []
     parser_classes = [MultiPartParser, FormParser]
 
@@ -1045,6 +1046,6 @@ class CompanyDocumentVerificationView(APIView):
                 "id": str(doc.document_id),
                 "verified": doc.is_verified,
                 "verified_at": doc.updated_at.isoformat(),
-                "verified_by": str(request.user.user_id)
+                "verified_by": str(request.user.user.id)
             }
         )

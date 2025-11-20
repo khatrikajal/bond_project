@@ -243,7 +243,7 @@ from apps.utils.get_company_from_token import get_company_from_token
 # ======================================================================
 class PanExtractionView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = PanExtractionSerializer(data=request.data)
@@ -302,8 +302,8 @@ class CompanyProfileView(APIView):
     PATCH → Partial update company using token
     DELETE → Soft delete company using token
     """
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+ 
+    permission_classes = [AllowAny]
 
     # -------------------- GET --------------------
     def get(self, request):
@@ -413,7 +413,7 @@ class CompanyProfileView(APIView):
 # 4️⃣ CIN LOOKUP API
 # ======================================================================
 class CompanyInfoByCINView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     CIN_REGEX = re.compile(r'^[LU]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$')
 

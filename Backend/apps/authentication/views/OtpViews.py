@@ -8,10 +8,11 @@ from ..serializers.OtpSerilizer import (
     SendEmailOtpSerializer,
     VerifyEmailOtpSerializer,
 )
-
+from django.contrib.auth import get_user_model
 from config.common.response import APIResponse
 from ..throttling import OtpThrottle
 
+User = get_user_model()
 
 
 class SendMobileOtpView(APIView):
@@ -19,11 +20,21 @@ class SendMobileOtpView(APIView):
     throttle_classes = [OtpThrottle]
 
     def post(self, request):
+        mobile = request.data.get("mobile_number")
+
+        # Business rule (correct place)
+        if User.objects.filter(mobile_number=mobile).exists():
+            return APIResponse.error(
+                message="User already exists with this mobile",
+                errors={"mobile_number": "User already exists with this mobile"},
+                status_code=400
+            )
+
         serializer = SendMobileOtpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
 
-        return APIResponse.success(message=data["message"], data=data)
+        return APIResponse.success(message=data["message"])
 
 
 class VerifyMobileOtpView(APIView):
@@ -46,11 +57,20 @@ class SendEmailOtpView(APIView):
     throttle_classes = [OtpThrottle]
 
     def post(self, request):
+        email = request.data.get("email")
+
+        if User.objects.filter(email=email).exists():
+            return APIResponse.error(
+                message="User already exists with this email",
+                errors={"email": "User already exists with this email"},
+                status_code=400
+            )
+
         serializer = SendEmailOtpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
 
-        return APIResponse.success(message="OTP sent", data=data)
+        return APIResponse.success(message="OTP sent")
 
 
 class VerifyEmailOtpView(APIView):

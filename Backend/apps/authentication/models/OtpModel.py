@@ -19,14 +19,16 @@ class Otp(models.Model):
     is_used = models.BooleanField(default=False)
 
     def is_expired(self):
-        return timezone.now() > self.expires_at
+        return timezone.now() >= self.expires_at
 
     @staticmethod
     def create_otp(recipient, code, otp_type, ttl_minutes=5):
+        expires = timezone.now() + timedelta(minutes=ttl_minutes)
         return Otp.objects.create(
             recipient=recipient,
             otp_code=code,
             otp_type=otp_type,
-            expires_at=timezone.now() + timedelta(minutes=ttl_minutes)
+            expires_at=expires
         )
+
 

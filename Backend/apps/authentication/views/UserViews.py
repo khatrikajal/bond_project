@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from config.common.response import APIResponse
 
 
 class GetUserFromTokenView(APIView):
@@ -21,7 +21,7 @@ class GetUserFromTokenView(APIView):
             "user_id": user.id,
             "email": user.email,
             "mobile_number": user.mobile_number,
-            "kyc_status": user.kyc_status,
+            "role":user.role
         }
 
         return APIResponse.success(

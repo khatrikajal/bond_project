@@ -22,6 +22,7 @@ class LoginRequestOtpView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
         logger.info(f"[LOGIN OTP VIEW] OTP sent to {data['identifier']}")
+        data.pop("message")
         return APIResponse.success(data=data, message="OTP sent")
 
 
