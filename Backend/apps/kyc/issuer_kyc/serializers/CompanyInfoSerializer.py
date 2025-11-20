@@ -13,7 +13,7 @@ from rest_framework import serializers
 from django.core.files.base import ContentFile
 from django.conf import settings
 
-from ..models.CompanyInformationModel import CompanyInformation, CompanyOnboardingApplication
+from ..models.CompanyInformationModel import CompanyInformation
 
 
 

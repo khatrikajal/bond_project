@@ -6,7 +6,7 @@ from datetime import datetime
 from rest_framework import serializers
 from django.core.files.base import ContentFile
 from apps.kyc.issuer_kyc.models import CompanyInformation, CompanySignatory
-from ..models.CompanyInformationModel import CompanyOnboardingApplication
+
 from ..utils.extract_files import validate_aadhaar_format,validate_pan_format,extract_aadhaar_from_file,extract_pan_from_file
 
 class CompanySignatoryCreateSerializer(serializers.Serializer):
