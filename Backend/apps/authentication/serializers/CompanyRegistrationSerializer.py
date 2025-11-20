@@ -2,7 +2,9 @@
 
 from rest_framework import serializers
 from django.db import transaction
-from apps.authentication.issureauth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.authentication.services.EmailService import EmailService
 

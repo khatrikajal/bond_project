@@ -417,26 +417,3 @@
 #             status_code=status.HTTP_400_BAD_REQUEST
 #         )
     
-
-class GetUserFromTokenView(APIView):
-    """
-    Returns only safe, non-confidential user info from the JWT token.
-    """
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user  # obtained via JWT authentication
-
-        data = {
-            "user_id": user.user_id,
-            "email": user.email,
-            "mobile_number": user.mobile_number,
-            "kyc_status": user.kyc_status,
-        }
-
-        return APIResponse.success(
-            message="User info retrieved successfully",
-            data=data,
-            status_code=status.HTTP_200_OK
-        )
