@@ -120,7 +120,9 @@
 # /root/bond_platform/Backend/config/settings/local.py
 from os import getenv, path
 from dotenv import load_dotenv
-from .base import * # noqa
+from .base import * # 
+from datetime import timedelta
+
 from .base import BASE_DIR
 import pytesseract
 import platform

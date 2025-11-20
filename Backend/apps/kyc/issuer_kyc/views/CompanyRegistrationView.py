@@ -2,7 +2,7 @@
 
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from apps.authentication.serializers.CompanyRegistrationSerializer import CompanyRegistrationSerializer
+from apps.kyc.issuer_kyc.serializers.CompanyRegistrationSerializer import CompanyRegistrationSerializer
 from config.common.response import APIResponse
 from django.db import IntegrityError
 

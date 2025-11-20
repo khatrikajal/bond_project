@@ -196,10 +196,10 @@ import os
 
 from apps.authentication.models.UserModel import User
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.authentication.services.EmailService import EmailService
+from apps.kyc.issuer_kyc.services.EmailService import EmailService
 
 # Import validators
-from apps.authentication.utils.company_registration_validators import (
+from apps.kyc.issuer_kyc.utils.company_registration_validators import (
     validate_required_fields,
     validate_mobile_verification,
     validate_email_verification,

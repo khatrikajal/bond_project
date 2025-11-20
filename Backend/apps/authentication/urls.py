@@ -1,7 +1,7 @@
 # Backend/apps/authentication/urls.py
 from django.urls import path,include
 
-from .views.CompanyRegistrationView import RegisterCompanyView
+
 
 from .views.OtpViews import (
     SendMobileOtpView,
@@ -26,7 +26,7 @@ app_name = 'authentication'
 
 urlpatterns = [
     # OTP endpoints
-    path('register-company/', RegisterCompanyView.as_view(), name='register-company'),
+    
    
     path("send-mobile-otp/", SendMobileOtpView.as_view(), name="send_mobile_otp"),
     path("verify-mobile-otp/", VerifyMobileOtpView.as_view(), name="verify_mobile_otp"),

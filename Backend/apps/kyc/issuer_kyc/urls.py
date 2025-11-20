@@ -25,7 +25,7 @@ from .views.FinancialDocumentView import FinancialDocumentViewSet
 
 from .views.CompanySignatoryView import CompanySignatoryCreateView,CompanySignatoryListView,CompanySignatoryDetailView,CompanySignatoryUpdateView,CompanySignatoryDelete,CompanySignatoryStatusUpdate
 
-
+from .views.CompanyRegistrationView import RegisterCompanyView
 from .views.CompanySignatoryView import( CompanySignatoryCreateView,
 CompanySignatoryListView,
 CompanySignatoryDetailView,
@@ -54,7 +54,7 @@ app_name = 'issuer_kyc'
 
 urlpatterns = [
     
-    
+    path('register-company/', RegisterCompanyView.as_view(), name='register-company'),
 
 
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
