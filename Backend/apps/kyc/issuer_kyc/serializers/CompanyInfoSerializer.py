@@ -57,7 +57,7 @@ def delete_temp_pan(token):
 # ============================================================
 # 1️⃣ PAN EXTRACTION SERIALIZER  (UPLOAD ONCE)
 # ============================================================
-class PanExtractionSerializer(serializers.Serializer):
+class PanExtractionSerializer(serializers.Serializer): 
     pan_card_file = serializers.FileField(required=True)
 
     pan_number = serializers.CharField(read_only=True)
@@ -204,6 +204,26 @@ class CompanyInfoSerializer(serializers.Serializer):
         )
 
         delete_temp_pan(token)
+
+        onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
+            user=user,
+            defaults={
+                "status": "IN_PROGRESS",
+                "last_accessed_step": 1,
+                "company_information": company,
+                "step_completion": {},
+            },
+        )
+
+        step_completion = onboarding_app.step_completion or {}
+        step_completion["1"] = {"completed": True, "record_id": str(company.company_id)}
+
+        onboarding_app.step_completion = step_completion
+        onboarding_app.company_information = company
+        if not created and onboarding_app.last_accessed_step < 1:
+            onboarding_app.last_accessed_step = 1
+        onboarding_app.status = "IN_PROGRESS"
+        onboarding_app.save(update_fields=["step_completion", "company_information","last_accessed_step","status"])
 
         return {
             "company_id": company.company_id,
