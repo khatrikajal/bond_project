@@ -16,7 +16,7 @@ class ApplicationScopedMixin:
             .filter(
                 application_id=application_id,
                 company__user=self.request.user,
-                del_flag=0
+                company__del_flag=0
             )
             .first()
         )

@@ -282,7 +282,12 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             updated = serializer.save(user_id_updated_by=request.user)
 
-            application.mark_step("2.1", True, [updated.pk])
+            self.application.mark_step(
+                "3.2",
+                completed=True,
+                record_ids=[instance.pk]
+            )
+
 
             return APIResponse.success(
                 message="Capital details updated successfully",
@@ -299,7 +304,11 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
             user_id_updated_by=request.user
         )
 
-        application.mark_step("2.1", True, [instance.pk])
+        self.application.mark_step(
+                "3.2",
+                completed=True,
+                record_ids=[instance.pk]
+            )
 
         return APIResponse.success(
             message="Capital details created successfully",
@@ -323,7 +332,11 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
 
         updated = serializer.save(user_id_updated_by=request.user)
 
-        self.application.mark_step("2.1", True, [updated.pk])
+        self.application.mark_step(
+                "3.2",
+                completed=True,
+                record_ids=[updated.pk]
+            )
 
         return APIResponse.success(
             message="Capital details updated successfully",
@@ -347,7 +360,11 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
 
         updated = serializer.save(user_id_updated_by=request.user)
 
-        self.application.mark_step("2.1", True, [updated.pk])
+        self.application.mark_step(
+                "3.2",
+                completed=True,
+                record_ids=[updated.pk]
+            )
 
         return APIResponse.success(
             message="Capital details updated successfully",
@@ -368,8 +385,13 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
         remaining = CapitalDetails.objects.active().filter(
             application=self.application
         ).values_list("capital_detail_id", flat=True)
-
-        self.application.mark_step("2.1", bool(remaining), list(remaining))
+        
+        self.application.mark_step(
+                "3.2",
+                bool(remaining), 
+                list(remaining)
+            )
+       
 
         return APIResponse.success(
             message="Capital detail deleted successfully",
@@ -382,7 +404,7 @@ class CapitalDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
     # ------------------------------------------
     def list(self, request, application_id, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = self.serializer_class(queryset)
 
         return APIResponse.success(
             message="Capital detail fetched successfully",
