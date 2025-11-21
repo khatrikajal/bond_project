@@ -34,4 +34,5 @@ class LoginVerifyOtpView(APIView):
         serializer.is_valid(raise_exception=True)
         data = serializer.save()
         logger.info(f"[LOGIN VERIFY VIEW] Login successful for user={data['user_id']}")
+        data.pop("message", None)
         return APIResponse.success(data=data, message="Login successful")

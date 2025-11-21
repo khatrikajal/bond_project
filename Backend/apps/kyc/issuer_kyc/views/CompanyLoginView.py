@@ -33,6 +33,6 @@ class CompanyLoginView(APIView):
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
                 "user_id": user.id,
-                "role": user.role
+                "roles": list(user.roles.values_list("name", flat=True))
             }
         )

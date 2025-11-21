@@ -1,21 +1,29 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models.UserModel import User
+from .models.UserModel import User,Role
 from .models.OtpModel import Otp
+
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    search_fields = ("name",)
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    model = User
-
-    list_display = ("mobile_number", "email", "mobile_verified", "email_verified", "role")
-    list_filter = ("role", "mobile_verified", "email_verified", "is_active")
+    list_display = ("email", "mobile_number", "get_roles", "is_active", "is_staff")
+    list_filter = ("is_active", "is_staff", "roles")
+    search_fields = ("email", "mobile_number")
+    ordering = ("email",)
 
     fieldsets = (
-        (None, {"fields": ("mobile_number", "email", "password")}),
+        (None, {"fields": ("email", "mobile_number", "password")}),
         ("Verification", {"fields": ("mobile_verified", "email_verified")}),
-        ("Role", {"fields": ("role",)}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups")}),
-        ("Timestamps", {"fields": ("last_login",)}),
+        ("Roles", {"fields": ("roles",)}),
+        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
+        ("Important Dates", {"fields": ("last_login",)}),
     )
 
     add_fieldsets = (
@@ -23,19 +31,21 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "fields": (
-                    "mobile_number",
                     "email",
+                    "mobile_number",
                     "password1",
                     "password2",
-                    "role",
-                ),
+                    "roles",
+                )
             },
         ),
     )
 
-    search_fields = ("mobile_number", "email")
-    ordering = ("mobile_number",)
+    filter_horizontal = ("roles", "groups", "user_permissions")
 
+    def get_roles(self, obj):
+        return ", ".join([role.name for role in obj.roles.all()])
+    get_roles.short_description = "Roles"
 
 
 

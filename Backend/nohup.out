@@ -576,3 +576,1085 @@ System check identified 1 issue (0 silenced).
 [2025-11-21 05:21:53,832] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
 [2025-11-21 05:56:52,694] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
 [2025-11-21 05:56:52,695] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
+[2025-11-21 06:20:36,650] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/kyc/issuer_kyc/urls.py changed, reloading.
+Performing system checks...
+
+November 20, 2025 - 17:51:21
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[DUMMY OTP] Sending OTP 1111 to 7040556811
+[DUMMY OTP] Sending OTP 1111 to kk@example.com
+[DUMMY OTP] Sending OTP 1111 to kk@example.com
+[DUMMY OTP] Sending OTP 1111 to kk@example.com
+[DUMMY OTP] Sending OTP 1111 to 7040556812
+[DUMMY OTP] Sending OTP 1111 to kkk@example.com
+[DUMMY OTP] Sending OTP 1111 to 7040556813
+[DUMMY OTP] Sending OTP 1111 to combat.projectmanagement@gmail.com
+[DUMMY OTP] Sending OTP 1111 to 7040556814
+[DUMMY OTP] Sending OTP 1111 to combat.projectmanagement@gmail.com
+[DUMMY OTP] Sending OTP 1111 to 7040556815
+[DUMMY OTP] Sending OTP 1111 to kajalkhatri7040@gmail.com
+[DUMMY OTP] Sending OTP 1111 to 8624888888
+[DUMMY OTP] Sending OTP 1111 to pritesh@gmail.com
+[DUMMY OTP] Sending OTP 1111 to 8624888888
+[DUMMY OTP] Sending OTP 1111 to pritesh@gmail.com
+[2025-11-21 06:20:38,852] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 06:21:56,772] WARNING apps.kyc.issuer_kyc.serializers.CompanyLoginSerializer:30 - [COMPANY LOGIN] Incorrect password for: ganesh@gmail.com
+[2025-11-21 06:21:56,774] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/login-company/ HTTP/1.1" 400 113
+[2025-11-21 06:22:03,986] WARNING apps.kyc.issuer_kyc.serializers.CompanyLoginSerializer:30 - [COMPANY LOGIN] Incorrect password for: ganesh@gmail.com
+[2025-11-21 06:22:03,987] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/login-company/ HTTP/1.1" 400 113
+[2025-11-21 06:22:16,934] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 9423022606 (override=1111)
+[2025-11-21 06:22:16,935] INFO apps.authentication.serializers.ForgotPasswordSerializer:39 - [FORGOT PASSWORD] OTP sent to 9423022606
+[2025-11-21 06:22:16,935] INFO apps.authentication.views.ForgotPasswordView:25 - [FORGOT PASSWORD OTP VIEW] OTP sent to 9423022606
+[2025-11-21 06:22:16,936] INFO django.server:213 - "POST /api/auth/forgot-password/request-otp/ HTTP/1.1" 200 120
+[2025-11-21 06:22:26,901] INFO apps.authentication.serializers.ForgotPasswordSerializer:78 - [RESET PASSWORD] Password reset successful for user=23
+[2025-11-21 06:22:26,901] INFO apps.authentication.views.ForgotPasswordView:37 - [FORGOT PASSWORD RESET VIEW] Password reset successful
+[2025-11-21 06:22:26,902] INFO django.server:213 - "POST /api/auth/forgot-password/reset/ HTTP/1.1" 200 115
+[2025-11-21 06:22:42,228] WARNING apps.kyc.issuer_kyc.serializers.CompanyLoginSerializer:30 - [COMPANY LOGIN] Incorrect password for: ganesh@gmail.com
+[2025-11-21 06:22:42,229] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/login-company/ HTTP/1.1" 400 113
+[2025-11-21 06:26:22,536] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 9423022606 (override=1111)
+[2025-11-21 06:26:22,536] INFO apps.authentication.serializers.LoginSerializer:37 - [LOGIN OTP] Mobile OTP sent to 9423022606
+[2025-11-21 06:26:22,536] INFO apps.authentication.views.LoginView:24 - [LOGIN OTP VIEW] OTP sent to 9423022606
+[2025-11-21 06:26:22,537] INFO django.server:213 - "POST /api/auth/login/request-otp/ HTTP/1.1" 200 86
+[2025-11-21 06:26:31,055] INFO apps.authentication.serializers.LoginSerializer:75 - [LOGIN VERIFY] OTP verified successfully for user=23
+[2025-11-21 06:26:31,173] INFO apps.authentication.views.LoginView:36 - [LOGIN VERIFY VIEW] Login successful for user=23
+[2025-11-21 06:26:31,174] INFO django.server:213 - "POST /api/auth/login/verify-otp/ HTTP/1.1" 200 603
+[2025-11-21 06:26:53,693] INFO django.server:213 - "GET /api/auth/me/ HTTP/1.1" 200 169
+[2025-11-21 06:27:18,925] WARNING apps.kyc.issuer_kyc.serializers.CompanyLoginSerializer:30 - [COMPANY LOGIN] Incorrect password for: ganesh@gmail.com
+[2025-11-21 06:27:18,926] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/login-company/ HTTP/1.1" 400 113
+[2025-11-21 06:27:20,825] WARNING apps.kyc.issuer_kyc.serializers.CompanyLoginSerializer:30 - [COMPANY LOGIN] Incorrect password for: ganesh@gmail.com
+[2025-11-21 06:27:20,825] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/login-company/ HTTP/1.1" 400 113
+[2025-11-21 06:34:44,448] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4422
+[2025-11-21 06:34:44,513] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 06:34:51,238] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4422
+[2025-11-21 06:34:51,299] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 06:35:20,259] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4422
+[2025-11-21 06:35:20,263] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 177
+[2025-11-21 06:35:30,358] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 177
+[2025-11-21 06:36:01,490] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/kyc/issuer_kyc/serializers/CompanyLoginSerializer.py changed, reloading.
+Performing system checks...
+
+November 21, 2025 - 06:20:39
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[DUMMY OTP] Sending OTP 1111 to 9423022606
+[DUMMY OTP] Sending OTP 1111 to 9423022606
+[2025-11-21 06:36:02,725] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 06:49:19,997] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+November 21, 2025 - 06:36:03
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 06:49:21,058] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 06:49:22,729] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+November 21, 2025 - 06:49:21
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 06:49:23,816] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 06:50:56,044] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 3969
+[2025-11-21 06:50:56,065] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 06:52:06,097] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
+[2025-11-21 06:52:06,097] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-21 06:52:06,518] INFO django.server:213 - code 400, message Bad request version ('À\x14À')
+[2025-11-21 06:52:06,521] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-21 06:52:06,952] WARNING django.server:213 - "GET / HTTP/1.1" 404 3601
+[2025-11-21 06:52:07,587] WARNING django.server:213 - "GET /login HTTP/1.1" 404 3634
+[2025-11-21 06:54:51,558] ERROR config.common.exceptions:100 - Unhandled exception in SendMobileOtpView: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 26, in post
+    if User.objects.filter(mobile_number=mobile).exists():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1296, in exists
+    return self.query.has_results(using=self.db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/query.py", line 674, in has_results
+    return compiler.has_results()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1591, in has_results
+    return bool(self.execute_sql(SINGLE))
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+[2025-11-21 06:54:51,568] ERROR django.request:146 - [2025-11-21 06:54:51] 223.233.81.240 POST /api/auth/send-mobile-otp/ - 500 in 0.02s - PostmanRuntime/7.49.1
+[2025-11-21 06:54:51,569] ERROR django.request:253 - Internal Server Error: /api/auth/send-mobile-otp/
+[2025-11-21 06:54:51,569] ERROR django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 500 383
+[2025-11-21 06:54:52,462] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/migrations/0001_initial.py changed, reloading.
+Performing system checks...
+
+November 21, 2025 - 06:49:24
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 06:54:53,467] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 06:57:09,826] ERROR config.common.exceptions:100 - Unhandled exception in SendMobileOtpView: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 26, in post
+    if User.objects.filter(mobile_number=mobile).exists():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1296, in exists
+    return self.query.has_results(using=self.db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/query.py", line 674, in has_results
+    return compiler.has_results()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1591, in has_results
+    return bool(self.execute_sql(SINGLE))
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+[2025-11-21 06:57:09,830] ERROR django.request:146 - [2025-11-21 06:57:09] 223.233.81.240 POST /api/auth/send-mobile-otp/ - 500 in 0.02s - PostmanRuntime/7.49.1
+[2025-11-21 06:57:09,831] ERROR django.request:253 - Internal Server Error: /api/auth/send-mobile-otp/
+[2025-11-21 06:57:09,831] ERROR django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 500 383
+[2025-11-21 07:11:50,712] ERROR config.common.exceptions:100 - Unhandled exception in SendMobileOtpView: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 26, in post
+    if User.objects.filter(mobile_number=mobile).exists():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1296, in exists
+    return self.query.has_results(using=self.db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/query.py", line 674, in has_results
+    return compiler.has_results()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1591, in has_results
+    return bool(self.execute_sql(SINGLE))
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+[2025-11-21 07:11:50,713] ERROR django.request:146 - [2025-11-21 07:11:50] 223.233.81.240 POST /api/auth/send-mobile-otp/ - 500 in 0.01s - PostmanRuntime/7.49.1
+[2025-11-21 07:11:50,713] ERROR django.request:253 - Internal Server Error: /api/auth/send-mobile-otp/
+[2025-11-21 07:11:50,713] ERROR django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 500 383
+[2025-11-21 07:11:52,823] ERROR config.common.exceptions:100 - Unhandled exception in SendMobileOtpView: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/Backend/apps/authentication/views/OtpViews.py", line 26, in post
+    if User.objects.filter(mobile_number=mobile).exists():
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/query.py", line 1296, in exists
+    return self.query.has_results(using=self.db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/query.py", line 674, in has_results
+    return compiler.has_results()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1591, in has_results
+    return bool(self.execute_sql(SINGLE))
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "authentication_user" does not exist
+LINE 1: SELECT 1 AS "a" FROM "authentication_user" WHERE "authentica...
+                             ^
+
+[2025-11-21 07:11:52,824] ERROR django.request:146 - [2025-11-21 07:11:52] 223.233.81.240 POST /api/auth/send-mobile-otp/ - 500 in 0.00s - PostmanRuntime/7.49.1
+[2025-11-21 07:11:52,824] ERROR django.request:253 - Internal Server Error: /api/auth/send-mobile-otp/
+[2025-11-21 07:11:52,824] ERROR django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 500 383
+[2025-11-21 07:14:28,117] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/migrations/0001_initial.py changed, reloading.
+Performing system checks...
+
+November 21, 2025 - 06:54:53
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 07:14:29,142] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 07:23:26,000] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/migrations/0001_initial.py changed, reloading.
+Performing system checks...
+
+
+You have 3 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authentication, bonds.
+Run 'python manage.py migrate' to apply them.
+November 21, 2025 - 07:14:29
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 07:23:27,093] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 07:36:02,915] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+
+You have 5 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): authentication, bond_estimate, bonds, issuer_kyc.
+Run 'python manage.py migrate' to apply them.
+November 21, 2025 - 07:23:27
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 07:36:04,098] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+[2025-11-21 07:36:19,280] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4198
+[2025-11-21 07:36:19,321] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 07:36:30,816] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+
+You have 21 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, authentication, bond_estimate, bonds, contenttypes, issuer_kyc.
+Run 'python manage.py migrate' to apply them.
+November 21, 2025 - 07:36:04
+Django version 5.2.6, using settings 'config.settings.local'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/5.2/howto/deployment/
+[2025-11-21 07:36:31,778] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:39:43,549] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:39:44,535] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:40:42,026] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:40:43,014] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 492, in check
+    all_issues = checks.run_checks(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 89, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 44, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 63, in _load_all_namespaces
+    url_patterns = getattr(resolver, "url_patterns", [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 718, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 711, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/config/urls.py", line 42, in <module>
+    path("api/", include("apps.urls")),
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/urls.py", line 9, in <module>
+    path('auth/', include('apps.authentication.urls')),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/urls.py", line 15, in <module>
+    from .views.LoginView import (
+  File "/root/bond_project/Backend/apps/authentication/views/LoginView.py", line 7, in <module>
+    from apps.authentication.serializers.LoginSerializer import (
+  File "/root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py", line 81
+    "roles": list(user.roles.values_list("name", flat=True))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+[2025-11-21 07:40:44,379] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:40:45,279] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 492, in check
+    all_issues = checks.run_checks(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/registry.py", line 89, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 44, in check_url_namespaces_unique
+    all_namespaces = _load_all_namespaces(resolver)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/checks/urls.py", line 63, in _load_all_namespaces
+    url_patterns = getattr(resolver, "url_patterns", [])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 718, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+                       ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 711, in urlconf_module
+    return import_module(self.urlconf_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/config/urls.py", line 42, in <module>
+    path("api/", include("apps.urls")),
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/urls.py", line 9, in <module>
+    path('auth/', include('apps.authentication.urls')),
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/urls/conf.py", line 39, in include
+    urlconf_module = import_module(urlconf_module)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/urls.py", line 15, in <module>
+    from .views.LoginView import (
+  File "/root/bond_project/Backend/apps/authentication/views/LoginView.py", line 7, in <module>
+    from apps.authentication.serializers.LoginSerializer import (
+  File "/root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py", line 81
+    "roles": list(user.roles.values_list("name", flat=True))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+[2025-11-21 07:40:46,645] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/serializers/LoginSerializer.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:40:47,508] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:43:05,688] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:43:06,653] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:43:11,296] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/models/UserModel.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:43:12,311] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:50:02,917] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/views/UserViews.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:50:04,656] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 07:50:40,439] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/views/LoginView.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 07:50:41,366] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 134, in inner_run
+    self.check(**check_kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 569, in check
+    raise SystemCheckError(msg)
+django.core.management.base.SystemCheckError: SystemCheckError: System check identified some issues:
+
+ERRORS:
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E108) The value of 'list_display[4]' refers to 'role', which is not a callable or attribute of 'UserAdmin', or an attribute, method, or field on 'authentication.User'.
+<class 'apps.authentication.admin.UserAdmin'>: (admin.E116) The value of 'list_filter[0]' refers to 'role', which does not refer to a Field.
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 3 issues (0 silenced).
+[2025-11-21 08:00:51,835] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 08:00:52,765] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 124, in inner_run
+    autoreload.raise_last_exception()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 86, in raise_last_exception
+    raise _exception[1]
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/apps/registry.py", line 124, in populate
+    app_config.ready()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/apps.py", line 27, in ready
+    self.module.autodiscover()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/__init__.py", line 52, in autodiscover
+    autodiscover_modules("admin", register_to=site)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/module_loading.py", line 58, in autodiscover_modules
+    import_module("%s.%s" % (app_config.name, module_to_search))
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/admin.py", line 7, in <module>
+    from .models import User, Role
+ImportError: cannot import name 'Role' from 'apps.authentication.models' (/root/bond_project/Backend/apps/authentication/models/__init__.py)
+[2025-11-21 08:01:02,251] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+[2025-11-21 08:01:03,098] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 124, in inner_run
+    autoreload.raise_last_exception()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 86, in raise_last_exception
+    raise _exception[1]
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/apps/registry.py", line 124, in populate
+    app_config.ready()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/apps.py", line 27, in ready
+    self.module.autodiscover()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/__init__.py", line 52, in autodiscover
+    autodiscover_modules("admin", register_to=site)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/module_loading.py", line 58, in autodiscover_modules
+    import_module("%s.%s" % (app_config.name, module_to_search))
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 991, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1129, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1059, in source_to_code
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/admin.py", line 3
+    from .models.UserModel import User<role
+                                      ^
+SyntaxError: invalid syntax
+[2025-11-21 08:01:05,292] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+[2025-11-21 08:01:06,025] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 124, in inner_run
+    autoreload.raise_last_exception()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 86, in raise_last_exception
+    raise _exception[1]
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/apps/registry.py", line 124, in populate
+    app_config.ready()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/apps.py", line 27, in ready
+    self.module.autodiscover()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/__init__.py", line 52, in autodiscover
+    autodiscover_modules("admin", register_to=site)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/module_loading.py", line 58, in autodiscover_modules
+    import_module("%s.%s" % (app_config.name, module_to_search))
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 991, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1129, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1059, in source_to_code
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/admin.py", line 3
+    from .models.UserModel import User<role
+                                      ^
+SyntaxError: invalid syntax
+[2025-11-21 08:01:07,290] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+[2025-11-21 08:01:08,011] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 124, in inner_run
+    autoreload.raise_last_exception()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 86, in raise_last_exception
+    raise _exception[1]
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/apps/registry.py", line 124, in populate
+    app_config.ready()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/apps.py", line 27, in ready
+    self.module.autodiscover()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/__init__.py", line 52, in autodiscover
+    autodiscover_modules("admin", register_to=site)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/module_loading.py", line 58, in autodiscover_modules
+    import_module("%s.%s" % (app_config.name, module_to_search))
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/admin.py", line 3, in <module>
+    from .models.UserModel import User,role
+ImportError: cannot import name 'role' from 'apps.authentication.models.UserModel' (/root/bond_project/Backend/apps/authentication/models/UserModel.py). Did you mean: 'Role'?
+[2025-11-21 08:01:09,279] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+[2025-11-21 08:01:09,949] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 124, in inner_run
+    autoreload.raise_last_exception()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 86, in raise_last_exception
+    raise _exception[1]
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/__init__.py", line 394, in execute
+    autoreload.check_errors(django.setup)()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/__init__.py", line 24, in setup
+    apps.populate(settings.INSTALLED_APPS)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/apps/registry.py", line 124, in populate
+    app_config.ready()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/apps.py", line 27, in ready
+    self.module.autodiscover()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/contrib/admin/__init__.py", line 52, in autodiscover
+    autodiscover_modules("admin", register_to=site)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/module_loading.py", line 58, in autodiscover_modules
+    import_module("%s.%s" % (app_config.name, module_to_search))
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/admin.py", line 7, in <module>
+    from .models import User, Role
+ImportError: cannot import name 'Role' from 'apps.authentication.models' (/root/bond_project/Backend/apps/authentication/models/__init__.py)
+[2025-11-21 08:01:15,261] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/admin.py changed, reloading.
+[2025-11-21 08:01:16,069] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 137, in inner_run
+    self.check_migrations()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 587, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 58, in __init__
+    self.build_graph()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 229, in build_graph
+    self.load_disk()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 86, in load_disk
+    module = import_module(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/root/bond_project/Backend/apps/authentication/migrations/__init__.py", line 6, in <module>
+    migrations.RunPython(create_roles),
+    ^^^^^^^^^^
+NameError: name 'migrations' is not defined
+[2025-11-21 08:01:32,087] INFO django.utils.autoreload:265 - /root/bond_project/Backend/apps/authentication/migrations/__init__.py changed, reloading.
+Performing system checks...
+
+[2025-11-21 08:01:32,997] INFO django.utils.autoreload:667 - Watching for file changes with StatReloader
+System check identified some issues:
+
+WARNINGS:
+?: (staticfiles.W004) The directory '/root/bond_project/Backend/apps/static' in the STATICFILES_DIRS setting does not exist.
+
+System check identified 1 issue (0 silenced).
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 187, in check_key
+    return self.graph.root_nodes(key[0])[0]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.12/threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/commands/runserver.py", line 137, in inner_run
+    self.check_migrations()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/core/management/base.py", line 587, in check_migrations
+    executor = MigrationExecutor(connections[DEFAULT_DB_ALIAS])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/executor.py", line 18, in __init__
+    self.loader = MigrationLoader(self.connection)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 58, in __init__
+    self.build_graph()
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 250, in build_graph
+    self.add_external_dependencies(key, migration)
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 214, in add_external_dependencies
+    parent = self.check_key(parent, key[0])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/bond_project/venv/lib/python3.12/site-packages/django/db/migrations/loader.py", line 194, in check_key
+    raise ValueError(
+ValueError: Dependency on app with no migrations: authentication
+Performing system checks...
+
