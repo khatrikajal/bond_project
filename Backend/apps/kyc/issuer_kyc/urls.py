@@ -42,6 +42,8 @@ urlpatterns = [
     
     path('register-company/', RegisterCompanyView.as_view(), name='register-company'),
 
+    path("login-company/", CompanyLoginView.as_view(),name='login-company'),
+
 
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
     path("company/address/",ComapnyAdressAPIView.as_view(),name="create-company-address"),

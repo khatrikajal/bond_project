@@ -3,35 +3,41 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.utils import timezone
 
 
-class UserManager(BaseUserManager):
-    def create_user(self, mobile_number, email=None, password=None, **extra_fields):
-        if not mobile_number:
-            raise ValueError("Mobile number required")
 
-        email = self.normalize_email(email) if email else None
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class UserManager(BaseUserManager):
+
+    def create_user(self, email, mobile_number=None, password=None, role=None, **extra_fields):
+        if not email:
+            raise ValueError("Email is required")
+
+        email = self.normalize_email(email)
 
         user = self.model(email=email, mobile_number=mobile_number, **extra_fields)
+
         if password:
-            user.set_password(password)   # Django salted hash
+            user.set_password(password)
+
         user.save(using=self._db)
+
+        # assign single role if provided
+        if role:
+            user.roles.add(role)
+
         return user
 
-    def create_superuser(self, mobile_number, email=None, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(mobile_number, email, password, **extra_fields)
+    def create_superuser(self, email, mobile_number=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(email, mobile_number, password, **extra_fields)
 
 
-
-
-
-
-
-
-class UserRole(models.TextChoices):
-    ISSUER = "ISSUER", "Issuer"
-    TRUSTEE = "TRUSTEE", "Trustee"
-    INVESTOR = "INVESTOR", "Investor"
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -41,11 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     mobile_verified = models.BooleanField(default=False)
     email_verified = models.BooleanField(default=False)
 
-    role = models.CharField(
-        max_length=20,
-        choices=UserRole.choices,
-        default=UserRole.INVESTOR
-    )
+    roles = models.ManyToManyField(Role, related_name="users")
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -55,8 +57,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = "mobile_number"
-    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["mobile_number"]
 
 
 

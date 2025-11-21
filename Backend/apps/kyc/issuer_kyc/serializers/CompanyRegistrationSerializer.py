@@ -197,7 +197,7 @@ import os
 from apps.authentication.models.UserModel import User
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.services.EmailService import EmailService
-
+from apps.authentication.models.UserModel import Role
 # Import validators
 from apps.kyc.issuer_kyc.utils.company_registration_validators import (
     validate_required_fields,
@@ -307,16 +307,21 @@ class CompanyRegistrationSerializer(serializers.Serializer):
             })
 
         # Create user (default role = ISSUER)
+        # Fetch ISSUER role object
+        issuer_role = Role.objects.get(name="ISSUER")
+
+        # Create user
         user = User.objects.create_user(
             mobile_number=mobile,
             email=email,
             password=validated_data["password"],
-            role="ISSUER",
         )
 
         user.mobile_verified = True
         user.email_verified = True
         user.save()
+        # Assign the role (M2M)
+        user.roles.add(issuer_role)
 
         # Verification status
         status = "PENDING" if validated_data["human_intervention"] else "SUCCESS"
