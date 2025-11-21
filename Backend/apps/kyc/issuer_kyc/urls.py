@@ -47,7 +47,7 @@ financial_document_detail = FinancialDocumentViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
-
+from .views.CompanyLoginView import CompanyLoginView
 
 
 app_name = 'issuer_kyc'
@@ -55,6 +55,8 @@ app_name = 'issuer_kyc'
 urlpatterns = [
     
     path('register-company/', RegisterCompanyView.as_view(), name='register-company'),
+
+    path("login-company/", CompanyLoginView.as_view(),name='login-company'),
 
 
     path('company-info/', CompanyInformationCreateView.as_view(), name='company-info-create'),
