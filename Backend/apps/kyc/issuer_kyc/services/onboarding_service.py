@@ -8,7 +8,7 @@ from apps.kyc.issuer_kyc.models.CompanyAdressModel import CompanyAddress
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 # from apps.kyc.issuer_kyc.models.DematAccountModel  import DematAccount
-from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument
+
 from apps.kyc.issuer_kyc.models.CompanyDocumentModel import CompanyDocument
 from apps.kyc.issuer_kyc.models.DemateAccountDetailsModel import DematAccount
 from apps.kyc.issuer_kyc.models.CompanySignatoryModel import CompanySignatory
@@ -25,7 +25,7 @@ STEP_MODEL_MAP = {
     2: CompanyAddress,
     3:CompanyDocument,
     4: [BankDetails, DematAccount],
-    5:FinancialDocument,
+    
     6:CompanySignatory
 
     # add more steps here (KYC, Documents, Directors etc.)

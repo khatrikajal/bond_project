@@ -19,7 +19,7 @@ class EmailService:
 
         subject = "🎉 Registration Successful - Bond Platform"
 
-        login_url = "http://93.127.206.37:3000/issuer/login"
+        login_url = "http://93.127.206.37:3000/dashboard"
 
         html_message = f"""
         <html><body style="font-family:Arial">
