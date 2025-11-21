@@ -1,5 +1,5 @@
 from datetime import date
-from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument, DocumentType, PeriodType
+from apps.bond_estimate.models.FinancialDocumentModel import FinancialDocument, DocumentType, PeriodType
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
 import logging
 import re

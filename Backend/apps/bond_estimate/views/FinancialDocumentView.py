@@ -1,5 +1,5 @@
 import os
-from apps.kyc.issuer_kyc.models.FinancialDocumentModel import (
+from apps.bond_estimate.models.FinancialDocumentModel import (
     DocumentType, DocumentTag, PeriodType, VerificationSource
 )
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from django.core.files.storage import default_storage
 from django.utils import timezone
-from apps.kyc.issuer_kyc.models.FinancialDocumentModel import FinancialDocument
-from apps.kyc.issuer_kyc.serializers.FinancialDocumentsSerializers import (
+from apps.bond_estimate.models.FinancialDocumentModel import FinancialDocument
+from apps.bond_estimate.serializers.FinancialDocumentsSerializers import (
     FinancialDocumentUploadSerializer,
     FinancialDocumentSerializer,
     BulkUploadSerializer,
@@ -23,7 +23,7 @@ from calendar import month_name
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from django.http import Http404
-from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
+from apps.bond_estimate.services.financial_documents.financial_document_service import FinancialDocumentService
 import hashlib
 from config.common.response import APIResponse
 import logging

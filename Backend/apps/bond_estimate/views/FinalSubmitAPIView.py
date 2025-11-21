@@ -9,7 +9,7 @@ from apps.kyc.issuer_kyc.models import CompanyOnboardingApplication
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-from apps.kyc.issuer_kyc.services.financial_documents.financial_document_service import FinancialDocumentService
+from apps.bond_estimate.services.financial_documents.financial_document_service import FinancialDocumentService
 from apps.utils.get_company_from_token import get_company_from_token
 
 

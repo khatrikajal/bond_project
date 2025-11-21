@@ -1,58 +1,76 @@
 import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
+
 from apps.bond_estimate.models.BaseModel import BaseModel
-from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
+from apps.bond_estimate.models.BondEstimationApplicationModel import BondEstimationApplication
 
 User = get_user_model()
 
-# ============================
-# TOP-LEVEL MIGRATION-SAFE FUNCTIONS
-# ============================
 
+# ------------------------------------------------------------
+# Upload path helpers (fixed: use application → company)
+# ------------------------------------------------------------
 def security_document_upload_path(instance, filename):
-    company_id = instance.company.company_id
+    company_id = instance.application.company.company_id
     return f"{company_id}/bond_estimate/collateral_asset_verification/security_document/{filename}"
 
 def asset_cover_certificate_upload_path(instance, filename):
-    company_id = instance.company.company_id
+    company_id = instance.application.company.company_id
     return f"{company_id}/bond_estimate/collateral_asset_verification/asset_cover_certificate/{filename}"
 
 def valuation_report_upload_path(instance, filename):
-    company_id = instance.company.company_id
+    company_id = instance.application.company.company_id
     return f"{company_id}/bond_estimate/collateral_asset_verification/valuation_report/{filename}"
+
+
+# ------------------------------------------------------------
+# QuerySet optimized for N+1 prevention
+# ------------------------------------------------------------
+class CollateralAssetQuerySet(models.QuerySet):
+    def with_relations(self):
+        return self.select_related("application", "application__company")
+
+
+# ------------------------------------------------------------
+# Manager to enforce select_related globally
+# ------------------------------------------------------------
+class CollateralAssetManager(models.Manager):
+    def get_queryset(self):
+        return CollateralAssetQuerySet(self.model, using=self._db).with_relations()
 
 
 class CollateralAssetVerification(BaseModel):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    collateral_asset_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    company = models.ForeignKey(
-        CompanyInformation,
+    application = models.OneToOneField(
+        BondEstimationApplication,
         on_delete=models.CASCADE,
-        related_name="collateral_assets",
-        db_index=True
+        related_name='collateral_asset_verification',
+        db_column='application_id',
+        help_text="Bond estimation application this collateral belongs to."
     )
 
     collateral_type = models.CharField(
         max_length=50,
         choices=(
-            ("Land", "Land"),
-            ("Equipment", "Equipment"),
-            ("Receivables", "Receivables"),
-            ("Shares", "Shares"),
-            ("Project Assets", "Project Assets"),
+            ("LAND", "Land"),
+            ("EQUIPMENT", "Equipment"),
+            ("RECEIVABLES", "Receivables"),
+            ("SHARES", "Shares"),
+            ("PROJECT ASSETS", "Project Assets"),
         )
     )
 
     charge_type = models.CharField(
         max_length=50,
         choices=(
-            ("First Charge", "First Charge"),
-            ("Second Charge", "Second Charge"),
-            ("Exclusive Charge", "Exclusive Charge"),
-            ("Pari Passu Charge", "Pari Passu Charge"),
-            ("Subservient Charge", "Subservient Charge"),
+            ("FIRST CHARGE", "First Charge"),
+            ("SECOND CHARGE", "Second Charge"),
+            ("EXCLUSIVE CHARGE", "Exclusive Charge"),
+            ("PARI PASSU CHARGE", "Pari Passu Charge"),
+            ("SUBSERVIENT CHARGE", "Subservient Charge"),
         )
     )
 
@@ -62,9 +80,6 @@ class CollateralAssetVerification(BaseModel):
 
     valuation_date = models.DateField()
 
-    # =============================
-    # FIXED: increase max_length
-    # =============================
     security_document_file = models.FileField(
         upload_to=security_document_upload_path,
         max_length=500,
@@ -83,9 +98,9 @@ class CollateralAssetVerification(BaseModel):
     ownership_type = models.CharField(
         max_length=50,
         choices=(
-            ("Owned", "Owned"),
-            ("Leased", "Leased"),
-            ("Pledged", "Pledged"),
+            ("OWNED", "Owned"),
+            ("LEASED", "Leased"),
+            ("PLEDGED", "Pledged"),
         )
     )
 
@@ -105,16 +120,25 @@ class CollateralAssetVerification(BaseModel):
 
     remarks = models.TextField(null=True, blank=True)
 
+    objects = CollateralAssetManager()
+
     class Meta:
         db_table = "collateral_asset_verification"
         ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=["company", "del_flag"]),
-            models.Index(fields=["collateral_type"]),
-            models.Index(fields=["charge_type"]),
-            models.Index(fields=["ownership_type"]),
-            models.Index(fields=["created_at"]),
+            models.Index(fields=["application"], name="idx_collateral_application"),
+            models.Index(fields=["collateral_type"], name="idx_collateral_type"),
+            models.Index(fields=["charge_type"], name="idx_collateral_charge"),
+            models.Index(fields=["ownership_type"], name="idx_collateral_ownership"),
+            models.Index(fields=["created_at"], name="idx_collateral_created_at"),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["application"],
+                name="unique_collateral_per_application",
+            )
         ]
 
     def __str__(self):
-        return f"Collateral - {self.company.company_name if self.company else ''}"
+        company_name = self.application.company.company_name
+        return f"Collateral – {company_name}"
