@@ -104,24 +104,7 @@ urlpatterns = [
 
 
     #---------  CaptialDetails ------------
-    # path(
-    #     "company/<uuid:application_id>/capital-details/",
-    #     capital_details,
-    #     name="capital-details-list",
-    # ),
-
-    # path(
-    #     "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
-    #     capital_detail,
-    #     name="capital-details-detail",
-    # ),
-
-    # path(
-    #     "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
-    #     capital_detail,
-    #     name="capital-details-detail",
-    # ),
-
+ 
     path(
         "applications/<uuid:application_id>/capital-details/",
         CapitalDetailsAPI.as_view(),

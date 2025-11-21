@@ -7,12 +7,12 @@ from apps.bond_estimate.models.FundPositionModel import FundPosition
 from apps.bond_estimate.models.borrowing_details import BorrowingDetails
 from apps.bond_estimate.models.PreliminaryBondRequirementsModel import PreliminaryBondRequirements
 from apps.bond_estimate.models.CollateralAssetVerificationModel import CollateralAssetVerification
-from apps.bond_estimate.models.FinancialDocumentModel import FinancialDocument
+from apps.bond_estimate.models.ProfitabilityRatios import ProfitabilityRatios
+
 STEP_MODEL_MAP = {
     # Add step and its model here
     "1.1":FundPosition,
     "1.2":CreditRatingDetails,
-    "2":FinancialDocument,  
     "3.1":BorrowingDetails,
     "3.2":CapitalDetails,
     "5.1":PreliminaryBondRequirements,
@@ -49,5 +49,7 @@ def is_ready_for_calculation(application: BondEstimationApplication) -> bool:
     """
     Application is ready for calculation only if required steps are complete.
     """
-    REQUIRED_STEPS = ["1", "2", "3", "5"]
-    return all(application.is_step_completed(s) for s in REQUIRED_STEPS)
+    if not FinancialDocumentService.is_step_completed(application.company.company_id):
+        return False
+
+    return all(application.is_step_completed(s) for s in ["1", "3", "5"])
