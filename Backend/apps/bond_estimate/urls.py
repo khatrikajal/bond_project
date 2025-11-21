@@ -8,19 +8,9 @@ from apps.bond_estimate.views.FundPositionViews import (
     FundPositionBulkView,
 )
 from apps.bond_estimate.views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
+from .views.CapitalDetailsView import CapitalDetailsAPI
 
 
-capital_details = CapitalDetailsViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-capital_detail = CapitalDetailsViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
-})
 
 
 profitability_ratios = ProfitabilityRatiosViewSet.as_view({
@@ -114,22 +104,28 @@ urlpatterns = [
 
 
     #---------  CaptialDetails ------------
-    path(
-        "company/<uuid:application_id>/capital-details/",
-        capital_details,
-        name="capital-details-list",
-    ),
+    # path(
+    #     "company/<uuid:application_id>/capital-details/",
+    #     capital_details,
+    #     name="capital-details-list",
+    # ),
+
+    # path(
+    #     "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
+    #     capital_detail,
+    #     name="capital-details-detail",
+    # ),
+
+    # path(
+    #     "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
+    #     capital_detail,
+    #     name="capital-details-detail",
+    # ),
 
     path(
-        "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
-    ),
-
-    path(
-        "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
+        "applications/<uuid:application_id>/capital-details/",
+        CapitalDetailsAPI.as_view(),
+        name="capital-details"
     ),
 
 
