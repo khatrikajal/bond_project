@@ -453,3 +453,126 @@ System check identified 1 issue (0 silenced).
 [2025-11-20 18:09:41,560] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 133
 [2025-11-20 18:11:06,427] INFO apps.kyc.issuer_kyc.services.EmailService:204 - Email sent to combat.projectmanagement@gmail.com
 [2025-11-20 18:11:06,430] INFO django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 200 189
+[2025-11-20 18:16:47,785] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 7040556814 (override=1111)
+[2025-11-20 18:16:47,785] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 63
+[2025-11-20 18:16:57,154] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 18:17:02,344] INFO apps.authentication.services.otp.otp_service:43 - [OTP-EMAIL] OTP sent to combat.projectmanagement@gmail.com (override=1111)
+[2025-11-20 18:17:02,345] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 63
+[2025-11-20 18:17:08,126] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 133
+[2025-11-20 18:17:51,143] INFO apps.kyc.issuer_kyc.services.EmailService:204 - Email sent to combat.projectmanagement@gmail.com
+[2025-11-20 18:17:51,146] INFO django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 200 184
+[2025-11-20 18:19:00,838] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4567
+[2025-11-20 18:19:00,839] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-20 18:19:18,864] INFO django.server:81 - - Broken pipe from ('117.217.69.133', 56531)
+[2025-11-20 18:19:18,865] INFO django.server:81 - - Broken pipe from ('117.217.69.133', 56532)
+[2025-11-20 18:26:57,638] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 7040556815 (override=1111)
+[2025-11-20 18:26:57,639] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 63
+[2025-11-20 18:27:05,176] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-20 18:27:50,717] INFO apps.authentication.services.otp.otp_service:43 - [OTP-EMAIL] OTP sent to kajalkhatri7040@gmail.com (override=1111)
+[2025-11-20 18:27:50,718] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 63
+[2025-11-20 18:28:22,882] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 124
+[2025-11-20 18:29:05,490] INFO apps.kyc.issuer_kyc.services.EmailService:204 - Email sent to kajalkhatri7040@gmail.com
+[2025-11-20 18:29:05,493] INFO django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 200 184
+[2025-11-20 18:30:17,805] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-20 18:30:17,828] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4136
+[2025-11-20 18:30:28,660] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-20 20:33:00,414] INFO django.server:81 - - Broken pipe from ('167.94.138.171', 1078)
+[2025-11-20 20:33:16,551] INFO django.server:213 - code 400, message Bad request syntax ('\x10\x12\x00\x04MQTT\x04\x00\x00')
+[2025-11-20 20:33:16,551] WARNING django.server:213 - " MQTT  " 400 -
+[2025-11-20 20:33:39,584] INFO django.server:81 - - Broken pipe from ('167.94.138.171', 15162)
+[2025-11-20 20:33:53,157] INFO django.server:81 - - Broken pipe from ('167.94.138.171', 46318)
+[2025-11-20 21:47:47,661] WARNING django.server:213 - "GET / HTTP/1.1" 404 3596
+[2025-11-20 21:47:48,235] WARNING django.server:213 - "GET /favicon.ico HTTP/1.1" 404 3647
+[2025-11-21 03:20:17,771] WARNING django.server:213 - "GET / HTTP/1.1" 404 3601
+[2025-11-21 04:05:51,109] WARNING django.server:213 - "GET / HTTP/1.1" 404 3600
+[2025-11-21 04:32:17,256] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:32:17,354] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:32:38,240] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:32:38,388] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:32:51,800] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:32:51,800] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 177
+[2025-11-21 04:33:01,876] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 177
+[2025-11-21 04:33:08,175] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 175
+[2025-11-21 04:33:08,175] WARNING django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 429 175
+[2025-11-21 04:33:13,231] WARNING django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 429 175
+[2025-11-21 04:33:18,276] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:33:22,211] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:33:41,969] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:33:42,059] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:34:17,713] INFO django.server:213 - "OPTIONS /api/auth/send-mobile-otp/ HTTP/1.1" 200 0
+[2025-11-21 04:34:17,799] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 8624888888 (override=1111)
+[2025-11-21 04:34:17,801] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 63
+[2025-11-21 04:34:20,662] INFO django.server:213 - "OPTIONS /api/auth/verify-mobile-otp/ HTTP/1.1" 200 0
+[2025-11-21 04:34:20,718] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-21 04:34:34,790] INFO django.server:213 - "OPTIONS /api/auth/send-email-otp/ HTTP/1.1" 200 0
+[2025-11-21 04:34:34,843] INFO apps.authentication.services.otp.otp_service:43 - [OTP-EMAIL] OTP sent to pritesh@gmail.com (override=1111)
+[2025-11-21 04:34:34,843] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 63
+[2025-11-21 04:34:38,177] INFO django.server:213 - "OPTIONS /api/auth/verify-email-otp/ HTTP/1.1" 200 0
+[2025-11-21 04:34:38,231] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 116
+[2025-11-21 04:34:52,494] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4233
+[2025-11-21 04:34:52,599] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:36:24,183] INFO apps.kyc.issuer_kyc.services.company_information.company_info_service:84 - [Fallback] CIN=U65990TN2016NPL001234 not found → Returning dummy data
+[2025-11-21 04:36:24,186] INFO django.server:213 - "GET /api/kyc/issuer_kyc/company-info/cin/U65990TN2016NPL001234/ HTTP/1.1" 200 376
+[2025-11-21 04:36:39,728] INFO django.server:213 - "POST /api/kyc/issuer_kyc/pan-extraction/ HTTP/1.1" 200 245
+[2025-11-21 04:37:41,730] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 404 7778
+[2025-11-21 04:41:55,985] INFO apps.kyc.issuer_kyc.services.company_information.company_info_service:84 - [Fallback] CIN=U65990TN2016NPL001234 not found → Returning dummy data
+[2025-11-21 04:41:55,986] INFO django.server:213 - "GET /api/kyc/issuer_kyc/company-info/cin/U65990TN2016NPL001234/ HTTP/1.1" 200 376
+[2025-11-21 04:42:23,434] INFO django.server:213 - "POST /api/kyc/issuer_kyc/pan-extraction/ HTTP/1.1" 200 245
+[2025-11-21 04:42:27,195] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 404 7778
+[2025-11-21 04:42:48,891] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:42:48,897] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4227
+[2025-11-21 04:46:47,463] WARNING django.server:213 - "POST /api/auth/register-company/ HTTP/1.1" 404 7778
+[2025-11-21 04:47:26,657] INFO django.server:213 - code 400, message Bad request version ('¬\x00*úú\x13\x01\x13\x02\x13\x03À,À+Ì©À0À/Ì¨À')
+[2025-11-21 04:47:26,657] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-21 04:47:26,729] INFO django.server:213 - code 400, message Bad request version ('\x91\x12Ôºr5]ýZQO')
+[2025-11-21 04:47:26,729] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-21 04:47:26,801] INFO django.server:213 - code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x00}\x01\x00\x00y\x03\x01{y£_Yë"$ç')
+[2025-11-21 04:47:26,801] ERROR django.server:193 - You're accessing the development server over HTTPS, but it only supports HTTP.
+[2025-11-21 04:47:52,624] WARNING django.server:213 - "GET /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 405 10979
+[2025-11-21 04:47:52,677] INFO django.server:213 - "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+[2025-11-21 04:47:52,694] INFO django.server:213 - "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+[2025-11-21 04:47:52,696] INFO django.server:213 - "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+[2025-11-21 04:47:52,696] INFO django.server:213 - "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+[2025-11-21 04:47:52,698] INFO django.server:213 - "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+[2025-11-21 04:47:52,700] INFO django.server:213 - "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+[2025-11-21 04:47:52,704] INFO django.server:213 - "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+[2025-11-21 04:47:52,717] INFO django.server:213 - "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+[2025-11-21 04:47:52,720] INFO django.server:213 - "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+[2025-11-21 04:47:52,728] INFO django.server:213 - "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+[2025-11-21 04:47:52,736] INFO django.server:213 - "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+[2025-11-21 04:47:52,784] INFO django.server:213 - "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+[2025-11-21 04:47:52,872] WARNING django.server:213 - "GET /favicon.ico HTTP/1.1" 404 3652
+[2025-11-21 04:49:03,483] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4245
+[2025-11-21 04:49:03,483] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:49:53,409] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 400 194
+[2025-11-21 04:51:11,386] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 400 188
+[2025-11-21 04:51:33,783] INFO apps.authentication.services.otp.otp_service:30 - [OTP-MOBILE] OTP sent to 8624888888 (override=1111)
+[2025-11-21 04:51:33,784] INFO django.server:213 - "POST /api/auth/send-mobile-otp/ HTTP/1.1" 200 63
+[2025-11-21 04:51:35,686] INFO django.server:213 - "POST /api/auth/verify-mobile-otp/ HTTP/1.1" 200 90
+[2025-11-21 04:51:48,105] INFO apps.authentication.services.otp.otp_service:43 - [OTP-EMAIL] OTP sent to pritesh@gmail.com (override=1111)
+[2025-11-21 04:51:48,106] INFO django.server:213 - "POST /api/auth/send-email-otp/ HTTP/1.1" 200 63
+[2025-11-21 04:51:50,249] INFO django.server:213 - "POST /api/auth/verify-email-otp/ HTTP/1.1" 200 116
+[2025-11-21 04:52:01,737] INFO django.server:213 - "GET /api/bonds/stats HTTP/1.1" 301 0
+[2025-11-21 04:52:01,737] INFO django.server:213 - "GET /api/bonds/bonds/featured HTTP/1.1" 301 0
+[2025-11-21 04:52:01,806] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4245
+[2025-11-21 04:52:01,966] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:52:07,793] INFO apps.kyc.issuer_kyc.services.company_information.company_info_service:84 - [Fallback] CIN=U65990TN2016NPL001234 not found → Returning dummy data
+[2025-11-21 04:52:07,794] INFO django.server:213 - "GET /api/kyc/issuer_kyc/company-info/cin/U65990TN2016NPL001234/ HTTP/1.1" 200 376
+[2025-11-21 04:52:14,134] INFO django.server:213 - "POST /api/kyc/issuer_kyc/pan-extraction/ HTTP/1.1" 200 245
+[2025-11-21 04:52:24,714] WARNING django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 400 210
+[2025-11-21 04:53:10,416] INFO apps.kyc.issuer_kyc.services.EmailService:204 - Email sent to pritesh@gmail.com
+[2025-11-21 04:53:10,421] INFO django.server:213 - "POST /api/kyc/issuer_kyc/register-company/ HTTP/1.1" 200 189
+[2025-11-21 04:56:53,807] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 04:56:53,807] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4235
+[2025-11-21 05:02:00,178] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 05:02:00,188] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 3965
+[2025-11-21 05:02:06,846] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 3965
+[2025-11-21 05:02:06,924] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 05:02:13,250] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 3965
+[2025-11-21 05:02:13,357] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 05:02:20,528] INFO django.server:81 - - Broken pipe from ('103.178.126.125', 15131)
+[2025-11-21 05:02:20,528] INFO django.server:81 - - Broken pipe from ('103.178.126.125', 56396)
+[2025-11-21 05:21:53,814] INFO django.server:213 - "GET /api/bonds/bonds/featured/ HTTP/1.1" 200 4128
+[2025-11-21 05:21:53,832] INFO django.server:213 - "GET /api/bonds/stats/ HTTP/1.1" 200 90
+[2025-11-21 05:56:52,694] INFO django.server:213 - code 400, message Bad request syntax ('MGLNDD_93.127.206.37_8000')
+[2025-11-21 05:56:52,695] WARNING django.server:213 - "MGLNDD_93.127.206.37_8000" 400 -
