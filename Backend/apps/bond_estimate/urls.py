@@ -7,22 +7,16 @@ from apps.bond_estimate.views.FundPositionViews import (
     FundPositionDetailView,
     FundPositionBulkView,
 )
-from apps.bond_estimate.views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
+
 from .views.CapitalDetailsView import CapitalDetailsAPI
-
-
-
-
+from .views.BondEstimationStatusView import BondEstimationStatusAPI
+from .views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
 profitability_ratios = ProfitabilityRatiosViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-profitability_ratio = ProfitabilityRatiosViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
+    "post": "create",
+    "get": "list",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
 })
 
 
@@ -80,6 +74,12 @@ urlpatterns = [
     # path('borrowing/export/', BorrowingExportView.as_view(), name='borrowing-export'),
 
     # -------- Estimation Application -------
+
+    path(
+        "applications/<uuid:application_id>/status/",
+        BondEstimationStatusAPI.as_view(),
+        name="bond-estimation-status"
+    ),
 
     # 1 Create blank estimation application
     path(
@@ -188,16 +188,15 @@ urlpatterns = [
 
 
     # -------------- ProfitabilityRatios -----------------
+ 
     path(
-        "company/<uuid:company_id>/profitability-ratios/",
+        "applications/<uuid:application_id>/profitability/",
         profitability_ratios,
-        name="profitability-ratios-list",
+        name="application-profitability-ratios"
     ),
-    path(
-        "company/<uuid:company_id>/profitability-ratios/<int:ratio_id>/",
-        profitability_ratio,
-        name="profitability-ratios-detail",
-    ),
+    
+
+
      path(
         "preview/<uuid:company_id>/",
         BondPreviewGetView.as_view(),
