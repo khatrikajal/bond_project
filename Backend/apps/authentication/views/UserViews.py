@@ -21,7 +21,7 @@ class GetUserFromTokenView(APIView):
             "user_id": user.id,
             "email": user.email,
             "mobile_number": user.mobile_number,
-            "role":user.role
+            "roles": list(user.roles.values_list("name", flat=True))
         }
 
         return APIResponse.success(
