@@ -1,4 +1,4 @@
-# apps/common/mixins/company_scoped_mixin.py
+# config/mixins/company_scoped_mixin.py
 
 from rest_framework.exceptions import PermissionDenied
 from apps.utils.get_company_from_token import get_company_from_token

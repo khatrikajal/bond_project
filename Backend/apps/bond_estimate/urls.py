@@ -65,7 +65,7 @@ router = DefaultRouter()
 router.register(r'borrowing', BorrowingDetailsViewSet, basename='borrowing')
 
 
-
+from .views.BondEstimationApplicationView import UpdateLastAccessedStepAPI,CreateBondEstimationApplicationAPI,ListCompanyBondApplicationsAPI
 from .views.FinancialDocumentView import FinancialDocumentViewSet
 from .views.FinalSubmitAPIView import FinalSubmitAPIView
 from .views.TempFileUploadView import TempFileUploadView
@@ -88,21 +88,46 @@ urlpatterns = [
 
     # Example for future extension:
     # path('borrowing/export/', BorrowingExportView.as_view(), name='borrowing-export'),
+
+    # -------- Estimation Application -------
+
+    # 1 Create blank estimation application
+    path(
+        "company/<uuid:company_id>/applications/create/",
+        CreateBondEstimationApplicationAPI.as_view(),
+        name="create-estimation-application"
+    ),
+
+    # 2 List all applications of a company
+    path(
+        "company/<uuid:company_id>/applications/",
+        ListCompanyBondApplicationsAPI.as_view(),
+        name="list-estimation-applications"
+    ),
+
+    # 3 Update last accessed step (optional)
+    path(
+        "company/<uuid:company_id>/applications/<uuid:application_id>/last-accessed/",
+        UpdateLastAccessedStepAPI.as_view(),
+        name="update-last-accessed-step"
+    ),
+
+
     #---------  CaptialDetails ------------
     path(
-        "company/<uuid:company_id>/capital-details/",
+        "company/<uuid:application_id>/capital-details/",
         capital_details,
         name="capital-details-list",
     ),
 
     path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
+        "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
         capital_detail,
         name="capital-details-detail",
     ),
 
     path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
+        "company/<uuid:application_id>/capital-details/<int:capital_detail_id>/",
         capital_detail,
         name="capital-details-detail",
     ),
