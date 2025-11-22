@@ -7,32 +7,16 @@ from apps.bond_estimate.views.FundPositionViews import (
     FundPositionDetailView,
     FundPositionBulkView,
 )
-from apps.bond_estimate.views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
 
-
-capital_details = CapitalDetailsViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-capital_detail = CapitalDetailsViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
-})
-
-
+from .views.CapitalDetailsView import CapitalDetailsAPI
+from .views.BondEstimationStatusView import BondEstimationStatusAPI
+from .views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
 profitability_ratios = ProfitabilityRatiosViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-profitability_ratio = ProfitabilityRatiosViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
+    "post": "create",
+    "get": "list",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
 })
 
 
@@ -65,7 +49,7 @@ router = DefaultRouter()
 router.register(r'borrowing', BorrowingDetailsViewSet, basename='borrowing')
 
 
-
+from .views.BondEstimationApplicationView import UpdateLastAccessedStepAPI,CreateBondEstimationApplicationAPI,ListCompanyBondApplicationsAPI
 from .views.FinancialDocumentView import FinancialDocumentViewSet
 from .views.FinalSubmitAPIView import FinalSubmitAPIView
 from .views.TempFileUploadView import TempFileUploadView
@@ -88,23 +72,43 @@ urlpatterns = [
 
     # Example for future extension:
     # path('borrowing/export/', BorrowingExportView.as_view(), name='borrowing-export'),
+
+    # -------- Estimation Application -------
+
+    path(
+        "applications/<uuid:application_id>/status/",
+        BondEstimationStatusAPI.as_view(),
+        name="bond-estimation-status"
+    ),
+
+    # 1 Create blank estimation application
+    path(
+        "company/<uuid:company_id>/applications/create/",
+        CreateBondEstimationApplicationAPI.as_view(),
+        name="create-estimation-application"
+    ),
+
+    # 2 List all applications of a company
+    path(
+        "company/<uuid:company_id>/applications/",
+        ListCompanyBondApplicationsAPI.as_view(),
+        name="list-estimation-applications"
+    ),
+
+    # 3 Update last accessed step (optional)
+    path(
+        "company/<uuid:company_id>/applications/<uuid:application_id>/last-accessed/",
+        UpdateLastAccessedStepAPI.as_view(),
+        name="update-last-accessed-step"
+    ),
+
+
     #---------  CaptialDetails ------------
+ 
     path(
-        "company/<uuid:company_id>/capital-details/",
-        capital_details,
-        name="capital-details-list",
-    ),
-
-    path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
-    ),
-
-    path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
+        "applications/<uuid:application_id>/capital-details/",
+        CapitalDetailsAPI.as_view(),
+        name="capital-details"
     ),
 
 
@@ -167,16 +171,15 @@ urlpatterns = [
 
 
     # -------------- ProfitabilityRatios -----------------
+ 
     path(
-        "company/<uuid:company_id>/profitability-ratios/",
+        "applications/<uuid:application_id>/profitability/",
         profitability_ratios,
-        name="profitability-ratios-list",
+        name="application-profitability-ratios"
     ),
-    path(
-        "company/<uuid:company_id>/profitability-ratios/<int:ratio_id>/",
-        profitability_ratio,
-        name="profitability-ratios-detail",
-    ),
+    
+
+
      path(
         "preview/<uuid:company_id>/",
         BondPreviewGetView.as_view(),

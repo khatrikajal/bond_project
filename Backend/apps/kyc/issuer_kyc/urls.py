@@ -22,7 +22,7 @@ from .views.CompanyDocumentView import (
 from .views.DemateAccountView import DematAccountCreateView,DematAccountGetView,DematAccountUpdateView,DematAccountDelateView,FetchDematDetailsView
 from rest_framework.routers import DefaultRouter
 
-
+from .views.CompanyLoginView import CompanyLoginView
 from .views.CompanySignatoryView import CompanySignatoryCreateView,CompanySignatoryListView,CompanySignatoryDetailView,CompanySignatoryUpdateView,CompanySignatoryDelete,CompanySignatoryStatusUpdate
 
 from .views.CompanyRegistrationView import RegisterCompanyView
