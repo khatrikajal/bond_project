@@ -70,7 +70,7 @@ class CompanyOnboardingApplication(BaseModel):
     class Meta:
         db_table = "company_onboarding_applications"
         ordering = ['-created_at']
-        managed = False
+        # managed = False
         indexes = [
             models.Index(fields=['user', 'status']),
 

@@ -2,7 +2,7 @@ from ..models.DemateAccountDetailsModel import DematAccount
 from rest_framework import serializers
 from ..models.CompanyInformationModel import CompanyInformation
 
-from ..services.onboarding_service import update_step_4_status
+# from ..services.onboarding_service import update_step_4_status
 
 class DemateAccountSerializer(serializers.Serializer):
     dp_name = serializers.CharField(max_length=50)
@@ -37,33 +37,33 @@ class DemateAccountSerializer(serializers.Serializer):
         # Create new demat account
         demat_account = DematAccount.objects.create(
             company=company,
-            user_id_updated_by=user.user_id,
+            user_id_updated_by=user.id,
             **validated_data
         )
 
         # Fetch or create onboarding application
-        onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
-            user=user,
-            defaults={
-                "status": "IN_PROGRESS",
-                "last_accessed_step": 4,
-                "company_information": company,
-                "step_completion": {},
-            },
-        )
+        # onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
+        #     user=user,
+        #     defaults={
+        #         "status": "IN_PROGRESS",
+        #         "last_accessed_step": 4,
+        #         "company_information": company,
+        #         "step_completion": {},
+        #     },
+        # )
 
-        # ✅ Explicitly update last_accessed_step if already exists
-        if not created and onboarding_app.last_accessed_step < 4:
-            onboarding_app.last_accessed_step = 4
-            onboarding_app.status = "IN_PROGRESS"
-            onboarding_app.company_information = company
-            onboarding_app.save(update_fields=["last_accessed_step", "status", "company_information"])
+        # # ✅ Explicitly update last_accessed_step if already exists
+        # if not created and onboarding_app.last_accessed_step < 4:
+        #     onboarding_app.last_accessed_step = 4
+        #     onboarding_app.status = "IN_PROGRESS"
+        #     onboarding_app.company_information = company
+        #     onboarding_app.save(update_fields=["last_accessed_step", "status", "company_information"])
 
-        # ✅ Update onboarding step completion
-        update_step_4_status(
-            application=onboarding_app,
-            demat_ids=demat_account.demat_account_id,
-        )
+        # # ✅ Update onboarding step completion
+        # update_step_4_status(
+        #     application=onboarding_app,
+        #     demat_ids=demat_account.demat_account_id,
+        # )
 
         # ✅ Return response
         return {
@@ -75,66 +75,9 @@ class DemateAccountSerializer(serializers.Serializer):
             "demat_account_number": demat_account.demat_account_number,
             "client_id_bo_id": demat_account.client_id_bo_id,
             "message": "Demat account details saved successfully.",
-            "last_accessed_step": onboarding_app.last_accessed_step,  # Include in response for clarity
+            # "last_accessed_step": onboarding_app.last_accessed_step,  # Include in response for clarity
         }
 
-# class DemateAccountSerializer(serializers.Serializer):
-#     dp_name = serializers.CharField(max_length=50)
-#     depository_participant = serializers.ChoiceField(choices=[("NSDL", "NSDL"), ("CDSL", "CDSL")])
-#     dp_id = serializers.CharField(max_length=20)
-#     demat_account_number = serializers.CharField(max_length=50)
-#     client_id_bo_id = serializers.CharField(max_length=20,)
-
-#     def validate(self,data):
-#         if DematAccount.objects.filter(demat_account_number=data["demat_account_number"]).exists():
-#             raise serializers.ValidationError({"demat_account_number": "This demat account number is already registered."})
-        
-#         if DematAccount.objects.filter(dp_id=data['dp_id']).exists():
-#             raise serializers.ValidationError({"dp_id": "This DP ID is already used."})
-        
-#         return data
-#     def create(self,validated_data):
-#         user = self.context['request'].user
-#         company_id = self.context["company_id"]
-
-#         try:
-#             company=CompanyInformation.objects.get(company_id=company_id, user=user)
-
-#         except CompanyInformation.DoesNotExist:
-#             raise serializers.ValidationError({"company_id": "Invalid company or not owned by user."})
-        
-#         if hasattr(company, "demat_account"):
-#             raise serializers.ValidationError({"company": "This company already has a demat account."})
-        
-#         demat_account = DematAccount.objects.create(
-#             company=company,
-#             user_id_updated_by=user.user_id,
-#             **validated_data
-#         )
-
-#         onboarding_app, _ = CompanyOnboardingApplication.objects.get_or_create(
-#             user=user,
-#             defaults={
-#                 "status": "IN_PROGRESS",
-#                 "last_accessed_step": 2,
-#                 "company_information": company,
-#                 "step_completion": {},
-#             },
-#         )
-
-#         update_step_4_status(application=onboarding_app,demat_ids=demat_account.demat_account_id,)
-        
-
-#         return {
-#             "demat_account_id": demat_account.demat_account_id,
-#             "company_id": str(company.company_id),
-#             "dp_name": demat_account.dp_name,
-#             "depository_participant": demat_account.depository_participant,
-#             "dp_id": demat_account.dp_id,
-#             "demat_account_number": demat_account.demat_account_number,
-#             "client_id_bo_id": demat_account.client_id_bo_id,
-#             "message": "Demat account details saved successfully.",
-#         }
 
 class DemateAccountGetSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()         
@@ -200,18 +143,18 @@ class DemateAccountUpdateSerializer(serializers.Serializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        instance.user_id_updated_by = user.user_id
+        instance.user_id_updated_by = user.id
         instance.save()
 
         # Update onboarding status for step 4
-        try:
-            onboarding_app = CompanyOnboardingApplication.objects.get(user=user)
-            update_step_4_status(
-                application=onboarding_app,
-                demat_ids=instance.demat_account_id
-            )
-        except CompanyOnboardingApplication.DoesNotExist:
-            pass  # If onboarding not yet started, ignore silently
+        # try:
+        #     onboarding_app = CompanyOnboardingApplication.objects.get(user=user)
+        #     update_step_4_status(
+        #         application=onboarding_app,
+        #         demat_ids=instance.demat_account_id
+        #     )
+        # except CompanyOnboardingApplication.DoesNotExist:
+        #     pass  # If onboarding not yet started, ignore silently
 
         return {
             "demat_account_id": instance.demat_account_id,

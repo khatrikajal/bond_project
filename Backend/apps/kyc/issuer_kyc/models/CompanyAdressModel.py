@@ -85,7 +85,7 @@ class CompanyAddress(BaseModel):
 
     class Meta:
         db_table = "company_address"
-        managed = False
+        # managed = False
         indexes = [
             models.Index(fields=["company", "del_flag"]),
             models.Index(fields=["city", "state_ut"]),

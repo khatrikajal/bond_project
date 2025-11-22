@@ -49,7 +49,7 @@ class DematAccount(BaseModel):
 
     class Meta:
         db_table = "demat_accounts"
-        managed = False
+        # managed = False
         indexes = [
             models.Index(fields=["company", "del_flag"]),
             models.Index(fields=["dp_id"]),

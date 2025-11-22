@@ -215,7 +215,7 @@ class FetchDematDetailsView(APIView):
 
 
 class DematAccountCreateView(APIView):
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -340,7 +340,8 @@ class DematAccountDelateView(APIView):
             )
 
         demat_account.del_flag = 1
-        demat_account.user_id_updated_by = request.user.user.id
+        demat_account.user_id_updated_by = request.user.id
+
         demat_account.save(update_fields=["del_flag", "user_id_updated_by", "updated_at"])
 
         return APIResponse.success(
