@@ -7,32 +7,16 @@ from apps.bond_estimate.views.FundPositionViews import (
     FundPositionDetailView,
     FundPositionBulkView,
 )
-from apps.bond_estimate.views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
 
-
-capital_details = CapitalDetailsViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-capital_detail = CapitalDetailsViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
-})
-
-
+from .views.CapitalDetailsView import CapitalDetailsAPI
+from .views.BondEstimationStatusView import BondEstimationStatusAPI
+from .views.ProfitabilityRatiosView import ProfitabilityRatiosViewSet
 profitability_ratios = ProfitabilityRatiosViewSet.as_view({
-    'get': 'list',
-    'post': 'create',
-})
-
-profitability_ratio = ProfitabilityRatiosViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy',
+    "post": "create",
+    "get": "list",
+    "put": "update",
+    "patch": "partial_update",
+    "delete": "destroy",
 })
 
 
@@ -60,10 +44,27 @@ from .views.BondPreviewViews import (
     BondPreviewGetView,
     BondPreviewPatchView,
 )
-
 # Initialize the DRF router
 router = DefaultRouter()
 router.register(r'borrowing', BorrowingDetailsViewSet, basename='borrowing')
+
+
+from .views.BondEstimationApplicationView import UpdateLastAccessedStepAPI,CreateBondEstimationApplicationAPI,ListCompanyBondApplicationsAPI
+from .views.FinancialDocumentView import FinancialDocumentViewSet
+from .views.FinalSubmitAPIView import FinalSubmitAPIView
+from .views.TempFileUploadView import TempFileUploadView
+financial_documents = FinancialDocumentViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+
+financial_document_detail = FinancialDocumentViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 
 # Define URL patterns
 urlpatterns = [
@@ -71,23 +72,43 @@ urlpatterns = [
 
     # Example for future extension:
     # path('borrowing/export/', BorrowingExportView.as_view(), name='borrowing-export'),
+
+    # -------- Estimation Application -------
+
+    path(
+        "applications/<uuid:application_id>/status/",
+        BondEstimationStatusAPI.as_view(),
+        name="bond-estimation-status"
+    ),
+
+    # 1 Create blank estimation application
+    path(
+        "company/<uuid:company_id>/applications/create/",
+        CreateBondEstimationApplicationAPI.as_view(),
+        name="create-estimation-application"
+    ),
+
+    # 2 List all applications of a company
+    path(
+        "company/<uuid:company_id>/applications/",
+        ListCompanyBondApplicationsAPI.as_view(),
+        name="list-estimation-applications"
+    ),
+
+    # 3 Update last accessed step (optional)
+    path(
+        "company/<uuid:company_id>/applications/<uuid:application_id>/last-accessed/",
+        UpdateLastAccessedStepAPI.as_view(),
+        name="update-last-accessed-step"
+    ),
+
+
     #---------  CaptialDetails ------------
+ 
     path(
-        "company/<uuid:company_id>/capital-details/",
-        capital_details,
-        name="capital-details-list",
-    ),
-
-    path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
-    ),
-
-    path(
-        "company/<uuid:company_id>/capital-details/<int:capital_detail_id>/",
-        capital_detail,
-        name="capital-details-detail",
+        "applications/<uuid:application_id>/capital-details/",
+        CapitalDetailsAPI.as_view(),
+        name="capital-details"
     ),
 
 
@@ -150,16 +171,15 @@ urlpatterns = [
 
 
     # -------------- ProfitabilityRatios -----------------
+ 
     path(
-        "company/<uuid:company_id>/profitability-ratios/",
+        "applications/<uuid:application_id>/profitability/",
         profitability_ratios,
-        name="profitability-ratios-list",
+        name="application-profitability-ratios"
     ),
-    path(
-        "company/<uuid:company_id>/profitability-ratios/<int:ratio_id>/",
-        profitability_ratio,
-        name="profitability-ratios-detail",
-    ),
+    
+
+
      path(
         "preview/<uuid:company_id>/",
         BondPreviewGetView.as_view(),
@@ -172,6 +192,59 @@ urlpatterns = [
     ),
 
 
+ # ----------------FinancialDocuments-------------
+    path("financial-documents/upload/", TempFileUploadView.as_view(), name="financial-documents-upload"),
+    path(
+        "company/financial-documents/",
+        financial_documents,
+        name="financial-documents"
+    ),
+
+    path(
+        "company/financial-documents/<int:document_id>/",
+        financial_document_detail,
+        name="financial-document-detail"
+    ),
+
+    #bulk actions
+    path(
+        "company/financial-documents/bulk_upload/",
+        FinancialDocumentViewSet.as_view({'post': 'bulk_upload'}),
+        name="financial-documents-bulk-upload"
+    ),
+    path(
+        "company/financial-documents/bulk_update/",
+        FinancialDocumentViewSet.as_view({'patch': 'bulk_update'}),
+        name="financial-documents-bulk-update"
+    ),
+    path(
+        "company/financial-documents/bulk_delete/",
+        FinancialDocumentViewSet.as_view({'delete': 'bulk_delete'}),
+        name="financial-documents-bulk-delete"
+    ),
+
+    # extra actions
+    path(
+        "company/financial-documents/<int:pk>/verify/",
+        FinancialDocumentViewSet.as_view({'post': 'verify'}),
+        name="financial-document-verify"
+    ),
+
+    path(
+        "company/financial-documents/<int:pk>/download/",
+        FinancialDocumentViewSet.as_view({'get': 'download'}),
+        name="financial-document-download"
+    ),
+
+    path(
+        "company/financial-documents/missing/",
+        FinancialDocumentViewSet.as_view({'get': 'missing_documents'}),
+        name="financial-documents-missing"
+    ),
+
+    #------- Final Submit -------------
+   
+    # path("company/final-submit/", FinalSubmitAPIView.as_view(), name="final-submit"),
    
 ]
 

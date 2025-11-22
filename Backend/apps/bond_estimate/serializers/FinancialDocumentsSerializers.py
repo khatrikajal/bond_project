@@ -2,7 +2,7 @@ from rest_framework import serializers
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.kyc.issuer_kyc.models.FinancialDocumentModel import (
+from apps.bond_estimate.models.FinancialDocumentModel import (
     FinancialDocument,
     DocumentType,
     DocumentTag,

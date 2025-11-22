@@ -1,7 +1,7 @@
 from django.db import models
 from apps.kyc.issuer_kyc.models.BaseModel import BaseModel
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.kyc.issuer_kyc.utils.financial_documents.financial_document_path import financial_document_upload_path
+from apps.bond_estimate.utils.financial_documents.financial_document_path import financial_document_upload_path
 
 class DocumentType(models.TextChoices):
     GSTR_3B = 'GSTR_3B', 'GSTR-3B'
