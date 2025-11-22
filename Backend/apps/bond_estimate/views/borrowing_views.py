@@ -1,404 +1,51 @@
-
-# from rest_framework import viewsets, status
-# from rest_framework.decorators import action
-# from rest_framework.response import Response
-# from rest_framework.permissions import IsAuthenticated
-# from django.db import transaction
-# from django.core.cache import cache
-# from django.shortcuts import get_object_or_404
-
-# from ..models.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
-# from ..serializers.borrowing_serializers import (
-#     BorrowingDetailsSerializer,
-#     BorrowingDetailsListSerializer,
-#     BorrowingDetailsCreateSerializer,
-# )
-# from ..mixins.borrowing_mixins import (
-#     SoftDeleteMixin,
-#     CompanyFilterMixin,
-#     BorrowingQueryOptimizationMixin,
-#     BulkOperationMixin,
-#     SearchFilterMixin,
-#     BorrowingSummaryMixin
-# )
-
-# from apps.bond_estimate.services.bond_estimation_service import (
-#     create_or_get_application,
-#     update_step
-# )
-
-# from ..models.BondEstimationApplicationModel import BondEstimationApplication
-
-# from config.common.response import APIResponse  # standard response wrapper
-
-
-
-# class BorrowingDetailsViewSet(
-#     SoftDeleteMixin,
-#     CompanyFilterMixin,
-#     BorrowingQueryOptimizationMixin,
-#     BulkOperationMixin,
-#     SearchFilterMixin,
-#     BorrowingSummaryMixin,
-#     viewsets.ModelViewSet
-# ):
-#     """
-#     BORROWING DETAILS = STEP 2.1
-#     """
-
-#     queryset = BorrowingDetails.objects.all()
-#     permission_classes = [IsAuthenticated]
-#     ordering_fields = ['created_at', 'lender_amount', 'lender_name']
-#     ordering = ['-created_at']
-
-#     STEP_ID = "2.1"   # ⭐ VERY IMPORTANT
-
-#     # ---------------------------------------------------
-#     # SERIALIZER HANDLING
-#     # ---------------------------------------------------
-#     def get_serializer_class(self):
-#         if self.action == 'list':
-#             return BorrowingDetailsListSerializer
-#         elif self.action == 'create':
-#             return BorrowingDetailsCreateSerializer
-#         return BorrowingDetailsSerializer
-
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         ordering = self.request.query_params.get('ordering', '-created_at')
-#         if ordering:
-#             queryset = queryset.order_by(ordering)
-#         return queryset
-
-#     # ---------------------------------------------------
-#     # STEP TRACKING (UNICORN LOGIC)
-#     # ---------------------------------------------------
-#     def _update_step_tracking(self, instance, is_delete=False):
-#         """
-#         Correct step-tracking for Borrowing Details (Step 2.1)
-#         Uses SAME format as FundPosition.
-#         """
-#         try:
-#             company = instance.company
-#             company_id = instance.company_id
-
-#             application = create_or_get_application(self.request.user, company)
-
-#             # Get active IDs
-#             active_ids = BorrowingDetails.objects.filter(
-#                 company_id=company_id,
-#                 is_del=0
-#             ).values_list("borrowing_id", flat=True)
-
-#             active_ids = [str(i) for i in active_ids]   # UUID SAFE
-
-#             if active_ids:
-#                 update_step(
-#                     application=application,
-#                     step_id="2.1",
-#                     completed=True,
-#                     record_ids=active_ids,
-#                     metadata={
-#                         "total_borrowings": len(active_ids),
-#                         "last_action": "delete" if is_delete else "create/update",
-#                         "last_borrowing_id": str(instance.borrowing_id)
-#                     }
-#                 )
-#             else:
-#                 update_step(
-#                     application=application,
-#                     step_id="2.1",
-#                     completed=False,
-#                     record_ids=[],
-#                     metadata={
-#                         "total_borrowings": 0,
-#                         "last_action": "all_deleted"
-#                     }
-#                 )
-
-#         except Exception as e:
-#             print("Borrowing Step Tracking Error:", str(e))
-
-#     # ---------------------------------------------------
-#     # LIST
-#     # ---------------------------------------------------
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         page = self.paginate_queryset(queryset)
-
-#         serializer = self.get_serializer(page if page else queryset, many=True)
-
-#         if page:
-#             return self.get_paginated_response(serializer.data)
-
-#         return APIResponse.success(
-#             data=serializer.data,
-#             message="Borrowing details fetched successfully"
-#         )
-
-#     # ---------------------------------------------------
-#     # CREATE
-#     # ---------------------------------------------------
-#     @transaction.atomic
-#     def create(self, request, *args, **kwargs):
-#         serializer = self.get_serializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-
-#         instance = serializer.save()
-
-#         # Step Tracking
-#         self._update_step_tracking(instance)
-
-#         cache.delete(f'borrowing_summary_{instance.company_id}')
-
-#         return APIResponse.success(
-#             data=serializer.data,
-#             message="Borrowing created successfully",
-#             status_code=status.HTTP_201_CREATED
-#         )
-
-#     # ---------------------------------------------------
-#     # UPDATE
-#     # ---------------------------------------------------
-#     @transaction.atomic
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-
-#         partial = kwargs.pop('partial', False)
-#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-#         serializer.is_valid(raise_exception=True)
-
-#         updated_instance = serializer.save()
-
-#         # Step Tracking
-#         self._update_step_tracking(updated_instance)
-
-#         cache.delete(f'borrowing_summary_{instance.company_id}')
-
-#         return APIResponse.success(
-#             data=serializer.data,
-#             message="Borrowing updated successfully"
-#         )
-
-#     # ---------------------------------------------------
-#     # DELETE
-#     # ---------------------------------------------------
-#     @transaction.atomic
-#     def destroy(self, request, *args, **kwargs):
-#         instance = self.get_object()
-
-#         # Step Tracking (BEFORE deleting)
-#         self._update_step_tracking(instance, is_delete=True)
-
-#         company_id = instance.company_id
-
-#         self.perform_destroy(instance)
-
-#         cache.delete(f'borrowing_summary_{company_id}')
-
-#         return APIResponse.success(
-#             message="Borrowing deleted successfully"
-#         )
-
-#     # ---------------------------------------------------
-#     # BULK CREATE
-#     # ---------------------------------------------------
-#     @action(detail=False, methods=['post'])
-#     @transaction.atomic
-#     def bulk_create(self, request):
-#         borrowings_data = request.data.get('borrowings', [])
-#         if not borrowings_data:
-#             return APIResponse.error(message="No borrowings data provided")
-
-#         serializer = BorrowingDetailsCreateSerializer(
-#             data=borrowings_data,
-#             many=True,
-#             context={'request': request}
-#         )
-#         serializer.is_valid(raise_exception=True)
-
-#         instances = serializer.save()
-
-#         if instances:
-#             self._update_step_tracking(instances[0])
-
-#         return APIResponse.success(
-#             data=serializer.data,
-#             message=f"Successfully created {len(serializer.data)} borrowings",
-#             status_code=status.HTTP_201_CREATED
-#         )
-
-#     # ---------------------------------------------------
-#     # SUMMARY
-#     # ---------------------------------------------------
-#     @action(detail=False, methods=['get'])
-#     def summary(self, request):
-#         company_id = request.query_params.get('company_id')
-#         if not company_id:
-#             return APIResponse.error(message="company_id is required")
-
-#         cache_key = f'borrowing_summary_{company_id}'
-#         cached_data = cache.get(cache_key)
-
-#         if cached_data:
-#             return APIResponse.success(
-#                 data=cached_data,
-#                 message="Cached summary fetched"
-#             )
-
-#         response = super().get_summary(request)
-
-#         if response.status_code == 200:
-#             cache.set(cache_key, response.data, 300)
-
-#         return APIResponse.success(
-#             data=response.data,
-#             message="Borrowing summary fetched"
-#         )
-
-#     # ---------------------------------------------------
-#     # CHOICES
-#     # ---------------------------------------------------
-#     @action(detail=False, methods=['get'])
-#     def choices(self, request):
-#         borrowing_types = [
-#             {'value': c[0], 'label': c[1]} for c in BorrowingType.choices
-#         ]
-#         repayment_terms = [
-#             {'value': c[0], 'label': c[1]} for c in RepaymentTerms.choices
-#         ]
-
-#         return APIResponse.success(
-#             data={
-#                 'borrowing_types': borrowing_types,
-#                 'repayment_terms': repayment_terms
-#             },
-#             message="Dropdown choices fetched successfully"
-#         )
-
-#     # ---------------------------------------------------
-#     # RESTORE
-#     # ---------------------------------------------------
-#     @action(detail=True, methods=['post'])
-#     def restore(self, request, pk=None):
-#         instance = self.get_object()
-
-#         if instance.is_del == 0:
-#             return APIResponse.error(message="Borrowing is not deleted")
-
-#         user_id = getattr(request.user, 'uuid', getattr(request.user, 'id', None))
-#         instance.restore(user_id=user_id)
-
-#         # Step Tracking
-#         self._update_step_tracking(instance)
-
-#         cache.delete(f'borrowing_summary_{instance.company_id}')
-
-#         serializer = self.get_serializer(instance)
-
-#         return APIResponse.success(
-#             data=serializer.data,
-#             message="Borrowing restored successfully"
-#         )
-
-#     # ---------------------------------------------------
-#     # COMPANY BORROWINGS
-#     # ---------------------------------------------------
-#     @action(detail=False, methods=['get'])
-#     def company_borrowings(self, request):
-#         company_id = request.query_params.get('company_id')
-
-#         if not company_id:
-#             return APIResponse.error(message="company_id is required")
-
-#         queryset = self.get_queryset().filter(company_id=company_id, is_del=0)
-
-#         serializer = BorrowingDetailsListSerializer(queryset, many=True)
-
-#         return APIResponse.success(
-#             data={
-#                 'company_id': company_id,
-#                 'count': queryset.count(),
-#                 'borrowings': serializer.data
-#             },
-#             message="Company borrowings fetched successfully"
-#         )
-    
-# apps/bond_estimate/views/BorrowingDetailsViews.py
-
-from rest_framework import viewsets, status
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import status
 from django.db import transaction
-from django.core.cache import cache
+import logging
 
 from config.common.response import APIResponse
-from apps.bond_estimate.utils.commonutil import get_company_for_user
+from apps.bond_estimate.mixins.ApplicationScopedMixin import ApplicationScopedMixin
 
 from apps.bond_estimate.models.borrowing_details import BorrowingDetails, BorrowingType, RepaymentTerms
 from apps.bond_estimate.serializers.borrowing_serializers import (
     BorrowingDetailsSerializer,
-    BorrowingDetailsListSerializer,
     BorrowingDetailsCreateSerializer,
+    BorrowingDetailsListSerializer
 )
 
-from apps.bond_estimate.mixins.borrowing_mixins import (
-    SoftDeleteMixin,
-    CompanyFilterMixin,
-    BorrowingQueryOptimizationMixin,
-    BulkOperationMixin,
-    SearchFilterMixin,
-    BorrowingSummaryMixin
-)
+# -------------------------------------------------------
+# LOGGER
+# -------------------------------------------------------
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
-from apps.bond_estimate.services.bond_estimation_service import (
-    create_or_get_application,
-    update_step
-)
-
-
-class BorrowingDetailsViewSet(
-    SoftDeleteMixin,
-    CompanyFilterMixin,
-    BorrowingQueryOptimizationMixin,
-    BulkOperationMixin,
-    SearchFilterMixin,
-    BorrowingSummaryMixin,
-    viewsets.ModelViewSet
-):
+class BorrowingDetailsViewSet(ApplicationScopedMixin, viewsets.ModelViewSet):
     """
-    Borrowing Details Viewset (STEP 2.1)
+    Borrowing Details for a specific BondEstimationApplication
+    URL -> /applications/<application_id>/borrowings/
     """
-
-    queryset = BorrowingDetails.objects.all()
     permission_classes = [IsAuthenticated]
-    ordering = ['-created_at']
-    STEP_ID = "2.1"
+    lookup_field = "borrowing_id"
 
-    # -------------------------------------------------------------
-    # UNIVERSAL COMPANY VALIDATION
-    # -------------------------------------------------------------
-    def _get_company_or_denied(self, request):
-        company_id = (
-            request.query_params.get("company_id")
-            or request.data.get("company")
-            or request.data.get("company_id")
-        )
+    STEP_ID = "3.1"
 
-        if not company_id:
-            return None, APIResponse.error("company_id is required", 400)
+    # -------------------------------------------------------
+    # QUERYSET
+    # -------------------------------------------------------
+    def get_queryset(self):
+        logger.debug(f"[BorrowingDetails] Fetching queryset for application: {self.application.application_id}")
+        return BorrowingDetails.objects.filter(
+            application=self.application,
+            is_del=0
+        ).order_by("-created_at")
 
-        company = get_company_for_user(company_id, request.user)
-
-        if not company:
-            return None, APIResponse.error("Company not found or access denied", 403)
-
-        return company, None
-
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
     # SERIALIZER SELECTION
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
     def get_serializer_class(self):
         if self.action == "list":
             return BorrowingDetailsListSerializer
@@ -406,245 +53,183 @@ class BorrowingDetailsViewSet(
             return BorrowingDetailsCreateSerializer
         return BorrowingDetailsSerializer
 
-    # -------------------------------------------------------------
-    # FILTERED QUERYSET (no data leakage)
-    # -------------------------------------------------------------
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        ordering = self.request.query_params.get('ordering', '-created_at')
-        return queryset.order_by(ordering)
+    # -------------------------------------------------------
+    # STEP MARKING (UUID → STRING)
+    # -------------------------------------------------------
+    def _mark_step(self):
+        active_ids = BorrowingDetails.objects.filter(
+            application=self.application,
+            is_del=0
+        ).values_list("borrowing_id", flat=True)
 
-    # -------------------------------------------------------------
-    # STEP TRACKING
-    # -------------------------------------------------------------
-    def _update_step_tracking(self, instance, is_delete=False):
-        try:
-            company = instance.company
-            company_id = instance.company_id
+        active_ids = [str(pk) for pk in active_ids]  # fix for JSON serialization
 
-            application = create_or_get_application(self.request.user, company)
+        logger.debug(f"[BorrowingDetails] Marking step {self.STEP_ID} → Active IDs: {active_ids}")
 
-            active_ids = BorrowingDetails.objects.filter(
-                company_id=company_id,
-                is_del=0
-            ).values_list("borrowing_id", flat=True)
+        self.application.mark_step(
+            self.STEP_ID,
+            completed=bool(active_ids),
+            record_ids=active_ids
+        )
 
-            active_ids = [str(pk) for pk in active_ids]
-
-            update_step(
-                application=application,
-                step_id="2.1",
-                completed=bool(active_ids),
-                record_ids=active_ids,
-                metadata={
-                    "total_borrowings": len(active_ids),
-                    "last_action": "delete" if is_delete else "create/update",
-                    "last_borrowing_id": str(instance.borrowing_id),
-                }
-            )
-        except Exception as e:
-            print("Borrowing Step Tracking Error:", e)
-
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
     # LIST
-    # -------------------------------------------------------------
-    def list(self, request, *args, **kwargs):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
+    # -------------------------------------------------------
+    def list(self, request, application_id, *args, **kwargs):
+        logger.info(f"[BorrowingDetails] LIST called for application {application_id}")
 
-        queryset = self.get_queryset().filter(company_id=company.company_id, is_del=0)
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
 
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page or queryset, many=True)
+        return APIResponse.success(
+            message="Borrowing details fetched successfully",
+            data=serializer.data
+        )
 
-        if page:
-            return self.get_paginated_response(serializer.data)
-
-        return APIResponse.success(serializer.data, "Borrowing details fetched successfully")
-
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
     # RETRIEVE
-    # -------------------------------------------------------------
-    def retrieve(self, request, *args, **kwargs):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
+    # -------------------------------------------------------
+    def retrieve(self, request, application_id, *args, **kwargs):
+        logger.info(f"[BorrowingDetails] RETRIEVE for application {application_id}")
 
         instance = self.get_object()
-
-        if instance.company_id != company.company_id:
-            return APIResponse.error("Access denied: Not your company borrowing", 403)
-
         serializer = self.get_serializer(instance)
-        return APIResponse.success(serializer.data, "Borrowing fetched successfully")
 
-    # -------------------------------------------------------------
-    # CREATE
-    # -------------------------------------------------------------
+        return APIResponse.success(
+            message="Borrowing details fetched successfully",
+            data=serializer.data
+        )
+
+    # -------------------------------------------------------
+    # CREATE (UPDATED RESPONSE FORMAT)
+    # -------------------------------------------------------
     @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
+    def create(self, request, application_id, *args, **kwargs):
+        logger.info(f"[BorrowingDetails] CREATE requested for application {application_id} | Data: {request.data}")
 
         data = request.data.copy()
-        data["company"] = str(company.company_id)
+        data["application"] = self.application.application_id
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
-        instance = serializer.save()
+        instance = serializer.save(
+            application=self.application,
+            user_id_updated_by=request.user.id
+        )
 
-        self._update_step_tracking(instance)
-        cache.delete(f"borrowing_summary_{company.company_id}")
+        logger.debug(f"[BorrowingDetails] Created borrowing ID: {instance.borrowing_id}")
 
-        return APIResponse.success(serializer.data, "Borrowing created successfully", 201)
+        self._mark_step()
 
-    # -------------------------------------------------------------
+        # ------------------------------
+        # RESPONSE YOU REQUESTED
+        # ------------------------------
+        response_data = {
+            "borrowing_id": str(instance.borrowing_id),
+            
+            "lender_name": instance.lender_name,
+            "lender_amount": str(instance.lender_amount),
+            "borrowing_type": instance.borrowing_type,
+            "repayment_terms": instance.repayment_terms,
+            "monthly_principal_payment": str(instance.monthly_principal_payment),
+            "interest_payment_percentage": str(instance.interest_payment_percentage),
+            "monthly_interest_payment": str(instance.monthly_interest_payment),
+        }
+
+        return APIResponse.success(
+            message="Borrowing created successfully",
+            data=response_data,
+            status_code=201
+        )
+
+    # -------------------------------------------------------
     # UPDATE
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
     @transaction.atomic
-    def update(self, request, *args, **kwargs):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
+    def update(self, request, application_id, *args, **kwargs):
+        logger.info(f"[BorrowingDetails] UPDATE for application {application_id} | Data: {request.data}")
 
         instance = self.get_object()
-        if instance.company_id != company.company_id:
-            return APIResponse.error("Access denied", 403)
 
         serializer = self.get_serializer(
-            instance, data=request.data, partial=kwargs.get('partial', False)
+            instance,
+            data=request.data,
+            partial=False
         )
         serializer.is_valid(raise_exception=True)
+        serializer.save(user_id_updated_by=request.user.id)
 
-        updated_instance = serializer.save()
+        self._mark_step()
 
-        self._update_step_tracking(updated_instance)
-        cache.delete(f"borrowing_summary_{company.company_id}")
+        logger.debug(f"[BorrowingDetails] Updated borrowing ID: {instance.borrowing_id}")
 
-        return APIResponse.success(serializer.data, "Borrowing updated successfully")
+        return APIResponse.success(
+            message="Borrowing updated successfully",
+            data=serializer.data
+        )
 
-    # -------------------------------------------------------------
-    # DELETE
-    # -------------------------------------------------------------
+    # -------------------------------------------------------
+    # PARTIAL UPDATE
+    # -------------------------------------------------------
     @transaction.atomic
-    def destroy(self, request, *args, **kwargs):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
+    def partial_update(self, request, application_id, *args, **kwargs):
+        logger.info(f"[BorrowingDetails] PATCH for application {application_id} | Data: {request.data}")
 
         instance = self.get_object()
 
-        if instance.company_id != company.company_id:
-            return APIResponse.error("Access denied", 403)
-
-        self._update_step_tracking(instance, is_delete=True)
-        self.perform_destroy(instance)
-
-        cache.delete(f"borrowing_summary_{company.company_id}")
-
-        return APIResponse.success(message="Borrowing deleted successfully")
-
-    # -------------------------------------------------------------
-    # BULK CREATE
-    # -------------------------------------------------------------
-    @action(detail=False, methods=['post'])
-    @transaction.atomic
-    def bulk_create(self, request):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
-
-        borrowings_data = request.data.get('borrowings', [])
-        if not borrowings_data:
-            return APIResponse.error("No borrowings data provided")
-
-        for item in borrowings_data:
-            item["company"] = str(company.company_id)
-
-        serializer = BorrowingDetailsCreateSerializer(
-            data=borrowings_data, many=True, context={'request': request}
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=True
         )
         serializer.is_valid(raise_exception=True)
+        serializer.save(user_id_updated_by=request.user.id)
 
-        instances = serializer.save()
-        if instances:
-            self._update_step_tracking(instances[0])
+        self._mark_step()
 
-        return APIResponse.success(serializer.data, f"{len(serializer.data)} borrowings created", 201)
-
-    # -------------------------------------------------------------
-    # RESTORE
-    # -------------------------------------------------------------
-    @action(detail=True, methods=['post'])
-    def restore(self, request, pk=None):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
-
-        instance = self.get_object()
-
-        if instance.company_id != company.company_id:
-            return APIResponse.error("Access denied", 403)
-
-        if instance.is_del == 0:
-            return APIResponse.error("Borrowing already active")
-
-        instance.restore(user_id=request.user.id)
-
-        self._update_step_tracking(instance)
-        cache.delete(f"borrowing_summary_{company.company_id}")
-
-        serializer = self.get_serializer(instance)
-
-        return APIResponse.success(serializer.data, "Borrowing restored successfully")
-
-    # -------------------------------------------------------------
-    # COMPANY BORROWINGS
-    # -------------------------------------------------------------
-    @action(detail=False, methods=['get'])
-    def company_borrowings(self, request):
-        company, error = self._get_company_or_denied(request)
-        if error:
-            return error
-
-        queryset = self.get_queryset().filter(company_id=company.company_id, is_del=0)
-        serializer = BorrowingDetailsListSerializer(queryset, many=True)
+        logger.debug(f"[BorrowingDetails] Partially updated borrowing ID: {instance.borrowing_id}")
 
         return APIResponse.success(
-            {
-                "company_id": str(company.company_id),
-                "count": queryset.count(),
-                "borrowings": serializer.data,
-            },
-            "Company borrowings fetched successfully"
+            message="Borrowing updated successfully",
+            data=serializer.data
         )
 
-    # -------------------------------------------------------------
-    # BORROWING CHOICES (NO COMPANY CHECK)
-    # -------------------------------------------------------------
-    @action(detail=False, methods=['get'], url_path="choices",permission_classes=[AllowAny])
-    def borrowing_choices(self, request):
-        """
-        Return borrowing_type + repayment_terms enum choices
-        WITHOUT company ownership check.
-        """
-        borrowing_types = [
-            {"value": value, "label": label}
-            for value, label in BorrowingType.choices
-        ]
+    # -------------------------------------------------------
+    # DELETE (SOFT DELETE)
+    # -------------------------------------------------------
+    @transaction.atomic
+    def destroy(self, request, application_id, *args, **kwargs):
+        logger.warning(f"[BorrowingDetails] DELETE for application {application_id}")
 
-        repayment_terms = [
-            {"value": value, "label": label}
-            for value, label in RepaymentTerms.choices
-        ]
+        instance = self.get_object()
+        instance.is_del = 1
+        instance.user_id_updated_by = request.user.id
+        instance.save()
+
+        self._mark_step()
+
+        logger.debug(f"[BorrowingDetails] Soft delete borrowing ID: {instance.borrowing_id}")
 
         return APIResponse.success(
+            message="Borrowing deleted successfully",
+            data={"deleted_id": str(instance.borrowing_id)}
+        )
+
+    # -------------------------------------------------------
+    # CHOICES
+    # -------------------------------------------------------
+    @action(detail=False, methods=["get"], url_path="choices",permission_classes=[],authentication_classes=[])
+    def choices(self, request, application_id=None):
+        logger.info("[BorrowingDetails] Fetching dropdown choices")
+
+        borrowing_types = [{"value": v, "label": l} for v, l in BorrowingType.choices]
+        repayment_terms = [{"value": v, "label": l} for v, l in RepaymentTerms.choices]
+
+        return APIResponse.success(
+            message="Borrowing choices fetched",
             data={
                 "borrowing_types": borrowing_types,
                 "repayment_terms": repayment_terms
-            },
-            message="Borrowing dropdown choices fetched"
+            }
         )

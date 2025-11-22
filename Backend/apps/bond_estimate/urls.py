@@ -1,12 +1,8 @@
 # apps/bond_estimate/urls.py
 from django.urls import path
 from apps.bond_estimate.views.CapitalDetailsView import CapitalDetailsViewSet
-from apps.bond_estimate.views.CreditRatingView import CreditRatingCreateView
-from apps.bond_estimate.views.FundPositionViews import (
-    FundPositionListCreateView,
-    FundPositionDetailView,
-    FundPositionBulkView,
-)
+
+
 
 from .views.CapitalDetailsView import CapitalDetailsAPI
 from .views.BondEstimationStatusView import BondEstimationStatusAPI
@@ -19,17 +15,25 @@ profitability_ratios = ProfitabilityRatiosViewSet.as_view({
     "delete": "destroy",
 })
 
+from .views.CreditRatingView import CreditRatingViewSet
 
+credit_rating_list = CreditRatingViewSet.as_view({
+    "get": "list",
+    "post": "create"
+})
+
+credit_rating_detail = CreditRatingViewSet.as_view({
+    "patch": "partial_update",
+    "delete": "destroy"
+})
+
+
+
+from .views.FundPositionViews import FundPositionAPI
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views.borrowing_views import BorrowingDetailsViewSet  
-from .views.CreditRatingView import (
-    CreditRatingCreateView,
-    CreditRatingListView,
-    CreditRatingDetailView,
-    CreditRatingBulkDeleteView,
-    CreditRatingAgencyChoicesView,
-)
+
 
 from .views.PreliminaryBondRequirementsViews import (
     PreliminaryBondRequirementsListCreateView,
@@ -46,9 +50,15 @@ from .views.BondPreviewViews import (
 )
 # Initialize the DRF router
 router = DefaultRouter()
-router.register(r'borrowing', BorrowingDetailsViewSet, basename='borrowing')
 
+from .views.borrowing_views import BorrowingDetailsViewSet
+router.register(
+    r"applications/(?P<application_id>[0-9a-f-]+)/borrowings",
+    BorrowingDetailsViewSet,
+    basename="borrowing-details"
+)
 
+from .views.BorrowingChoices import BorrowingChoicesAPI
 from .views.BondEstimationApplicationView import UpdateLastAccessedStepAPI,CreateBondEstimationApplicationAPI,ListCompanyBondApplicationsAPI
 from .views.FinancialDocumentView import FinancialDocumentViewSet
 from .views.FinalSubmitAPIView import FinalSubmitAPIView
@@ -69,6 +79,16 @@ financial_document_detail = FinancialDocumentViewSet.as_view({
 # Define URL patterns
 urlpatterns = [
     path('', include(router.urls)),
+    # -------- Fund Position -------
+     path(
+        "applications/<uuid:application_id>/fund-position/",
+        FundPositionAPI.as_view(),
+        name="fund-position"
+    ),
+
+        # -------- Borrowing Details -------
+
+        path("borrowing/choices/", BorrowingChoicesAPI.as_view(), name="borrowing-choices"),
 
     # Example for future extension:
     # path('borrowing/export/', BorrowingExportView.as_view(), name='borrowing-export'),
@@ -113,19 +133,13 @@ urlpatterns = [
 
 
      #---------  RatingDetails ------------
-     path("company/<uuid:company_id>/credit-rating/", CreditRatingCreateView.as_view(), name="credit-rating-create"),
-    
 
-    path('choices/', CreditRatingAgencyChoicesView.as_view(), name='credit-rating-choices'),
-    
-    # CRUD operations
-    path('ratings/<uuid:company_id>', CreditRatingListView.as_view(), name='credit-rating-list'),
-    path('ratings/create/<uuid:company_id>', CreditRatingCreateView.as_view(), name='credit-rating-create'),
-    path('ratings/<int:credit_rating_id>/<uuid:company_id>', CreditRatingDetailView.as_view(), name='credit-rating-detail'),
-    
-    # Bulk operations
-    path('ratings/bulk-delete/<uuid:company_id>', CreditRatingBulkDeleteView.as_view(), name='credit-rating-bulk-delete'),
+    path("applications/<uuid:application_id>/credit-ratings/", credit_rating_list),
+    path("applications/<uuid:application_id>/credit-ratings/<int:pk>/", credit_rating_detail),
+    path("applications/<uuid:application_id>/credit-ratings/choices/", CreditRatingViewSet.as_view({"get": "choices"})),
 
+
+        #---------  PreliminaryBondRequirements ------------
 
      path(
         "preliminary-bond/<uuid:company_id>",
@@ -145,30 +159,8 @@ urlpatterns = [
         name="collateral-list-create"
     ),
 
-    # -------------------------------------------------------
-    # FETCH SINGLE  +  UPDATE  +  DELETE
-    # -------------------------------------------------------
-    path(
-        "collateral/<uuid:company_id>/<uuid:record_id>/",
-        CollateralAssetVerificationDetailView.as_view(),
-        name="collateral-detail"
-    ),
-   path(
-        'fund-positions/',
-        FundPositionListCreateView.as_view(),
-        name='fund-position-list-create'
-    ),
-    path(
-        'fund-positions/bulk/',
-        FundPositionBulkView.as_view(),
-        name='fund-position-bulk'
-    ),
-    path(
-        'fund-positions/<uuid:pk>/',  
-        FundPositionDetailView.as_view(),
-        name='fund-position-detail'
-    ),
 
+   
 
     # -------------- ProfitabilityRatios -----------------
  
