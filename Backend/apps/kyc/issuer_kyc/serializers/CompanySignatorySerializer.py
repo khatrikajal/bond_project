@@ -117,31 +117,31 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
         )
 
         # ✅ Update onboarding (Step 5)
-        onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
-            user=user,
-            defaults={
-                "status": "IN_PROGRESS",
-                "last_accessed_step": 6,
-                "company_information": company,
-                "step_completion": {},
-            },
-        )
+        # onboarding_app, created = CompanyOnboardingApplication.objects.get_or_create(
+        #     user=user,
+        #     defaults={
+        #         "status": "IN_PROGRESS",
+        #         "last_accessed_step": 6,
+        #         "company_information": company,
+        #         "step_completion": {},
+        #     },
+        # )
 
         # ✅ Ensure step completion & last_accessed_step update even if record exists
-        step_completion = onboarding_app.step_completion or {}
-        step_completion["6"] = {
-            "completed": True,
-            "record_id": str(signatory.signatory_id),
-        }
+        # step_completion = onboarding_app.step_completion or {}
+        # step_completion["6"] = {
+        #     "completed": True,
+        #     "record_id": str(signatory.signatory_id),
+        # }
 
-        onboarding_app.step_completion = step_completion
-        onboarding_app.company_information = company
+        # onboarding_app.step_completion = step_completion
+        # onboarding_app.company_information = company
 
-        if not created and onboarding_app.last_accessed_step < 6:
-            onboarding_app.last_accessed_step = 6
+        # if not created and onboarding_app.last_accessed_step < 6:
+        #     onboarding_app.last_accessed_step = 6
 
-        onboarding_app.status = "IN_PROGRESS"
-        onboarding_app.save(update_fields=["step_completion", "company_information", "last_accessed_step", "status"])
+        # onboarding_app.status = "IN_PROGRESS"
+        # onboarding_app.save(update_fields=["step_completion", "company_information", "last_accessed_step", "status"])
 
         # ✅ Return response
         return {
@@ -153,7 +153,7 @@ class CompanySignatoryCreateSerializer(serializers.Serializer):
             "pan_number": signatory.pan_number,
             "aadhaar_number": signatory.aadhaar_number,
             "email_address": signatory.email_address,
-            "last_accessed_step": onboarding_app.last_accessed_step,  # added for clarity
+            # "last_accessed_step": onboarding_app.last_accessed_step,  # added for clarity
             "message": "Signatory added successfully with extracted PAN/Aadhaar details.",
         }
     
@@ -299,26 +299,26 @@ class CompanySignatoryUpdateSerializer(serializers.Serializer):
         instance.save()
 
         # ------------------ UPDATE ONBOARDING STEP ------------------ #
-        try:
-            onboarding_app, _ = CompanyOnboardingApplication.objects.get_or_create(
-                user=user,
-                defaults={
-                    "status": "IN_PROGRESS",
-                    "last_accessed_step": 6,
-                    "company_information": instance.company,
-                    "step_completion": {},
-                },
-            )
-            step_completion = onboarding_app.step_completion or {}
-            step_completion["6"] = {
-                "completed": True,
-                "record_id": str(instance.signatory_id),
-            }
-            onboarding_app.step_completion = step_completion
-            onboarding_app.company_information = instance.company
-            onboarding_app.save(update_fields=["step_completion", "company_information"])
-        except Exception as e:
-            print("Onboarding update error:", e)
+        # try:
+        #     onboarding_app, _ = CompanyOnboardingApplication.objects.get_or_create(
+        #         user=user,
+        #         defaults={
+        #             "status": "IN_PROGRESS",
+        #             "last_accessed_step": 6,
+        #             "company_information": instance.company,
+        #             "step_completion": {},
+        #         },
+        #     )
+        #     step_completion = onboarding_app.step_completion or {}
+        #     step_completion["6"] = {
+        #         "completed": True,
+        #         "record_id": str(instance.signatory_id),
+        #     }
+        #     onboarding_app.step_completion = step_completion
+        #     onboarding_app.company_information = instance.company
+        #     onboarding_app.save(update_fields=["step_completion", "company_information"])
+        # except Exception as e:
+        #     print("Onboarding update error:", e)
 
         # Response
         return {

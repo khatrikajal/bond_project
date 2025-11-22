@@ -659,7 +659,6 @@ logger = logging.getLogger(__name__)
 # ======================================================================
 
 class CompanyDocumentBulkUploadView(APIView):
-    authentication_classes = []
     permission_classes = []
     parser_classes = [MultiPartParser, FormParser]
 

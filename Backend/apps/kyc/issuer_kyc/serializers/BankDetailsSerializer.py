@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.db import transaction
 from apps.kyc.issuer_kyc.models.BankDetailsModel import BankDetails
 from apps.kyc.issuer_kyc.models.CompanyInformationModel import CompanyInformation
-from apps.kyc.issuer_kyc.services.onboarding_service import update_step_4_status
+# from apps.kyc.issuer_kyc.services.onboarding_service import update_step_4_status
 from apps.kyc.issuer_kyc.services.bank_details.constants import BankDetailsConfig
 import re
 import logging
@@ -76,7 +76,7 @@ class BankDetailsSerializer(serializers.ModelSerializer):
                 bank.save()
             
             # Update onboarding step 4
-            self._update_onboarding_step(company, bank)
+            # self._update_onboarding_step(company, bank)
             
             return bank
 
@@ -108,9 +108,9 @@ class BankDetailsSerializer(serializers.ModelSerializer):
             instance.save()
             
             # Update onboarding step 4
-            if company:
+            # if company:
                
-                self._update_onboarding_step(company, instance)
+            #     self._update_onboarding_step(company, instance)
             
             return instance
 
@@ -130,16 +130,16 @@ class BankDetailsSerializer(serializers.ModelSerializer):
         
         return False
     
-    def _update_onboarding_step(self, company, bank):
-        """Update onboarding step 4 status"""
-        try:
-            if hasattr(company, "application") and company.application:
-                update_step_4_status(company.application, bank_ids=bank.bank_detail_id)
-        except Exception as e:
-            logger.exception(f"Failed to update onboarding step for company {company.pk}")
-            raise serializers.ValidationError(
-                f"Failed to update onboarding step: {str(e)}"
-            )
+    # def _update_onboarding_step(self, company, bank):
+    #     """Update onboarding step 4 status"""
+    #     try:
+    #         if hasattr(company, "application") and company.application:
+    #             update_step_4_status(company.application, bank_ids=bank.bank_detail_id)
+    #     except Exception as e:
+    #         logger.exception(f"Failed to update onboarding step for company {company.pk}")
+    #         raise serializers.ValidationError(
+    #             f"Failed to update onboarding step: {str(e)}"
+    #         )
         
 
 
